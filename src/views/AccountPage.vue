@@ -1,7 +1,5 @@
 <template>
-  <a-layout>
-    <AccountView />
-  </a-layout>
+  <AccountView />
 </template>
 
 <script setup>

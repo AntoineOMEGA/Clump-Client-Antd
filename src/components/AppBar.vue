@@ -1,7 +1,7 @@
 <template>
-  <v-app-bar color="light-blue-darken-4" v-if="!noAppBarPages.includes($route.name)">
-    <v-app-bar-title style="text-align: center; font-size: 2rem;" class="bebas-neue-regular">Clump</v-app-bar-title>
-  </v-app-bar>
+  <a-page-header class="header mb-2" v-if="!noAppBarPages.includes($route.name)">
+    <a-typography-title :level="3">Clump</a-typography-title>
+  </a-page-header>
 </template>
 
 <script setup>
@@ -12,7 +12,7 @@
 export default {
   data() {
     return {
-      noAppBarPages: ['Clump App']
+      noAppBarPages: ['Clump App', 'Login', 'Sign Up']
     }
   },
 
@@ -21,3 +21,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.header {
+  height: 70px;
+  padding: 5px;
+  text-align: center;
+}
+</style>

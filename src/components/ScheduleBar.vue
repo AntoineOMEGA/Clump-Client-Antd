@@ -1,17 +1,15 @@
 <template>
-  <a-layout>
-    <v-bottom-navigation style="position: fixed; bottom: 55px;" class="bg-light-blue-darken-2 bebas-neue-regular">
-      <a-button block to="/schedule" style="font-size: 1rem;">
-        Viewer
-      </a-button>
-      <a-button block to="/event-templates" style="font-size: 1rem;">
-        Event Templates
-      </a-button>
-      <a-button block to="/schedules" style="font-size: 1rem;">
-        Schedules
-      </a-button>
-    </v-bottom-navigation>
-  </a-layout>
+  <a-menu style="position: fixed; bottom: -1px; height: 60px;">
+    <a-button type=" text" size="large" to="/schedule">
+      Viewer
+    </a-button>
+    <a-button type="text" size="large" to="/event-templates">
+      Event Templates
+    </a-button>
+    <a-button type="text" size="large" to="/schedules">
+      Schedules
+    </a-button>
+  </a-menu>
 </template>
 
 <script setup>

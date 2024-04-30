@@ -1,61 +1,62 @@
 <template>
-  <a-row>
-    <a-col></a-col>
-    <a-col>
-      <a-button type="primary" size="large" shape="round" class="mb-3"
-        @click="clumpOverlayVisible = !clumpOverlayVisible" block>Create
-        Clump</a-button>
-      <a-button type="primary" size="large" shape="round" @click="clumpJoinOverlayVisible = !clumpJoinOverlayVisible"
-        block>Join Clump</a-button>
+  <a-row span="24" justify="space-around">
+    <a-col :span="20">
+      <a-flex justify="space-around" align="middle">
+        <a-button type="primary" size="large" class="mb-2" @click="clumpOverlayVisible = !clumpOverlayVisible">Create
+          Clump</a-button>
+        <a-button type="primary" size="large" class="mb-2"
+          @click="clumpJoinOverlayVisible = !clumpJoinOverlayVisible">Join Clump</a-button>
+      </a-flex>
     </a-col>
-    <a-col></a-col>
   </a-row>
-  <a-card v-for="clump in clumps" :key="clump._id" title="clump.title">
-    {{ roles[clump._id].title }}
-    <a-button @click="getClump(clump._id)">
-      Enter
-    </a-button>
-    <a-button @click="configureClumpFormData(clump)">
-      Edit
-    </a-button>
+  <a-card v-for="clump in clumps" :key="clump._id" style="margin: 10px;">
+    <a-card-meta :title="clump.title" :description="roles[clump._id].title"></a-card-meta>
+    <template #actions>
+      <select-outlined key="select" @click="getClump(clump._id)" />
+      <edit-outlined key="edit" @click="configureClumpFormData(clump)" />
+    </template>
   </a-card>
 
   <a-drawer v-model:open="clumpOverlayVisible">
     <a-form>
-      <a-input placeholder="Title" v-model="clumpFormData.title"></a-input>
+      <a-input class="mb-2" size="large" placeholder="Title" v-model="clumpFormData.title"></a-input>
 
       <a-card v-if="clumpFormErrorMessage != ''" title="clumpFormErrorMessage">
 
       </a-card>
 
-      <a-button type="primary" size="large" shape="round" @click="createClump()">
-        Create Clump
-      </a-button>
-      <a-button type="primary" size="large" shape="round" v-if="clumpFormData._id" @click="updateClump()">
-        Update Clump
-      </a-button>
-      <a-button type="primary" size="large" shape="round" v-if="clumpFormData._id" @click="deleteClump()">
-        Delete Clump
-      </a-button>
+      <a-flex justify="space-around" align="middle">
+        <a-button type="primary" size="large" v-if="!clumpFormData._id" @click="createClump()">
+          Create Clump
+        </a-button>
+        <a-button type="primary" size="large" v-if="clumpFormData._id" @click="updateClump()">
+          Update Clump
+        </a-button>
+        <a-button type="primary" size="large" v-if="clumpFormData._id" @click="deleteClump()">
+          Delete Clump
+        </a-button>
+      </a-flex>
     </a-form>
   </a-drawer>
 
   <a-drawer v-model:open="clumpJoinOverlayVisible">
     <a-form>
-      <a-input placeholder="Invite Token" v-model="clumpJoinFormData.inviteToken"></a-input>
+      <a-input class="mb-2" size="large" placeholder="Invite Token" v-model="clumpJoinFormData.inviteToken"></a-input>
 
       <a-card v-if="clumpJoinFormErrorMessage != ''" title="clumpJoinFormErrorMessage">
       </a-card>
 
-      <a-button type="primary" size="large" shape="round" @click="joinClump()">
-        Join Clump
-      </a-button>
+      <a-flex justify="space-around" align="middle">
+        <a-button type="primary" size="large" @click="joinClump()">
+          Join Clump
+        </a-button>
+      </a-flex>
     </a-form>
   </a-drawer>
 </template>
 
 <script setup>
-//
+import { SelectOutlined, EditOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
@@ -75,8 +76,8 @@ export default {
         inviteToken: ''
       },
       clumpJoinFormErrorMessage: '',
-      clumps: [],
-      roles: {},
+      clumps: [{ _id: 'red', title: 'red', inviteToken: 'red' }, { _id: 'red', title: 'green', inviteToken: 'green' }],
+      roles: { 'red': { title: 'red' } },
       members: {},
       toggle: undefined
     }

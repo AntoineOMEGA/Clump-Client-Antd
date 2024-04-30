@@ -1,7 +1,7 @@
 <template>
-  <a-layout>
+  <a-layout-content>
     <ClumpsView></ClumpsView>
-  </a-layout>
+  </a-layout-content>
 </template>
 
 <script setup>

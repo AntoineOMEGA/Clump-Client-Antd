@@ -1,21 +1,17 @@
 <template>
-  <a-row>
-    <a-col>
+  <a-row class="full-height" span="24" justify="space-around" align="middle">
+    <a-col :span="20">
+      <a-typography-title>CLUMP</a-typography-title>
       <a-form>
-        <a-input id="email" placeholder="Email" v-model="email"></a-input>
-        <a-input id="password" placeholder="Password" type="password" v-model="password"></a-input>
-        <a-button type="primary" size="large" @click="login()" block>Login</a-button>
+        <a-input class="mb-2" size="large" id="email" placeholder="Email" v-model="email"></a-input>
+        <a-input class="mb-2" size="large" id="password" placeholder="Password" type="password"
+          v-model="password"></a-input>
+        <a-button class="mb-2" type="primary" size="large" @click="login()" block>Login</a-button>
       </a-form>
-      <a-space>
-        <a-row>
-          <a-col>
-            <RouterLink to="/forgot-password">Forgot Password?</RouterLink>
-          </a-col>
-          <a-col>
-            <RouterLink to="/signup">Sign Up</RouterLink>
-          </a-col>
-        </a-row>
-      </a-space>
+      <a-flex justify="space-around" align="middle">
+        <RouterLink to="/forgot-password">Forgot Password?</RouterLink>
+        <RouterLink to="/signup">Sign Up</RouterLink>
+      </a-flex>
     </a-col>
   </a-row>
 </template>

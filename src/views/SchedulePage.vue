@@ -1,8 +1,6 @@
 <template>
-  <a-layout>
-    <ScheduleView />
-    <ScheduleBar />
-  </a-layout>
+  <ScheduleView />
+  <ScheduleBar />
 </template>
 
 <script setup>

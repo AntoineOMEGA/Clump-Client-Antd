@@ -8,9 +8,9 @@
       <a-input placeholder="Search" v-model="eventTemplateFilterSettings.search"></a-input>
     </a-card-actions>
     <a-card-actions>
-      <a-checkbox placeholder="Show Location" v-model="eventTemplateFilterSettings.location"></a-checkbox>
-      <a-checkbox placeholder="Show Description" v-model="eventTemplateFilterSettings.description"></a-checkbox>
-      <a-checkbox placeholder="Show Comments" v-model="eventTemplateFilterSettings.comments"></a-checkbox>
+      <a-checkbox v-model="eventTemplateFilterSettings.location">Show Location</a-checkbox>
+      <a-checkbox v-model="eventTemplateFilterSettings.description">Show Description</a-checkbox>
+      <a-checkbox v-model="eventTemplateFilterSettings.comments">Show Comments</a-checkbox>
     </a-card-actions>
   </a-card>
 

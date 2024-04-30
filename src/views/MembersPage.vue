@@ -1,8 +1,6 @@
 <template>
-  <a-layout>
-    <MembersView />
-    <RoleBar />
-  </a-layout>
+  <MembersView />
+  <RoleBar />
 </template>
 
 <script setup>

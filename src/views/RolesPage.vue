@@ -1,8 +1,6 @@
 <template>
-  <a-layout>
-    <RolesView />
-    <RoleBar />
-  </a-layout>
+  <RolesView />
+  <RoleBar />
 </template>
 
 <script setup>
