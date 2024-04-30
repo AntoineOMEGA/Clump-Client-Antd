@@ -5,12 +5,12 @@
     <a-icon color="pink" style="font-size: 3.5rem">mdi-plus-circle</a-icon>
   </a-button>
 
-  <div a-for="scheduleCategory in scheduleCategories.sort((a, b) => (a.title > b.title) ? 1 : -1)"
+  <div v-for="scheduleCategory in scheduleCategories.sort((a, b) => (a.title > b.title) ? 1 : -1)"
     :key="scheduleCategory._id">
     <a-card class="mb-4">
       <a-card-title class="bebas-neue-regular" :class="'text-' + scheduleCategory.color"> {{ scheduleCategory.title }}
       </a-card-title>
-      <a-card-subtitle a-if="scheduleCategory.description != ''" class="mb-4"> {{ scheduleCategory.description }}
+      <a-card-subtitle v-if="scheduleCategory.description != ''" class="mb-4"> {{ scheduleCategory.description }}
       </a-card-subtitle>
       <a-card-actions>
         <a-button @click="configureUpdateScheduleCategoryForm(scheduleCategory)" icon variant="text">
@@ -26,20 +26,20 @@
           <a-divider></a-divider>
           <a-card flat>
             <a-card-item>
-              <a-input hide-details="auto" label="Search" a-model="scheduleFilterSettings.search" clearable></a-input>
+              <a-input hide-details="auto" label="Search" v-model="scheduleFilterSettings.search" clearable></a-input>
               <a-checkbox hide-details="auto" label="Show Details"
-                a-model="scheduleFilterSettings.details"></a-checkbox>
+                v-model="scheduleFilterSettings.details"></a-checkbox>
             </a-card-item>
           </a-card>
           <div class="pa-2">
-            <div a-for="schedule in filteredSchedules(scheduleCategory).sort((a, b) => (a.title > b.title) ? 1 : -1)"
+            <div v-for="schedule in filteredSchedules(scheduleCategory).sort((a, b) => (a.title > b.title) ? 1 : -1)"
               :key="schedule._id">
-              <a-card a-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())"
+              <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())"
                 class="mb-2" color="grey-darken-3" @click="configureUpdateScheduleForm(schedule)">
                 <a-card-title class="bebas-neue-regular" :class="'text-' + getScheduleCategoryColor(schedule)"> {{
       schedule.title }}
                 </a-card-title>
-                <a-card-text a-if="schedule.comments != '' && scheduleFilterSettings.details"
+                <a-card-text v-if="schedule.comments != '' && scheduleFilterSettings.details"
                   style="white-space: pre-line">
                   {{ schedule.comments }}
                 </a-card-text>
@@ -51,7 +51,7 @@
     </a-card>
   </div>
 
-  <a-drawer a-model="scheduleEditOverlayVisible" class="justify-center bg-grey-darken-4" scrim="black"
+  <a-drawer v-model="scheduleEditOverlayVisible" class="justify-center bg-grey-darken-4" scrim="black"
     scroll-strategy="block" width="100%" style="overflow-y: scroll !important" persistent>
     <a-layout align="right">
       <a-button @click="resetForm()" icon variant="text">
@@ -60,7 +60,7 @@
     </a-layout>
 
     <!--Select Action-->
-    <a-layout a-if="scheduleSelect">
+    <a-layout v-if="scheduleSelect">
       <a-form>
         <div>
           <a-button size="x-large" class="bg-light-blue mb-8 pa-8 bebas-neue-regular" rounded="pill" block
@@ -72,50 +72,50 @@
     </a-layout>
 
     <!--Create/Edit Schedule-->
-    <a-layout a-if="scheduleCreateEdit">
+    <a-layout v-if="scheduleCreateEdit">
       <a-form>
-        <a-input a-model="scheduleFormData.title" label="Title"></a-input>
-        <a-select label="Category" a-model="scheduleFormData.scheduleCategoryID" :items="scheduleCategories"
+        <a-input v-model="scheduleFormData.title" label="Title"></a-input>
+        <a-select label="Category" v-model="scheduleFormData.scheduleCategoryID" :items="scheduleCategories"
           item-title="title" item-value="_id"></a-select>
         <div class="d-flex justify-space-between">
-          <a-input label="Start Date" a-model="scheduleFormData.startDate" type="date" class="mr-4"></a-input>
-          <a-input label="End Date" a-model="scheduleFormData.endDate" type="date"></a-input>
+          <a-input label="Start Date" v-model="scheduleFormData.startDate" type="date" class="mr-4"></a-input>
+          <a-input label="End Date" v-model="scheduleFormData.endDate" type="date"></a-input>
         </div>
-        <a-textarea label="Comments" a-model="scheduleFormData.comments"></a-textarea>
+        <a-textarea label="Comments" v-model="scheduleFormData.comments"></a-textarea>
 
-        <a-card class="bg-red-accent-3 mb-5" a-if="scheduleFormErrorMessageVisible">
+        <a-card class="bg-red-accent-3 mb-5" v-if="scheduleFormErrorMessageVisible">
           <a-card-title>{{ scheduleFormErrorMessage }}</a-card-title>
         </a-card>
 
         <div class="d-flex justify-space-between">
-          <a-button a-if="!scheduleFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
+          <a-button v-if="!scheduleFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
             @click="createSchedule()">Create</a-button>
-          <a-button a-if="scheduleFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
+          <a-button v-if="scheduleFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
             @click="updateSchedule()">Save</a-button>
-          <a-button a-if="scheduleFormData._id" size="x-large" class="bg-red-accent-3 bebas-neue-regular" rounded="pill"
+          <a-button v-if="scheduleFormData._id" size="x-large" class="bg-red-accent-3 bebas-neue-regular" rounded="pill"
             @click="deleteSchedule()">Archive</a-button>
         </div>
       </a-form>
     </a-layout>
 
     <!--Create/Edit Schedule Category-->
-    <a-layout a-if="scheduleCategoryCreateEdit">
+    <a-layout v-if="scheduleCategoryCreateEdit">
       <a-form>
-        <a-input a-model="scheduleCategoryFormData.title" label="Title"></a-input>
-        <a-input a-model="scheduleCategoryFormData.description" label="Description"></a-input>
-        <a-select label="Color" a-model="scheduleCategoryFormData.color" :items="colors"
+        <a-input v-model="scheduleCategoryFormData.title" label="Title"></a-input>
+        <a-input v-model="scheduleCategoryFormData.description" label="Description"></a-input>
+        <a-select label="Color" v-model="scheduleCategoryFormData.color" :items="colors"
           :color="scheduleCategoryFormData.color"></a-select>
 
-        <a-card class="bg-red-accent-3 mb-5" a-if="scheduleCategoryFormErrorMessage != ''">
+        <a-card class="bg-red-accent-3 mb-5" v-if="scheduleCategoryFormErrorMessage != ''">
           <a-card-title>{{ scheduleCategoryFormErrorMessage }}</a-card-title>
         </a-card>
 
         <div class="d-flex justify-space-between">
-          <a-button a-if="!scheduleCategoryFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular"
+          <a-button v-if="!scheduleCategoryFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular"
             rounded="pill" @click="createScheduleCategory()">Create</a-button>
-          <a-button a-if="scheduleCategoryFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular"
+          <a-button v-if="scheduleCategoryFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular"
             rounded="pill" @click="updateScheduleCategory()">Save</a-button>
-          <a-button a-if="scheduleCategoryFormData._id" size="x-large" class="bg-red-accent-3 bebas-neue-regular"
+          <a-button v-if="scheduleCategoryFormData._id" size="x-large" class="bg-red-accent-3 bebas-neue-regular"
             rounded="pill" @click="deleteScheduleCategory()">Delete</a-button>
         </div>
       </a-form>

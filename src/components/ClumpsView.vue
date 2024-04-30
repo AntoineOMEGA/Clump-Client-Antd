@@ -1,90 +1,57 @@
 <template>
-  <v-row no-gutters class="mb-4">
-    <v-col></v-col>
-    <v-col align-self="center">
-      <v-btn-toggle v-model="toggle" rounded="pill" divided align-self="center" class="bebas-neue-regular">
-        <v-btn class="bg-light-blue" size="x-large" @click="clumpOverlayVisible = !clumpOverlayVisible">Create
-          Clump</v-btn>
-        <v-btn class="bg-light-blue" size="x-large" @click="clumpJoinOverlayVisible = !clumpJoinOverlayVisible">Join
-          Clump</v-btn>
-      </v-btn-toggle>
-    </v-col>
-    <v-col></v-col>
-  </v-row>
-  <v-card v-for="clump in clumps" :key="clump._id" class="mb-4">
-    <v-card-item>
-      <v-card-title>
-        {{ clump.title }}
-      </v-card-title>
-      <v-card-subtitle>
-        {{ roles[clump._id].title }}
-      </v-card-subtitle>
-    </v-card-item>
-    <v-card-actions>
-      <v-btn @click="getClump(clump._id)" icon variant="text">
-        <v-icon>mdi-location-enter</v-icon>
-      </v-btn>
-      <v-btn @click="configureClumpFormData(clump)" icon variant="text">
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+  <a-row>
+    <a-col></a-col>
+    <a-col>
+      <a-button type="primary" size="large" shape="round" class="mb-3"
+        @click="clumpOverlayVisible = !clumpOverlayVisible" block>Create
+        Clump</a-button>
+      <a-button type="primary" size="large" shape="round" @click="clumpJoinOverlayVisible = !clumpJoinOverlayVisible"
+        block>Join Clump</a-button>
+    </a-col>
+    <a-col></a-col>
+  </a-row>
+  <a-card v-for="clump in clumps" :key="clump._id" title="clump.title">
+    {{ roles[clump._id].title }}
+    <a-button @click="getClump(clump._id)">
+      Enter
+    </a-button>
+    <a-button @click="configureClumpFormData(clump)">
+      Edit
+    </a-button>
+  </a-card>
 
-  <v-overlay v-model="clumpOverlayVisible" class="justify-center bg-grey-darken-4" scrim="black" scroll-strategy="block"
-    width="100%" style="overflow-y: scroll !important" persistent>
-    <v-container align="right">
-      <v-btn @click="resetClumpFormData()" icon variant="text">
-        <v-icon color="red-accent-3">mdi-close</v-icon>
-      </v-btn>
-    </v-container>
-    <v-container>
+  <a-drawer v-model:open="clumpOverlayVisible">
+    <a-form>
+      <a-input placeholder="Title" v-model="clumpFormData.title"></a-input>
 
-      <v-form>
-        <v-text-field label="Title" v-model="clumpFormData.title"></v-text-field>
+      <a-card v-if="clumpFormErrorMessage != ''" title="clumpFormErrorMessage">
 
-        <v-card class="bg-red-accent-3 mb-5" v-if="clumpFormErrorMessage != ''">
-          <v-card-title>{{ clumpFormErrorMessage }}</v-card-title>
-        </v-card>
+      </a-card>
 
-        <v-btn class="mx-2 bg-light-blue bebas-neue-regular" size="x-large" rounded="pill" height="60px"
-          @click="createClump()">
-          Create Clump
-        </v-btn>
-        <v-btn v-if="clumpFormData._id" class="mx-2 bg-light-blue bebas-neue-regular" size="x-large" rounded="pill"
-          height="60px" @click="updateClump()">
-          Update Clump
-        </v-btn>
-        <v-btn v-if="clumpFormData._id" class="mx-2 bg-light-blue bebas-neue-regular" size="x-large" rounded="pill"
-          height="60px" @click="deleteClump()">
-          Delete Clump
-        </v-btn>
-      </v-form>
-    </v-container>
-  </v-overlay>
+      <a-button type="primary" size="large" shape="round" @click="createClump()">
+        Create Clump
+      </a-button>
+      <a-button type="primary" size="large" shape="round" v-if="clumpFormData._id" @click="updateClump()">
+        Update Clump
+      </a-button>
+      <a-button type="primary" size="large" shape="round" v-if="clumpFormData._id" @click="deleteClump()">
+        Delete Clump
+      </a-button>
+    </a-form>
+  </a-drawer>
 
-  <v-overlay v-model="clumpJoinOverlayVisible" class="justify-center bg-grey-darken-4" scrim="black"
-    scroll-strategy="block" width="100%" style="overflow-y: scroll !important" persistent>
-    <v-container align="right">
-      <v-btn @click="resetClumpJoinFormData()" icon variant="text">
-        <v-icon color="red-accent-3" size="x-large">mdi-close</v-icon>
-      </v-btn>
-    </v-container>
-    <v-container>
+  <a-drawer v-model:open="clumpJoinOverlayVisible">
+    <a-form>
+      <a-input placeholder="Invite Token" v-model="clumpJoinFormData.inviteToken"></a-input>
 
-      <v-form>
-        <v-text-field label="Invite Token" v-model="clumpJoinFormData.inviteToken"></v-text-field>
+      <a-card v-if="clumpJoinFormErrorMessage != ''" title="clumpJoinFormErrorMessage">
+      </a-card>
 
-        <v-card class="bg-red-accent-3 mb-5" v-if="clumpJoinFormErrorMessage != ''">
-          <v-card-title>{{ clumpJoinFormErrorMessage }}</v-card-title>
-        </v-card>
-
-        <v-btn class="mx-2 bg-light-blue bebas-neue-regular" size="x-large" rounded="pill" height="60px"
-          @click="joinClump()">
-          Join Clump
-        </v-btn>
-      </v-form>
-    </v-container>
-  </v-overlay>
+      <a-button type="primary" size="large" shape="round" @click="joinClump()">
+        Join Clump
+      </a-button>
+    </a-form>
+  </a-drawer>
 </template>
 
 <script setup>
@@ -111,6 +78,7 @@ export default {
       clumps: [],
       roles: {},
       members: {},
+      toggle: undefined
     }
   },
 

@@ -1,26 +1,23 @@
 <template>
-  <a-container class="fill-height">
-    <a-row>
-      <a-col>
-        <a-form>
-          <a-input id="email" label="Email" a-model="email"></a-input>
-          <a-input id="password" label="Password" type="password" a-model="password"></a-input>
-          <a-button @click="login()" size="x-large" color="light-blue" rounded="pill"
-            style="height: 60px; font-size: 2rem;" class="bebas-neue-regular" block>Login</a-button>
-        </a-form>
-        <a-container>
-          <a-row style="text-align: center;">
-            <a-col>
-              <a href="" class="text-light-blue-lighten-2">Forgot Password?</a>
-            </a-col>
-            <a-col>
-              <RouterLink class="text-light-blue-lighten-2" to="/signup">Sign Up</RouterLink>
-            </a-col>
-          </a-row>
-        </a-container>
-      </a-col>
-    </a-row>
-  </a-container>
+  <a-row>
+    <a-col>
+      <a-form>
+        <a-input id="email" placeholder="Email" v-model="email"></a-input>
+        <a-input id="password" placeholder="Password" type="password" v-model="password"></a-input>
+        <a-button type="primary" size="large" @click="login()" block>Login</a-button>
+      </a-form>
+      <a-space>
+        <a-row>
+          <a-col>
+            <RouterLink to="/forgot-password">Forgot Password?</RouterLink>
+          </a-col>
+          <a-col>
+            <RouterLink to="/signup">Sign Up</RouterLink>
+          </a-col>
+        </a-row>
+      </a-space>
+    </a-col>
+  </a-row>
 </template>
 
 <script>

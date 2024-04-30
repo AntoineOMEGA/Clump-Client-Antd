@@ -1,7 +1,7 @@
 <template>
   <div class="text-overline mb-4"><span class="bebas-neue-regular" style="font-size: 1rem;">Members</span></div>
 
-  <a-card a-for="member in members" :key="member._id" class="mb-4" @click="console.log('test')">
+  <a-card v-for="member in members" :key="member._id" class="mb-4" @click="console.log('test')">
     <a-card-item>
       <a-card-title>
         {{ users[member.userID].name }}

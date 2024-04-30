@@ -7,15 +7,15 @@
 
   <a-card class="mb-5">
     <a-card-actions>
-      <a-input hide-details="auto" label="Search Event Templates" a-model="filterSettings.search"></a-input>
+      <a-input hide-details="auto" label="Search Event Templates" v-model="filterSettings.search"></a-input>
     </a-card-actions>
   </a-card>
 
   <a-card class="mb-4 bg-grey-darken-3">
     <a-card-item class="pa-4 ma-0">
       <div class="d-flex justify-space-between mb-0">
-        <a-input class="ma-0 mr-4" label="Start Date" a-model="startDate" type="date"></a-input>
-        <a-input class="ma-0" label="End Date" a-model="endDate" type="date"></a-input>
+        <a-input class="ma-0 mr-4" label="Start Date" v-model="startDate" type="date"></a-input>
+        <a-input class="ma-0" label="End Date" v-model="endDate" type="date"></a-input>
       </div>
 
       <a-button @click="getCombineScheduleData(startDate, endDate)" size="x-large" class="bg-pink bebas-neue-regular"
@@ -23,15 +23,15 @@
     </a-card-item>
   </a-card>
 
-  <a-card class="bg-red-accent-3 mb-5" a-if="getSchedulesErrorMessage != ''">
+  <a-card class="bg-red-accent-3 mb-5" v-if="getSchedulesErrorMessage != ''">
     <a-card-title>{{ getSchedulesErrorMessage }}</a-card-title>
   </a-card>
 
   <div
-    a-for="site in Object.keys(combinedSchedules).sort((a, b) => (objectifiedEventTemplates[a].title > objectifiedEventTemplates[b].title) ? 1 : -1)"
+    v-for="site in Object.keys(combinedSchedules).sort((a, b) => (objectifiedEventTemplates[a].title > objectifiedEventTemplates[b].title) ? 1 : -1)"
     :key="site">
     <a-card
-      a-if="Object.keys(combinedSchedules[site]).length > 0 && objectifiedEventTemplates[site].title.toLowerCase().includes(filterSettings.search.toLowerCase())"
+      v-if="Object.keys(combinedSchedules[site]).length > 0 && objectifiedEventTemplates[site].title.toLowerCase().includes(filterSettings.search.toLowerCase())"
       class="mb-4">
       <a-card-title class="bebas-neue-regular">{{ objectifiedEventTemplates[site].title }}</a-card-title>
       <a-card-actions>
@@ -46,13 +46,13 @@
           <a-divider></a-divider>
 
           <a-card
-            a-for="date in Object.keys(combinedSchedules[site]).sort((a, b) => (new Date(date + ' ' + a.split(' - ')[0]).getTime() > new Date(date + ' ' + b.split(' - ')[0]).getTime()) ? 1 : -1)"
+            v-for="date in Object.keys(combinedSchedules[site]).sort((a, b) => (new Date(date + ' ' + a.split(' - ')[0]).getTime() > new Date(date + ' ' + b.split(' - ')[0]).getTime()) ? 1 : -1)"
             :key="date">
             <div class="bg-grey-darken-3">
               <a-card-title>{{ new Date(date).toDateString() }}</a-card-title>
             </div>
             <div
-              a-for="time in Object.keys(combinedSchedules[site][date]).sort((a, b) => (new Date(date + ' ' + a.split(' - ')[0]).getTime() > new Date(date + ' ' + b.split(' - ')[0]).getTime()) ? 1 : -1)"
+              v-for="time in Object.keys(combinedSchedules[site][date]).sort((a, b) => (new Date(date + ' ' + a.split(' - ')[0]).getTime() > new Date(date + ' ' + b.split(' - ')[0]).getTime()) ? 1 : -1)"
               :key="time">
               <div>
                 <a-card-subtitle class="py-2">
@@ -63,7 +63,7 @@
               </div>
               <a-divider />
               <div class="pa-2">
-                <a-chip a-for="schedule in Object.keys(combinedSchedules[site][date][time])" :key="schedule"
+                <a-chip v-for="schedule in Object.keys(combinedSchedules[site][date][time])" :key="schedule"
                   class="pa-4 ma-1"
                   :color="objectifiedScheduleCategories[objectifiedSchedules[schedule].scheduleCategoryID].color" label
                   prepend-icon="mdi-pencil" rounded="pill"
@@ -79,7 +79,7 @@
     </a-card>
   </div>
 
-  <a-drawer a-model="eventEditOverlayVisible" class="justify-center bg-grey-darken-4" scrim="black" width="100%"
+  <a-drawer v-model="eventEditOverlayVisible" class="justify-center bg-grey-darken-4" scrim="black" width="100%"
     style="overflow-y: scroll !important" persistent>
     <a-container align="right">
       <a-button @click="resetForm()" icon variant="text">
@@ -90,8 +90,8 @@
       <a-card-item class="ma-0">
         <a-form>
           <a-select :items="schedules.sort((a, b) => (a.title > b.title) ? 1 : -1)" item-title="title" item-value="_id"
-            a-model="eventFormData.scheduleID" label="Schedules" clearable></a-select>
-          <a-select a-model="eventFormData.eventTemplateID" :item-props="true"
+            v-model="eventFormData.scheduleID" label="Schedules" clearable></a-select>
+          <a-select v-model="eventFormData.eventTemplateID" :item-props="true"
             :items="eventTemplates.sort((a, b) => (a.title > b.title) ? 1 : -1)" item-title="_id" item-value="_id"
             label="Event Template" clearable>
             <template a-slot:item="{ props, item }">
@@ -99,33 +99,33 @@
             </template>
           </a-select>
 
-          <a-input label="Title" a-model="eventFormData.title" a-if="!eventFormData.eventTemplateID"></a-input>
-          <a-input label="Location" a-model="eventFormData.location" a-if="!eventFormData.eventTemplateID"></a-input>
-          <a-textarea label="Description" a-model="eventFormData.description"
-            a-if="!eventFormData.eventTemplateID"></a-textarea>
+          <a-input label="Title" v-model="eventFormData.title" v-if="!eventFormData.eventTemplateID"></a-input>
+          <a-input label="Location" v-model="eventFormData.location" v-if="!eventFormData.eventTemplateID"></a-input>
+          <a-textarea label="Description" v-model="eventFormData.description"
+            v-if="!eventFormData.eventTemplateID"></a-textarea>
 
-          <a-select a-model="eventFormData.timeZone" :items="timeZones" label="Time Zone" clearable
-            a-if="!eventFormData.eventTemplateID"></a-select>
+          <a-select v-model="eventFormData.timeZone" :items="timeZones" label="Time Zone" clearable
+            v-if="!eventFormData.eventTemplateID"></a-select>
 
-          <a-select a-model="eventFormData.shiftID" label="Shift" clearable
-            a-if="eventFormData.eventTemplateID"></a-select>
+          <a-select v-model="eventFormData.shiftID" label="Shift" clearable
+            v-if="eventFormData.eventTemplateID"></a-select>
 
           <div class="d-flex justify-space-between">
-            <a-input label="Start Date" type="date" a-model="eventFormData.startDate"></a-input>
+            <a-input label="Start Date" type="date" v-model="eventFormData.startDate"></a-input>
             <a-select :items="generateTimes(6, 0, 1, 0)" label="Start Time"
-              a-model="eventFormData.startTime"></a-select>
+              v-model="eventFormData.startTime"></a-select>
           </div>
 
           <div class="d-flex justify-space-between">
-            <a-input label="End Date" type="date" a-model="eventFormData.endDate"></a-input>
-            <a-select :items="generateTimes(16, 30, 9, 15)" label="End Time" a-model="eventFormData.endTime"></a-select>
+            <a-input label="End Date" type="date" v-model="eventFormData.endDate"></a-input>
+            <a-select :items="generateTimes(16, 30, 9, 15)" label="End Time" v-model="eventFormData.endTime"></a-select>
           </div>
 
-          <a-select label="Frequency" a-model="eventFormData.recurrence.frequency"
+          <a-select label="Frequency" v-model="eventFormData.recurrence.frequency"
             :items="recurrenceRuleOptions.freq"></a-select>
         </a-form>
       </a-card-item>
-      <a-card-actions a-if="eventFormData.recurrence.frequency != 'Once'">
+      <a-card-actions v-if="eventFormData.recurrence.frequency != 'Once'">
         <span class="ml-4">Advanced Frequency</span>
         <a-spacer></a-spacer>
         <a-button :icon="eventEditAdvanced ? 'mdi-chevron-up' : 'mdi-chevron-down'"
@@ -135,44 +135,44 @@
         <a-card a-show="eventEditAdvanced" color="transparent">
           <a-card-item>
             <a-form>
-              <a-input a-if="['Daily', 'Weekly', 'Monthly by Day'].includes(eventFormData.recurrence.frequency)"
-                label="Interval" type="number" a-model="eventFormData.recurrence.interval" clearable></a-input>
+              <a-input v-if="['Daily', 'Weekly', 'Monthly by Day'].includes(eventFormData.recurrence.frequency)"
+                label="Interval" type="number" v-model="eventFormData.recurrence.interval" clearable></a-input>
 
-              <a-select a-if="['Yearly by Day', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)"
-                label="Month" a-model="eventFormData.recurrence.ByMonth"
+              <a-select v-if="['Yearly by Day', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)"
+                label="Month" v-model="eventFormData.recurrence.ByMonth"
                 :items="Object.keys(recurrenceRuleOptions.advFreq.ByMonth)" clearable></a-select>
 
-              <a-select a-if="['Monthly by Day', 'Yearly by Day'].includes(eventFormData.recurrence.frequency)"
-                label="Occurrences of Week Days in Month" a-model="eventFormData.recurrence.ByDayMonthly"
+              <a-select v-if="['Monthly by Day', 'Yearly by Day'].includes(eventFormData.recurrence.frequency)"
+                label="Occurrences of Week Days in Month" v-model="eventFormData.recurrence.ByDayMonthly"
                 :items="Object.keys(generatedMonthDays)" multiple clearable></a-select>
 
-              <a-select a-if="['Weekly'].includes(eventFormData.recurrence.frequency)" label="Days of Week"
-                a-model="eventFormData.recurrence.byDay" :items="Object.keys(recurrenceRuleOptions.advFreq.ByDay)"
+              <a-select v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" label="Days of Week"
+                v-model="eventFormData.recurrence.byDay" :items="Object.keys(recurrenceRuleOptions.advFreq.ByDay)"
                 multiple clearable></a-select>
 
-              <a-select a-if="['Monthly by Date', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)"
-                label="Day in Month" a-model="eventFormData.recurrence.ByMonthDay"
+              <a-select v-if="['Monthly by Date', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)"
+                label="Day in Month" v-model="eventFormData.recurrence.ByMonthDay"
                 :items="Object.keys(recurrenceRuleOptions.advFreq.ByMonthDay)" multiple clearable></a-select>
 
-              <a-input a-if="eventFormData.recurrence.frequency != 'Once'" label="Until" type="date"
-                a-model="eventFormData.until" clearable></a-input>
-              <a-input a-if="eventFormData.recurrence.frequency != 'Once'" label="Until" type="date"
-                a-model="eventFormData.until" clearable></a-input>
+              <a-input v-if="eventFormData.recurrence.frequency != 'Once'" label="Until" type="date"
+                v-model="eventFormData.until" clearable></a-input>
+              <a-input v-if="eventFormData.recurrence.frequency != 'Once'" label="Until" type="date"
+                v-model="eventFormData.until" clearable></a-input>
             </a-form>
           </a-card-item>
         </a-card>
       </a-expand-transition>
     </a-card>
-    <a-card class="bg-red-accent-3 mb-5" a-if="eventFormErrorMessage != ''">
+    <a-card class="bg-red-accent-3 mb-5" v-if="eventFormErrorMessage != ''">
       <a-card-title>{{ eventFormErrorMessage }}</a-card-title>
     </a-card>
 
     <div class="d-flex justify-space-between pa-4">
-      <a-button a-if="!eventFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
+      <a-button v-if="!eventFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
         @click="createEvent()">Create</a-button>
-      <a-button a-if="eventFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
+      <a-button v-if="eventFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
         @click="updateEvent()">Save</a-button>
-      <a-button a-if="eventFormData._id" size="x-large" class="bg-red-accent-3 bebas-neue-regular" rounded="pill"
+      <a-button v-if="eventFormData._id" size="x-large" class="bg-red-accent-3 bebas-neue-regular" rounded="pill"
         @click="deleteEvent()">Delete</a-button>
     </div>
   </a-drawer>

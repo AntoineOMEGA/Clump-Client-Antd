@@ -1,25 +1,21 @@
 <template>
-  <a-layout class="fill-height">
-    <a-row>
-      <a-col>
-        <a-form>
-          <a-input id="name" label="Name" a-model="name"></a-input>
-          <a-input id="email" label="Email" a-model="email"></a-input>
-          <a-input id="password" label="Password" type="password" a-model="password"></a-input>
-          <a-input id="passwordConfirm" label="Confirm Password" type="password" a-model="passwordConfirm"></a-input>
-          <a-btn @click="signup()" size="x-large" rounded="pill" color="pink" style="height: 60px; font-size: 1.5rem;"
-            class="bebas-neue-regular" block>Sign Up</a-btn>
-        </a-form>
-        <a-layout>
-          <a-row style="text-align: center;">
-            <a-col>
-              <RouterLink class="text-pink-lighten-3" to="/login">Login</RouterLink>
-            </a-col>
-          </a-row>
-        </a-layout>
-      </a-col>
-    </a-row>
-  </a-layout>
+  <a-row>
+    <a-col>
+      <a-form>
+        <a-input id="name" placeholder="Name" v-model="name"></a-input>
+        <a-input id="email" placeholder="Email" v-model="email"></a-input>
+        <a-input id="password" placeholder="Password" type="password" v-model="password"></a-input>
+        <a-input id="passwordConfirm" placeholder="Confirm Password" type="password"
+          v-model="passwordConfirm"></a-input>
+        <a-button type="primary" size="large" @click="signup()" block>Sign Up</a-button>
+      </a-form>
+      <a-row>
+        <a-col>
+          <RouterLink to="/login">Login</RouterLink>
+        </a-col>
+      </a-row>
+    </a-col>
+  </a-row>
 </template>
 
 <script>
