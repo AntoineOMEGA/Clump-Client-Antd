@@ -12,14 +12,14 @@
   <a-card v-for="clump in clumps" :key="clump._id" style="margin: 10px;">
     <a-card-meta :title="clump.title" :description="roles[clump._id].title"></a-card-meta>
     <template #actions>
-      <select-outlined key="select" @click="getClump(clump._id)" />
-      <edit-outlined key="edit" @click="configureClumpFormData(clump)" />
+      <select-outlined style="font-size: 1.5rem;" key="select" @click="getClump(clump._id)" />
+      <edit-outlined style="font-size: 1.5rem;" key="edit" @click="configureClumpFormData(clump)" />
     </template>
   </a-card>
 
-  <a-drawer v-model:open="clumpOverlayVisible">
+  <a-drawer v-model:open="clumpOverlayVisible" @close="resetClumpFormData()">
     <a-form>
-      <a-input class="mb-2" size="large" placeholder="Title" v-model="clumpFormData.title"></a-input>
+      <a-input class="mb-2" size="large" placeholder="Title" v-model:value="clumpFormData.title"></a-input>
 
       <a-card v-if="clumpFormErrorMessage != ''" title="clumpFormErrorMessage">
 
@@ -39,9 +39,10 @@
     </a-form>
   </a-drawer>
 
-  <a-drawer v-model:open="clumpJoinOverlayVisible">
+  <a-drawer v-model:open="clumpJoinOverlayVisible" @close="resetClumpJoinFormData()">
     <a-form>
-      <a-input class="mb-2" size="large" placeholder="Invite Token" v-model="clumpJoinFormData.inviteToken"></a-input>
+      <a-input class="mb-2" size="large" placeholder="Invite Token"
+        v-model:value="clumpJoinFormData.inviteToken"></a-input>
 
       <a-card v-if="clumpJoinFormErrorMessage != ''" title="clumpJoinFormErrorMessage">
       </a-card>

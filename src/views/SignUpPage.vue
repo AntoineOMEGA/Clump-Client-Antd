@@ -3,12 +3,12 @@
     <a-col :span="20">
       <a-typography-title>CLUMP</a-typography-title>
       <a-form>
-        <a-input class="mb-2" size="large" id="name" placeholder="Name" v-model="name"></a-input>
-        <a-input class="mb-2" size="large" id="email" placeholder="Email" v-model="email"></a-input>
+        <a-input class="mb-2" size="large" id="name" placeholder="Name" v-model:value="name"></a-input>
+        <a-input class="mb-2" size="large" id="email" placeholder="Email" v-model:value="email"></a-input>
         <a-input class="mb-2" size="large" id="password" placeholder="Password" type="password"
-          v-model="password"></a-input>
+          v-model:value="password"></a-input>
         <a-input class="mb-2" size="large" id="passwordConfirm" placeholder="Confirm Password" type="password"
-          v-model="passwordConfirm"></a-input>
+          v-model:value="passwordConfirm"></a-input>
         <a-button class="mb-2" type="primary" size="large" @click="signup()" block>Sign Up</a-button>
       </a-form>
       <a-flex justify="space-around" align="middle">
