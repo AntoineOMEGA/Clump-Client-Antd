@@ -1,59 +1,61 @@
 <template>
-  <a-button @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
-    <PlusCircleOutlined />
-  </a-button>
+  <a-float-button
+    type="primary"
+    style="height: 60px; width: 60px"
+    @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible"
+  >
+    <template #icon>
+      <PlusOutlined style="font-size: 20px" />
+    </template>
+  </a-float-button>
 
-  <a-card>
-    <a-card-actions>
-      <a-input placeholder="Search" v-model="eventTemplateFilterSettings.search"></a-input>
-    </a-card-actions>
-    <a-card-actions>
-      <a-checkbox v-model="eventTemplateFilterSettings.location">Show Location</a-checkbox>
-      <a-checkbox v-model="eventTemplateFilterSettings.description">Show Description</a-checkbox>
-      <a-checkbox v-model="eventTemplateFilterSettings.comments">Show Comments</a-checkbox>
-    </a-card-actions>
-  </a-card>
+  <a-input placeholder="Search" v-model:value="eventTemplateFilterSettings.search"></a-input>
 
-  <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title) ? 1 : -1)" :key="eventTemplate._id">
-    <a-card v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())"
-      @click="configureUpdateEventTemplateForm(eventTemplate)">
-      <a-card-title> {{ eventTemplate.title }} </a-card-title>
-      <div v-if="eventTemplate.location && eventTemplateFilterSettings.location">
-        <a-card-subtitle>Location:</a-card-subtitle>
-        <a-card-text> {{ eventTemplate.location }}
-        </a-card-text>
-      </div>
-      <div v-if="eventTemplate.description && eventTemplateFilterSettings.description">
-        <a-card-subtitle>Description:</a-card-subtitle>
-        <a-card-text> {{ eventTemplate.description }}
-        </a-card-text>
-      </div>
-      <div v-if="eventTemplate.comments && eventTemplateFilterSettings.comments">
-        <a-card-subtitle>Comments:</a-card-subtitle>
-        <a-card-text> {{ eventTemplate.comments }}
-        </a-card-text>
+  <div
+    v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))"
+    :key="eventTemplate._id"
+  >
+    <a-card
+      style="margin: 10px"
+      v-if="
+        eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())
+      "
+      @click="configureUpdateEventTemplateForm(eventTemplate)"
+    >
+      <a-card-meta :title="eventTemplate.title"></a-card-meta>
+      <div>
+        <a-card-meta description="Location: "></a-card-meta>
+        <p>{{ eventTemplate.location }}</p>
+        <a-card-meta description="Description: "></a-card-meta>
+        <p>{{ eventTemplate.description }}</p>
+        <a-card-meta description="Comments: "></a-card-meta>
+        <p>{{ eventTemplate.comments }}</p>
       </div>
     </a-card>
   </div>
 
-  <a-drawer v-model:open="eventTemplateEditOverlayVisible">
-    <a-button @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible; resetEventTemplateForm();">
-      <CloseOutlined />
-    </a-button>
+  <a-drawer v-model:open="eventTemplateEditOverlayVisible" @close="resetEventTemplateForm()">
     <a-form>
-      <a-input v-model="eventTemplateFormData.title" placeholder="Title"></a-input>
-      <a-input v-model="eventTemplateFormData.location" placeholder="Location"></a-input>
-      <a-input v-model="eventTemplateFormData.description" placeholder="Description"></a-input>
-      <a-input placeholder="Comments" v-model="eventTemplateFormData.comments"></a-input>
+      <a-input v-model:value="eventTemplateFormData.title" placeholder="Title"></a-input>
+      <a-input v-model:value="eventTemplateFormData.location" placeholder="Location"></a-input>
+      <a-input
+        v-model:value="eventTemplateFormData.description"
+        placeholder="Description"
+      ></a-input>
+      <a-input placeholder="Comments" v-model:value="eventTemplateFormData.comments"></a-input>
 
       <a-card>
-        <a-card-title> Shifts </a-card-title>
-        <a-card-text v-if="!eventTemplateFormData._id">You must create the Event Template before creating
-          shifts.</a-card-text>
+        <a-card-meta title="Shifts"></a-card-meta>
+        <p v-if="!eventTemplateFormData._id">
+          You must create the Event Template before creating shifts.
+        </p>
         <div v-if="eventTemplateFormData._id">
           <div v-for="shift in shifts" :key="shift._id">
-            <a-card v-if="shift.eventTemplateID == eventTemplateFormData._id" @click="configureUpdateShiftForm(shift)">
-              <a-card-title>{{ shift.startTime + ' - ' + shift.endTime }}</a-card-title>
+            <a-card
+              v-if="shift.eventTemplateID == eventTemplateFormData._id"
+              @click="configureUpdateShiftForm(shift)"
+            >
+              <a-card-meta :title="shift.startTime + ' - ' + shift.endTime"></a-card-meta>
             </a-card>
           </div>
           <a-button @click="shiftEditOverlayVisible = !shiftEditOverlayVisible">New Shift</a-button>
@@ -61,7 +63,7 @@
       </a-card>
 
       <a-card v-if="eventTemplateFormErrorMessage != ''">
-        <a-card-title>{{ eventTemplateFormErrorMessage }}</a-card-title>
+        <a-card-meta :title="eventTemplateFormErrorMessage"></a-card-meta>
       </a-card>
 
       <div>
@@ -72,21 +74,18 @@
     </a-form>
   </a-drawer>
 
-  <a-drawer v-model:open="shiftEditOverlayVisible">
-    <a-button @click="shiftEditOverlayVisible = !shiftEditOverlayVisible; resetShiftForm();">
-      <CloseOutlined />
-    </a-button>
+  <a-drawer v-model:open="shiftEditOverlayVisible" @close="resetShiftForm()">
     <a-form>
       <div>
-        <a-select placeholder="Start Time" v-model="shiftFormData.startTime"></a-select>
+        <a-select placeholder="Start Time" v-model:value="shiftFormData.startTime"></a-select>
       </div>
 
       <div>
-        <a-select placeholder="End Time" v-model="shiftFormData.endTime"></a-select>
+        <a-select placeholder="End Time" v-model:value="shiftFormData.endTime"></a-select>
       </div>
 
       <a-card v-if="shiftFormErrorMessage != ''">
-        <a-card-title>{{ shiftFormErrorMessage }}</a-card-title>
+        <a-card-meta :title="shiftFormErrorMessage"></a-card-meta>
       </a-card>
 
       <div>
@@ -99,14 +98,16 @@
 </template>
 
 <script setup>
+import { PlusOutlined } from '@ant-design/icons-vue'
+
 //
 </script>
 
 <script>
 export default {
   mounted() {
-    this.getEventTemplates();
-    this.getShifts();
+    this.getEventTemplates()
+    this.getShifts()
   },
   data() {
     return {
@@ -118,12 +119,20 @@ export default {
         comments: ''
       },
       eventTemplateFormErrorMessage: '',
-      eventTemplates: [],
+      eventTemplates: [
+        {
+          _id: 'red',
+          title: 'Red',
+          location: 'Red Tree',
+          description: 'Red Rocks',
+          comments: 'Red Too'
+        }
+      ],
       eventTemplateFilterSettings: {
         location: false,
         description: false,
         comments: true,
-        search: '',
+        search: ''
       },
       shiftEditOverlayVisible: false,
       shiftFormData: {
@@ -132,17 +141,17 @@ export default {
       },
       shiftFormErrorMessage: '',
       shifts: [],
-      showShifts: false,
+      showShifts: false
     }
   },
   methods: {
     getEventTemplates() {
       fetch('/api/v1/event-templates', {
-        method: 'GET',
-      }).then(response => {
-        response.json().then(data => {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
           if (response.status === 200) {
-            this.eventTemplates = data.data.eventTemplates;
+            this.eventTemplates = data.data.eventTemplates
           }
         })
       })
@@ -151,10 +160,10 @@ export default {
       this.eventTemplateFormData = {
         title: '',
         location: '',
-        description: '',
+        description: ''
       }
-      this.eventTemplateEditOverlayVisible = false;
-      this.eventTemplateFormErrorMessage = '';
+      this.eventTemplateEditOverlayVisible = false
+      this.eventTemplateFormErrorMessage = ''
     },
     createEventTemplate() {
       fetch('/api/v1/event-templates', {
@@ -168,25 +177,25 @@ export default {
           description: this.eventTemplateFormData.description,
           comments: this.eventTemplateFormData.comments
         })
-      }).then(response => {
-        response.json().then(data => {
+      }).then((response) => {
+        response.json().then((data) => {
           if (response.status === 201) {
-            this.eventTemplates.push(data.data.eventTemplate);
-            this.resetEventTemplateForm();
+            this.eventTemplates.push(data.data.eventTemplate)
+            this.resetEventTemplateForm()
           } else {
-            this.eventTemplateFormErrorMessage = data.message;
+            this.eventTemplateFormErrorMessage = data.message
           }
         })
       })
     },
     configureUpdateEventTemplateForm(eventTemplate) {
-      this.eventTemplateFormData._id = eventTemplate._id;
-      this.eventTemplateFormData.title = eventTemplate.title;
-      this.eventTemplateFormData.description = eventTemplate.description;
-      this.eventTemplateFormData.location = eventTemplate.location;
-      this.eventTemplateFormData.comments = eventTemplate.comments;
+      this.eventTemplateFormData._id = eventTemplate._id
+      this.eventTemplateFormData.title = eventTemplate.title
+      this.eventTemplateFormData.description = eventTemplate.description
+      this.eventTemplateFormData.location = eventTemplate.location
+      this.eventTemplateFormData.comments = eventTemplate.comments
 
-      this.eventTemplateEditOverlayVisible = true;
+      this.eventTemplateEditOverlayVisible = true
     },
     updateEventTemplate() {
       fetch('/api/v1/event-templates/' + this.eventTemplateFormData._id, {
@@ -200,30 +209,34 @@ export default {
           description: this.eventTemplateFormData.description,
           comments: this.eventTemplateFormData.comments
         })
-      }).then(response => {
-        response.json().then(data => {
+      }).then((response) => {
+        response.json().then((data) => {
           if (response.status === 200) {
-            let indexOfUpdatedEventTemplate = this.eventTemplates.findIndex(eventTemplate => eventTemplate._id === data.data.eventTemplate._id);
-            this.eventTemplates[indexOfUpdatedEventTemplate] = data.data.eventTemplate;
-            this.resetEventTemplateForm();
+            let indexOfUpdatedEventTemplate = this.eventTemplates.findIndex(
+              (eventTemplate) => eventTemplate._id === data.data.eventTemplate._id
+            )
+            this.eventTemplates[indexOfUpdatedEventTemplate] = data.data.eventTemplate
+            this.resetEventTemplateForm()
           } else {
-            this.eventTemplateFormErrorMessage = data.message;
+            this.eventTemplateFormErrorMessage = data.message
           }
         })
       })
     },
     deleteEventTemplate() {
       fetch('/api/v1/event-templates/' + this.eventTemplateFormData._id, {
-        method: 'DELETE',
-      }).then(response => {
-        response.json().then(data => {
+        method: 'DELETE'
+      }).then((response) => {
+        response.json().then((data) => {
           if (response.status === 204) {
-            let indexOfDeletedEventTemplate = this.eventTemplates.findIndex(eventTemplate => eventTemplate._id === this.eventTemplateFormData._id);
-            this.eventTemplates.splice(indexOfDeletedEventTemplate, 1);
+            let indexOfDeletedEventTemplate = this.eventTemplates.findIndex(
+              (eventTemplate) => eventTemplate._id === this.eventTemplateFormData._id
+            )
+            this.eventTemplates.splice(indexOfDeletedEventTemplate, 1)
 
-            this.resetEventTemplateForm();
+            this.resetEventTemplateForm()
           } else {
-            this.eventTemplateFormErrorMessage = data.message;
+            this.eventTemplateFormErrorMessage = data.message
           }
         })
       })
@@ -231,11 +244,11 @@ export default {
 
     getShifts() {
       fetch('/api/v1/shifts', {
-        method: 'GET',
-      }).then(response => {
-        response.json().then(data => {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
           if (response.status === 200) {
-            this.shifts = data.data.shifts;
+            this.shifts = data.data.shifts
           }
         })
       })
@@ -243,10 +256,10 @@ export default {
     resetShiftForm() {
       this.shiftFormData = {
         startTime: '',
-        endTime: '',
+        endTime: ''
       }
-      this.shiftEditOverlayVisible = false;
-      this.shiftFormErrorMessage = '';
+      this.shiftEditOverlayVisible = false
+      this.shiftFormErrorMessage = ''
     },
     createShift() {
       fetch('/api/v1/shifts', {
@@ -257,25 +270,25 @@ export default {
         body: JSON.stringify({
           eventTemplateID: this.eventTemplateFormData._id,
           startTime: this.shiftFormData.startTime,
-          endTime: this.shiftFormData.endTime,
+          endTime: this.shiftFormData.endTime
         })
-      }).then(response => {
-        response.json().then(data => {
+      }).then((response) => {
+        response.json().then((data) => {
           if (response.status === 201) {
-            this.shifts.push(data.data.shift);
-            this.resetShiftForm();
+            this.shifts.push(data.data.shift)
+            this.resetShiftForm()
           } else {
-            this.shiftFormErrorMessage = data.message;
+            this.shiftFormErrorMessage = data.message
           }
         })
       })
     },
     configureUpdateShiftForm(shift) {
-      this.shiftFormData._id = shift._id;
-      this.shiftFormData.startTime = shift.startTime;
-      this.shiftFormData.endTime = shift.endTime;
+      this.shiftFormData._id = shift._id
+      this.shiftFormData.startTime = shift.startTime
+      this.shiftFormData.endTime = shift.endTime
 
-      this.shiftEditOverlayVisible = true;
+      this.shiftEditOverlayVisible = true
     },
     updateShift() {
       fetch('/api/v1/shifts/' + this.shiftFormData._id, {
@@ -287,32 +300,36 @@ export default {
           startTime: this.shiftFormData.startTime,
           endTime: this.shiftFormData.endTime
         })
-      }).then(response => {
-        response.json().then(data => {
+      }).then((response) => {
+        response.json().then((data) => {
           if (response.status === 200) {
-            let indexOfUpdatedShift = this.shifts.findIndex(shift => shift._id === data.data.shift._id);
-            this.shifts[indexOfUpdatedShift] = data.data.shift;
-            this.resetShiftForm();
+            let indexOfUpdatedShift = this.shifts.findIndex(
+              (shift) => shift._id === data.data.shift._id
+            )
+            this.shifts[indexOfUpdatedShift] = data.data.shift
+            this.resetShiftForm()
           } else {
-            this.shiftFormErrorMessage = data.message;
+            this.shiftFormErrorMessage = data.message
           }
         })
       })
     },
     deleteShift() {
       fetch('/api/v1/shifts/' + this.shiftFormData._id, {
-        method: 'DELETE',
-      }).then(response => {
+        method: 'DELETE'
+      }).then((response) => {
         if (response.status === 204) {
-          let indexOfDeletedShift = this.shifts.findIndex(shift => shift._id === this.shiftFormData._id);
-          this.shifts.splice(indexOfDeletedShift, 1);
+          let indexOfDeletedShift = this.shifts.findIndex(
+            (shift) => shift._id === this.shiftFormData._id
+          )
+          this.shifts.splice(indexOfDeletedShift, 1)
 
-          this.resetShiftForm();
+          this.resetShiftForm()
         } else {
-          this.shiftFormErrorMessage = response.status;
+          this.shiftFormErrorMessage = response.status
         }
       })
-    },
+    }
   }
 }
 </script>
