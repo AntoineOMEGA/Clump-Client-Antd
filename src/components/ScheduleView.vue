@@ -1,9 +1,10 @@
 <template>
-  <a-button color="white" icon rounded="pill" density="compact"
-    @click="eventEditOverlayVisible = !eventEditOverlayVisible"
-    style="position: fixed; bottom: 150px; right: 10px; z-index: 100; height: 60px; width: 60px;">
-    <a-icon color="pink" style="font-size: 3.5rem">mdi-plus-circle</a-icon>
-  </a-button>
+  <a-float-button type="primary" style="height: 60px; width: 60px"
+    @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <template #icon>
+      <PlusOutlined style="font-size: 20px" />
+    </template>
+  </a-float-button>
 
   <a-card class="mb-5">
     <a-card-actions>

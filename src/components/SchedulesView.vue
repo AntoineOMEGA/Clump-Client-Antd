@@ -1,9 +1,10 @@
 <template>
-  <a-button color="white" icon rounded="pill" density="compact"
-    style="position: fixed; bottom: 150px; right: 10px; z-index: 100; height: 60px; width: 60px;"
+  <a-float-button type="primary" style="height: 60px; width: 60px"
     @click="scheduleEditOverlayVisible = !scheduleEditOverlayVisible">
-    <a-icon color="pink" style="font-size: 3.5rem">mdi-plus-circle</a-icon>
-  </a-button>
+    <template #icon>
+      <PlusOutlined style="font-size: 20px" />
+    </template>
+  </a-float-button>
 
   <div v-for="scheduleCategory in scheduleCategories.sort((a, b) => (a.title > b.title) ? 1 : -1)"
     :key="scheduleCategory._id">
@@ -37,7 +38,7 @@
               <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())"
                 class="mb-2" color="grey-darken-3" @click="configureUpdateScheduleForm(schedule)">
                 <a-card-title class="bebas-neue-regular" :class="'text-' + getScheduleCategoryColor(schedule)"> {{
-      schedule.title }}
+                  schedule.title }}
                 </a-card-title>
                 <a-card-text v-if="schedule.comments != '' && scheduleFilterSettings.details"
                   style="white-space: pre-line">
