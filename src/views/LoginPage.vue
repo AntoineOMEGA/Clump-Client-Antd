@@ -3,9 +3,21 @@
     <a-col :span="20">
       <a-typography-title>CLUMP</a-typography-title>
       <a-form>
-        <a-input class="mb-2" size="large" id="email" placeholder="Email" v-model:value="email"></a-input>
-        <a-input class="mb-2" size="large" id="password" placeholder="Password" type="password"
-          v-model:value="password"></a-input>
+        <a-input
+          class="mb-2"
+          size="large"
+          id="email"
+          addonBefore="Email"
+          v-model:value="email"
+        ></a-input>
+        <a-input
+          class="mb-2"
+          size="large"
+          id="password"
+          addonBefore="Password"
+          type="password"
+          v-model:value="password"
+        ></a-input>
         <a-button class="mb-2" type="primary" size="large" @click="login()" block>Login</a-button>
       </a-form>
       <a-flex justify="space-around" align="middle">
@@ -36,11 +48,11 @@ export default {
           email: this.email,
           password: this.password
         })
-      }).then(response => {
+      }).then((response) => {
         if (response.status == 200) {
           this.$router.push('/clumps')
         } else {
-          alert("Incorrect")
+          alert('Incorrect')
         }
       })
     }

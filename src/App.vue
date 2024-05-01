@@ -16,7 +16,7 @@ import AppBar from './components/AppBar.vue'
       }
     }"
   >
-    <a-layout class="full-height" style="padding: 10px">
+    <a-layout class="full-height">
       <AppBar />
       <RouterView />
     </a-layout>

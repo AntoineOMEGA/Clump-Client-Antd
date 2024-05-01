@@ -30,20 +30,26 @@
       <a-input
         class="mb-2"
         size="large"
-        placeholder="Title"
+        addonBefore="Title"
         v-model:value="clumpFormData.title"
       ></a-input>
 
       <a-card v-if="clumpFormErrorMessage != ''" title="clumpFormErrorMessage"> </a-card>
 
-      <a-flex justify="space-around" align="middle">
-        <a-button type="primary" size="large" v-if="!clumpFormData._id" @click="createClump()">
+      <a-flex justify="space-around" align="middle" gap="middle">
+        <a-button
+          type="primary"
+          size="large"
+          block
+          v-if="!clumpFormData._id"
+          @click="createClump()"
+        >
           Create Clump
         </a-button>
-        <a-button type="primary" size="large" v-if="clumpFormData._id" @click="updateClump()">
+        <a-button type="primary" size="large" block v-if="clumpFormData._id" @click="updateClump()">
           Update Clump
         </a-button>
-        <a-button type="primary" size="large" v-if="clumpFormData._id" @click="deleteClump()">
+        <a-button type="primary" size="large" block v-if="clumpFormData._id" @click="deleteClump()">
           Delete Clump
         </a-button>
       </a-flex>
@@ -55,7 +61,7 @@
       <a-input
         class="mb-2"
         size="large"
-        placeholder="Invite Token"
+        addonBefore="Invite Token"
         v-model:value="clumpJoinFormData.inviteToken"
       ></a-input>
 

@@ -9,7 +9,13 @@
     </template>
   </a-float-button>
 
-  <a-input placeholder="Search" v-model:value="eventTemplateFilterSettings.search"></a-input>
+  <div style="margin: 10px">
+    <a-input
+      size="large"
+      addonBefore="Search"
+      v-model:value="eventTemplateFilterSettings.search"
+    ></a-input>
+  </div>
 
   <div
     v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))"
@@ -36,15 +42,28 @@
 
   <a-drawer v-model:open="eventTemplateEditOverlayVisible" @close="resetEventTemplateForm()">
     <a-form>
-      <a-input v-model:value="eventTemplateFormData.title" placeholder="Title"></a-input>
-      <a-input v-model:value="eventTemplateFormData.location" placeholder="Location"></a-input>
+      <a-input
+        v-model:value="eventTemplateFormData.title"
+        addonBefore="Title"
+        class="mb-2"
+      ></a-input>
+      <a-input
+        v-model:value="eventTemplateFormData.location"
+        addonBefore="Location"
+        class="mb-2"
+      ></a-input>
       <a-input
         v-model:value="eventTemplateFormData.description"
-        placeholder="Description"
+        addonBefore="Description"
+        class="mb-2"
       ></a-input>
-      <a-input placeholder="Comments" v-model:value="eventTemplateFormData.comments"></a-input>
+      <a-input
+        addonBefore="Comments"
+        v-model:value="eventTemplateFormData.comments"
+        class="mb-2"
+      ></a-input>
 
-      <a-card>
+      <a-card class="mb-2">
         <a-card-meta title="Shifts"></a-card-meta>
         <p v-if="!eventTemplateFormData._id">
           You must create the Event Template before creating shifts.
@@ -66,33 +85,77 @@
         <a-card-meta :title="eventTemplateFormErrorMessage"></a-card-meta>
       </a-card>
 
-      <div>
-        <a-button v-if="!eventTemplateFormData._id" @click="createEventTemplate()">Create</a-button>
-        <a-button v-if="eventTemplateFormData._id" @click="updateEventTemplate()">Save</a-button>
-        <a-button v-if="eventTemplateFormData._id" @click="deleteEventTemplate()">Delete</a-button>
-      </div>
+      <a-flex justify="space-around" align="middle" gap="middle">
+        <a-button
+          type="primary"
+          size="large"
+          block
+          v-if="!eventTemplateFormData._id"
+          @click="createEventTemplate()"
+          >Create</a-button
+        >
+        <a-button
+          type="primary"
+          size="large"
+          block
+          v-if="eventTemplateFormData._id"
+          @click="updateEventTemplate()"
+          >Save</a-button
+        >
+        <a-button
+          type="primary"
+          size="large"
+          block
+          v-if="eventTemplateFormData._id"
+          @click="deleteEventTemplate()"
+          >Delete</a-button
+        >
+      </a-flex>
     </a-form>
   </a-drawer>
 
   <a-drawer v-model:open="shiftEditOverlayVisible" @close="resetShiftForm()">
     <a-form>
       <div>
-        <a-select placeholder="Start Time" v-model:value="shiftFormData.startTime"></a-select>
+        <a-time-picker
+          class="mb-2"
+          addonBefore="Start Time"
+          size="large"
+          format="hh:mm A"
+          use12-hours
+          :minute-step="15"
+          v-model:value="shiftFormData.startTime"
+        ></a-time-picker>
       </div>
 
       <div>
-        <a-select placeholder="End Time" v-model:value="shiftFormData.endTime"></a-select>
+        <a-time-picker
+          class="mb-2"
+          addonBefore="End Time"
+          size="large"
+          format="hh:mm A"
+          use12-hours
+          :minute-step="15"
+          v-model:value="shiftFormData.endTime"
+          valueFormat="HH:mm A"
+        ></a-time-picker>
       </div>
 
       <a-card v-if="shiftFormErrorMessage != ''">
         <a-card-meta :title="shiftFormErrorMessage"></a-card-meta>
       </a-card>
 
-      <div>
-        <a-button v-if="!shiftFormData._id" @click="createShift()">Create</a-button>
-        <a-button v-if="shiftFormData._id" @click="updateShift()">Save</a-button>
-        <a-button v-if="shiftFormData._id" @click="deleteShift()">Delete</a-button>
-      </div>
+      <a-flex justify="space-around" align="middle" gap="middle">
+        <a-button type="primary" size="large" block v-if="!shiftFormData._id" @click="createShift()"
+          >Create</a-button
+        >
+        <a-button type="primary" size="large" block v-if="shiftFormData._id" @click="updateShift()"
+          >Save</a-button
+        >
+        <a-button type="primary" size="large" block v-if="shiftFormData._id" @click="deleteShift()"
+          >Delete</a-button
+        >
+      </a-flex>
     </a-form>
   </a-drawer>
 </template>
