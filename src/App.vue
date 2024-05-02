@@ -4,18 +4,16 @@ import AppBar from './components/AppBar.vue'
 </script>
 
 <template>
-  <a-config-provider
-    :theme="{
-      token: {
-        colorBgBase: '#252525',
-        colorTextBase: '#ffffff',
-        colorPrimary: '#22a2ff',
-        colorPrimaryBg: '#22a2ff',
-        colorLink: '#22a2ff',
-        colorBorder: '#444444'
-      }
-    }"
-  >
+  <a-config-provider :theme="{
+    token: {
+      colorBgBase: '#252525',
+      colorTextBase: '#ffffff',
+      colorPrimary: '#22a2ff',
+      colorPrimaryBg: '#22a2ff',
+      colorLink: '#22a2ff',
+      colorBorder: '#444444',
+    }
+  }">
     <a-layout class="full-height">
       <AppBar />
       <RouterView />
@@ -37,5 +35,9 @@ body {
 
 .mb-2 {
   margin-bottom: 20px;
+}
+
+button {
+  box-shadow: none !important;
 }
 </style>

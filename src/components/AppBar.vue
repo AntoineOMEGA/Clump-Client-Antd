@@ -12,7 +12,8 @@
     </a-row>
   </a-page-header>
 
-  <a-drawer :open="displayMenu" placement="top" :closable="false" @close="displayMenu = !displayMenu">
+  <a-drawer :open="displayMenu" placement="top" :closable="false" @close="displayMenu = !displayMenu"
+    :height="windowHeight">
     <a-row :wrap="false">
       <a-col flex="none">
         <a-button type="text" size="large" @click="displayMenu = !displayMenu">
@@ -23,7 +24,7 @@
         <a-typography-title :level="3" style="text-align: center">CLUMP</a-typography-title>
       </a-col>
     </a-row>
-    <a-menu mode="inline">
+    <a-menu mode="inline" style="border: none">
       <a-menu-item @click="$router.push('/clumps')" key="clumps">
         Clumps
       </a-menu-item>
@@ -39,6 +40,9 @@
       <a-menu-item @click="$router.push('/my-account')" key="my-account">
         Settings
       </a-menu-item>
+      <a-menu-item key="logout">
+        Logout
+      </a-menu-item>
     </a-menu>
   </a-drawer>
 </template>
@@ -52,7 +56,8 @@ export default {
   data() {
     return {
       displayMenu: false,
-      noAppBarPages: ['Clump App', 'Login', 'Sign Up']
+      noAppBarPages: ['Clump App', 'Login', 'Sign Up'],
+      windowHeight: window.innerHeight
     }
   },
 
