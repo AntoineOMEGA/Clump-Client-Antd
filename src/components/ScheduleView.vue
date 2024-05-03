@@ -80,13 +80,7 @@
     </a-card>
   </div>
 
-  <a-drawer v-model="eventEditOverlayVisible" class="justify-center bg-grey-darken-4" scrim="black" width="100%"
-    style="overflow-y: scroll !important" persistent>
-    <a-container align="right">
-      <a-button @click="resetForm()" icon variant="text">
-        <a-icon color="red-accent-3" size="x-large">mdi-close</a-icon>
-      </a-button>
-    </a-container>
+  <a-drawer v-model="eventEditOverlayVisible" @close="resetForm()" >
     <a-card color="transparent">
       <a-card-item class="ma-0">
         <a-form>
