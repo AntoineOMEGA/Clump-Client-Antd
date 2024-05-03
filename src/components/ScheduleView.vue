@@ -11,6 +11,10 @@
       <a-input hide-details="auto" label="Search Event Templates" v-model="filterSettings.search"></a-input>
     </a-card-actions>
   </a-card>
+  
+<div style="margin: 10px">
+    <a-input size="large" addonBefore="Search" v-model:value="filterSettings.search"></a-input>
+  </div>
 
   <a-card class="mb-4 bg-grey-darken-3">
     <a-card-item class="pa-4 ma-0">
@@ -158,18 +162,17 @@
         </a-card>
       </a-expand-transition>
     </a-card>
-    <a-card class="bg-red-accent-3 mb-5" v-if="eventFormErrorMessage != ''">
-      <a-card-title>{{ eventFormErrorMessage }}</a-card-title>
-    </a-card>
+    
+<a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2"
+        v-if="eventFormErrorMessage != ''" />
 
-    <div class="d-flex justify-space-between pa-4">
-      <a-button v-if="!eventFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
-        @click="createEvent()">Create</a-button>
-      <a-button v-if="eventFormData._id" size="x-large" class="bg-light-blue bebas-neue-regular" rounded="pill"
+    <a-flex justify="space-around" align="middle" gap="middle">
+      <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
+      <a-button v-if="eventFormData._id" type="primary" size="large" block
         @click="updateEvent()">Save</a-button>
-      <a-button v-if="eventFormData._id" size="x-large" class="bg-red-accent-3 bebas-neue-regular" rounded="pill"
+      <a-button v-if="eventFormData._id" type="primary" size="large" block danger
         @click="deleteEvent()">Delete</a-button>
-    </div>
+    </a-flex>
   </a-drawer>
 </template>
 
