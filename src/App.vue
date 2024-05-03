@@ -12,6 +12,12 @@ import AppBar from './components/AppBar.vue'
       colorPrimaryBg: '#22a2ff',
       colorLink: '#22a2ff',
       colorBorder: '#444444',
+
+    },
+    components: {
+      Alert: {
+        colorText: '#000000'
+      }
     }
   }">
     <a-layout class="full-height">
