@@ -22,13 +22,15 @@
 
   <template v-for="schedule in schedules.sort((a, b) => (a.title > b.title) ? 1 : -1)" :key="schedule._id">
     <a-badge-ribbon :text="scheduleCategories[scheduleCategories.findIndex(scheduleCategory => scheduleCategory._id ===
-    schedule.scheduleCategoryID)].title"
+      schedule.scheduleCategoryID)].title"
       :color="scheduleCategories[scheduleCategories.findIndex(scheduleCategory => scheduleCategory._id === schedule.scheduleCategoryID)].color"
       style="top: -5px; right: 5px"
       v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())">
       <a-card style="margin: 10px; margin-bottom: 15px;" :title="schedule.title" :bodyStyle="{ padding: '0' }">
         <template #extra>
-          <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureUpdateScheduleForm(schedule)" />
+          <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px;" key="calendar"
+            @click="console.log('Open Calendar')" />
+          <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateScheduleForm(schedule)" />
         </template>
         <a-descriptions v-if="scheduleFilterSettings.details" bordered>
           <a-descriptions-item label="Duration">{{ schedule.startDate + ' to ' + schedule.endDate
@@ -41,12 +43,14 @@
 
   <a-typography-title :level="5" style="margin: 10px; margin-top: 25px;">Schedule Categories</a-typography-title>
   <template v-for="scheduleCategory in scheduleCategories" :key="scheduleCategory._id">
-    <a-card :title="scheduleCategory.title" style="margin: 10px" :style="'background-color:' + scheduleCategory.color">
-      <template #extra>
-        <edit-outlined style="font-size: 1.5rem" key="edit"
-          @click="configureUpdateScheduleCategoryForm(scheduleCategory)" />
-      </template>
-    </a-card>
+    <a-badge-ribbon :text="scheduleCategory.color" :color="scheduleCategory.color" style="top: -5px; right: 5px">
+      <a-card :title="scheduleCategory.title" style="margin: 10px">
+        <template #extra>
+          <edit-outlined style="font-size: 1.5rem" key="edit"
+            @click="configureUpdateScheduleCategoryForm(scheduleCategory)" />
+        </template>
+      </a-card>
+    </a-badge-ribbon>
   </template>
 
   <a-drawer v-model:open="scheduleEditOverlayVisible" @close="resetForm()">
@@ -101,7 +105,7 @@
 </template>
 
 <script setup>
-import { EditOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { EditOutlined, PlusOutlined, CalendarOutlined } from '@ant-design/icons-vue'
 </script>
 
 <script>

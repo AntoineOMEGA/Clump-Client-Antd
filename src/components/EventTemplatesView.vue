@@ -14,9 +14,10 @@
     <a @click="toggleMoreDetails = !toggleMoreDetails">Show Details</a>
   </a-flex>
 
-  <div v-for="eventTemplate in  eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1)) " :key="eventTemplate._id">
-    <a-card style="margin: 10px;" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())
-      " :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
+  <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1)) " :key="eventTemplate._id">
+    <a-card style="margin: 10px;"
+      v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())"
+      :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
       <template #extra><edit-outlined style="font-size: 1.5rem" key="edit"
           @click="configureUpdateEventTemplateForm(eventTemplate)" /></template>
       <a-descriptions v-if="toggleMoreDetails" bordered>
@@ -40,7 +41,7 @@
           You must create the Event Template before creating shifts.
         </p>
         <div v-if="eventTemplateFormData._id">
-          <div v-for=" shift  in  shifts " :key="shift._id">
+          <div v-for=" shift in shifts " :key="shift._id">
             <a-card v-if="shift.eventTemplateID == eventTemplateFormData._id" @click="configureUpdateShiftForm(shift)">
               <a-card-meta :title="shift.startTime + ' - ' + shift.endTime"></a-card-meta>
             </a-card>
@@ -92,8 +93,6 @@
 
 <script setup>
 import { EditOutlined, PlusOutlined } from '@ant-design/icons-vue'
-
-//
 </script>
 
 <script>
