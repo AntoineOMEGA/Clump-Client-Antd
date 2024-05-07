@@ -12,8 +12,8 @@
 
   <div>
     <a-flex justify="space-around" align="middle" gap="middle">
-      <a-input size="large" addonBefore="Start Date" v-model="startDate" type="date"></a-input>
-      <a-input size="large" addonBefore="End Date" v-model="endDate" type="date"></a-input>
+      <a-date-picker placeholder="Start Date" v-model="startDate"></a-date-picker>
+      <a-date-picker placeholder="End Date" v-model="endDate"></a-date-picker>
     </a-flex>
     <a-button @click="getCombineScheduleData(startDate, endDate)" size="large">Load Selected Dates</a-button>
   </div>
@@ -57,93 +57,10 @@
 
     </a-card>
   </div>
-
-  <a-drawer v-model:open="eventEditOverlayVisible" @close="resetForm()">
-    <a-card>
-      <a-form>
-        <a-select :items="schedules.sort((a, b) => (a.title > b.title) ? 1 : -1)" item-title="title" item-value="_id"
-          v-model="eventFormData.scheduleID" label="Schedules" clearable></a-select>
-        <a-select v-model="eventFormData.eventTemplateID" :item-props="true"
-          :items="eventTemplates.sort((a, b) => (a.title > b.title) ? 1 : -1)" item-title="_id" item-value="_id"
-          addonBefore="Event Template" clearable>
-          <template a-slot:item="{ props, item }">
-            <a-list-item a-bind="props" :subtitle="item.raw.description"></a-list-item>
-          </template>
-        </a-select>
-
-        <a-input addonBefore="Title" v-model="eventFormData.title" v-if="!eventFormData.eventTemplateID"></a-input>
-        <a-input addonBefore="Location" v-model="eventFormData.location"
-          v-if="!eventFormData.eventTemplateID"></a-input>
-        <a-textarea addonBefore="Description" v-model="eventFormData.description"
-          v-if="!eventFormData.eventTemplateID"></a-textarea>
-
-        <a-select v-model="eventFormData.timeZone" :items="timeZones" addonBefore="Time Zone" clearable
-          v-if="!eventFormData.eventTemplateID"></a-select>
-
-        <a-select v-model="eventFormData.shiftID" addonBefore="Shift" clearable
-          v-if="eventFormData.eventTemplateID"></a-select>
-
-        <div class="d-flex justify-space-between">
-          <a-input label="Start Date" type="date" v-model="eventFormData.startDate"></a-input>
-          <a-select :items="generateTimes(6, 0, 1, 0)" addonBefore="Start Time"
-            v-model="eventFormData.startTime"></a-select>
-        </div>
-
-        <div class="d-flex justify-space-between">
-          <a-input addonBefore="End Date" type="date" v-model="eventFormData.endDate"></a-input>
-          <a-select :items="generateTimes(16, 30, 9, 15)" addonBefore="End Time"
-            v-model="eventFormData.endTime"></a-select>
-        </div>
-
-        <a-select addonBefore="Frequency" v-model="eventFormData.recurrence.frequency"
-          :items="recurrenceRuleOptions.freq"></a-select>
-      </a-form>
-      <div v-if="eventFormData.recurrence.frequency != 'Once'">
-        <span>Advanced Frequency</span>
-      </div>
-      <a-card a-show="eventEditAdvanced">
-        <a-form>
-          <a-input v-if="['Daily', 'Weekly', 'Monthly by Day'].includes(eventFormData.recurrence.frequency)"
-            addonBefore="Interval" type="number" v-model="eventFormData.recurrence.interval" clearable></a-input>
-
-          <a-select v-if="['Yearly by Day', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)"
-            addonBefore="Month" v-model="eventFormData.recurrence.ByMonth"
-            :items="Object.keys(recurrenceRuleOptions.advFreq.ByMonth)" clearable></a-select>
-
-          <a-select v-if="['Monthly by Day', 'Yearly by Day'].includes(eventFormData.recurrence.frequency)"
-            addonBefore="Occurrences of Week Days in Month" v-model="eventFormData.recurrence.ByDayMonthly"
-            :items="Object.keys(generatedMonthDays)" multiple clearable></a-select>
-
-          <a-select v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" addonBefore="Days of Week"
-            v-model="eventFormData.recurrence.byDay" :items="Object.keys(recurrenceRuleOptions.advFreq.ByDay)" multiple
-            clearable></a-select>
-
-          <a-select v-if="['Monthly by Date', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)"
-            addonBefore="Day in Month" v-model="eventFormData.recurrence.ByMonthDay"
-            :items="Object.keys(recurrenceRuleOptions.advFreq.ByMonthDay)" multiple clearable></a-select>
-
-          <a-input v-if="eventFormData.recurrence.frequency != 'Once'" addonBefore="Until" type="date"
-            v-model="eventFormData.until" clearable></a-input>
-          <a-input v-if="eventFormData.recurrence.frequency != 'Once'" addonBefore="Until" type="date"
-            v-model="eventFormData.until" clearable></a-input>
-        </a-form>
-      </a-card>
-    </a-card>
-
-    <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2"
-      v-if="eventFormErrorMessage != ''" />
-
-    <a-flex justify="space-around" align="middle" gap="middle">
-      <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
-      <a-button v-if="eventFormData._id" type="primary" size="large" block @click="updateEvent()">Save</a-button>
-      <a-button v-if="eventFormData._id" type="primary" size="large" block danger
-        @click="deleteEvent()">Delete</a-button>
-    </a-flex>
-  </a-drawer>
 </template>
 
 <script setup>
-import { EditOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined } from '@ant-design/icons-vue'
 </script>
 
 <script>
@@ -223,107 +140,6 @@ export default {
     }
   },
   methods: {
-    generateTimes(minHour, minMinute, maxHour, maxMinute) {
-      let tempTimes = [];
-      let times = [];
-
-      let sH = minHour;
-      let sM = minMinute;
-
-      let eH = maxHour;
-      let eM = maxMinute;
-
-      let cH = sH;
-      let cM = sM;
-
-      while (cH != eH) {
-        if (cH == 23) {
-          cH = 0;
-        }
-        tempTimes.push(cH + ":" + cM);
-
-        if (cM == 45) {
-          cH += 1;
-          cM = 0;
-        } else {
-          cM = cM + 15;
-        }
-      }
-
-      if (cH == eH) {
-        while (cM != eM + 15) {
-          tempTimes.push(cH + ":" + cM);
-          if (cM == 45) {
-            cH += 1;
-            cM = 0;
-          } else {
-            cM = cM + 15;
-          }
-        }
-      }
-
-      for (let time of tempTimes) {
-        times.push(this.convertToLocalTime(time));
-      }
-
-      return times;
-    },
-    convertToMilitaryTime(time) {
-      let hour = parseInt(time.split(':')[0]);
-      let minute = parseInt(time.split(':')[1]);
-
-      if (time.includes('PM')) {
-        hour = hour + 12;
-        if (hour == 24) {
-          hour = 0;
-        }
-      }
-
-      let hourString;
-      let minuteString;
-
-      if (hour < 10) {
-        hourString = '0' + hour;
-      } else {
-        hourString = hour.toString();
-      }
-
-      if (minute < 10) {
-        minuteString = '0' + minute;
-      } else {
-        minuteString = minute.toString();
-      }
-
-      return hourString + ':' + minuteString;
-    },
-    convertToLocalTime(time) {
-      let hour = parseInt(time.split(":")[0]);
-      let min = parseInt(time.split(":")[1]);
-
-      let pMin;
-      let pTime;
-
-      if (min < 10) {
-        pMin = "0" + min;
-      } else {
-        pMin = min;
-      }
-
-      if (hour < 12 && hour > 0) {
-        pTime = hour + ":" + pMin + " AM";
-      } else if (hour == 12) {
-        pTime = 12 + ":" + pMin + " PM";
-      } else if (hour > 12 && hour != 24) {
-        let tH = hour % 12;
-        pTime = tH + ":" + pMin + " PM";
-      } else if (hour == 0) {
-        pTime = 12 + ":" + pMin + " AM";
-      } else {
-        console.log("Error")
-      }
-
-      return pTime;
-    },
     resetForm() {
       this.eventEditOverlayVisible = false;
       this.eventEditAdvanced = false;

@@ -27,11 +27,6 @@ const router = createRouter({
       component: () => import('@/views/ClumpsPage.vue')
     },
     {
-      path: '/schedule',
-      name: 'Schedule',
-      component: () => import('@/views/SchedulePage.vue')
-    },
-    {
       path: '/schedules',
       name: 'Schedules',
       component: () => import('@/views/SchedulesPage.vue')

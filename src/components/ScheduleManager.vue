@@ -105,8 +105,9 @@
 </template>
 
 <script setup>
-import { EditOutlined, PlusOutlined, CalendarOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined, EditOutlined, CalendarOutlined } from '@ant-design/icons-vue'
 </script>
+
 
 <script>
 export default {
