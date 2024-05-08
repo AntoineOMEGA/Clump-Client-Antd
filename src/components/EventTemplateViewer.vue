@@ -11,25 +11,64 @@
 
   <div>
     <a-flex justify="space-around" align="middle" gap="middle" style="padding: 5px; margin: 10px; background-color: #333333; border-radius: 10px">
-      <a-date-picker placeholder="Start Date" v-model="startDate" format="MM-DD-YY" size="large"></a-date-picker>
-      <a-date-picker placeholder="End Date" v-model="endDate" format="MM-DD-YY" size="large"></a-date-picker>
+      <a-date-picker placeholder="Start Date" format="MM-DD-YY" size="large"></a-date-picker>
+      <a-date-picker placeholder="End Date" format="MM-DD-YY" size="large"></a-date-picker>
       <a-button @click="getCombineScheduleData(startDate, endDate)" size="large" type="primary">Load</a-button>
     </a-flex>
   </div>
 
   <a-alert message="Error" :description="getSchedulesErrorMessage" type="error" class="mb-2" v-if="getSchedulesErrorMessage != ''" />
 
-  <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
-    <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
-      <template #extra><edit-outlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" /></template>
-      <a-descriptions v-if="toggleMoreDetails" bordered>
-        <a-descriptions-item label="Location">{{ eventTemplate.location }}</a-descriptions-item>
-        <a-descriptions-item label="Description">{{ eventTemplate.description }}</a-descriptions-item>
-        <a-descriptions-item label="Comments">{{ eventTemplate.comments }}</a-descriptions-item>
-      </a-descriptions>
+  <div>
+    <a-card v-for="i in 3" :key="i" style="margin: 10px" title="Family Search Center" :bodyStyle="{ padding: '0' }">
+      <template #extra><EyeOutlined style="font-size: 1.5rem" key="edit" @click="exampleViewOpen = !exampleViewOpen" /></template>
     </a-card>
   </div>
 
+  <a-drawer v-model:open="exampleViewOpen">
+    <a-card style="margin-bottom: 20px; background-color: #333333">
+      <a-statistic title="Total Hours" :value="48">
+        <template #suffix>
+          <ClockCircleOutlined />
+        </template>
+      </a-statistic>
+    </a-card>
+
+    <a-card title="Tuesday 17th, March 2024" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 10px; background-color: #333">
+      <a-card title="9:00am - 12:00pm" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
+        <template #extra>
+          <a-badge color="red" count="4"> <UserOutlined style="font-size: 1.2rem" /> </a-badge
+        ></template>
+        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px" @click="console.log('hi')">Bart.Anthony</a-tag>
+        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">McCormick.Ben</a-tag>
+        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Tiffany.Alex</a-tag>
+        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
+        <a-button type="primary" block style="margin-top: 20px">Add Event</a-button>
+      </a-card>
+      <a-card title="1:00 - 4:00pm" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
+        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Bart.Anthony</a-tag>
+        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">McCormick.Ben</a-tag>
+        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Tiffany.Alex</a-tag>
+        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
+      </a-card>
+    </a-card>
+    <a-card title="Wednesday 18th, March 2024" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 10px; background-color: #333">
+      <a-card title="9:00am - 12:00pm" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
+        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Bart.Anthony</a-tag>
+        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">McCormick.Ben</a-tag>
+        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Tiffany.Alex</a-tag>
+        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
+      </a-card>
+      <a-card title="1:00 - 4:00pm" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
+        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Bart.Anthony</a-tag>
+        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">McCormick.Ben</a-tag>
+        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Tiffany.Alex</a-tag>
+        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
+      </a-card>
+    </a-card>
+  </a-drawer>
+  <a-drawer :open="false"> Hi </a-drawer>
+  <!--
   <div v-for="site in Object.keys(combinedSchedules).sort((a, b) => (objectifiedEventTemplates[a].title > objectifiedEventTemplates[b].title ? 1 : -1))" :key="site">
     <a-card v-if="Object.keys(combinedSchedules[site]).length > 0 && objectifiedEventTemplates[site].title.toLowerCase().includes(filterSettings.search.toLowerCase())" :title="objectifiedEventTemplates[site].title">
       <div a-show="show[site]">
@@ -53,14 +92,16 @@
       </div>
     </a-card>
   </div>
+  -->
 </template>
 
 <script setup>
-import { PlusOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined, EyeOutlined, UserOutlined, ClockCircleOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
 export default {
+  /*
   mounted() {
     this.formSiteSchedule();
     let initialStartDate = new Date();
@@ -70,8 +111,10 @@ export default {
     this.startDate = initialStartDate.toISOString().substring(0, 10);
     this.endDate = initialEndDate.toISOString().substring(0, 10);
   },
+  */
   data() {
     return {
+      exampleViewOpen: false,
       schedules: [],
       eventTemplates: [],
       eventEditOverlayVisible: false,
