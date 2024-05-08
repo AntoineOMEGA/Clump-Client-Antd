@@ -19,6 +19,14 @@
 
   <a-alert message="Error" :description="getSchedulesErrorMessage" type="error" class="mb-2" v-if="getSchedulesErrorMessage != ''" />
 
+  <a-card style="margin: 10px; background-color: #333333">
+    <a-statistic title="Total Hours" :value="480">
+      <template #suffix>
+        <ClockCircleOutlined />
+      </template>
+    </a-statistic>
+  </a-card>
+
   <div>
     <a-card v-for="i in 3" :key="i" style="margin: 10px" title="Family Search Center" :bodyStyle="{ padding: '0' }">
       <template #extra><EyeOutlined style="font-size: 1.5rem" key="edit" @click="exampleViewOpen = !exampleViewOpen" /></template>
@@ -27,7 +35,7 @@
 
   <a-drawer v-model:open="exampleViewOpen">
     <a-card style="margin-bottom: 20px; background-color: #333333">
-      <a-statistic title="Total Hours" :value="48">
+      <a-statistic title="Total Hours" :value="480">
         <template #suffix>
           <ClockCircleOutlined />
         </template>
@@ -35,17 +43,23 @@
     </a-card>
 
     <a-card title="Tuesday 17th, March 2024" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 10px; background-color: #333">
-      <a-card title="9:00am - 12:00pm" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
+      <a-card title="9:00am - 12:00pm | Shift" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
         <template #extra>
-          <a-badge color="red" count="4"> <UserOutlined style="font-size: 1.2rem" /> </a-badge
-        ></template>
-        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px" @click="console.log('hi')">Bart.Anthony</a-tag>
-        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">McCormick.Ben</a-tag>
-        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Tiffany.Alex</a-tag>
-        <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
-        <a-button type="primary" block style="margin-top: 20px">Add Event</a-button>
+          <a-badge color="#22a2ff" count="4" style="color: #fff"> <UserOutlined style="font-size: 1.2rem" /> </a-badge>
+        </template>
+        <a-card title="9:00am - 11:00am" style="background-color: #333" :bodyStyle="{ padding: '5px' }">
+          <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px" @click="console.log('hi')">Bart.Anthony</a-tag>
+          <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">McCormick.Ben</a-tag>
+          <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Tiffany.Alex</a-tag>
+        </a-card>
+        <a-card title="9:00am - 12:00pm" style="background-color: #333" :bodyStyle="{ padding: '5px' }">
+          <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
+        </a-card>
       </a-card>
       <a-card title="1:00 - 4:00pm" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
+        <template #extra>
+          <a-badge color="#22a2ff" count="4" style="color: #fff"> <UserOutlined style="font-size: 1.2rem" /> </a-badge>
+        </template>
         <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Bart.Anthony</a-tag>
         <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">McCormick.Ben</a-tag>
         <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Tiffany.Alex</a-tag>
@@ -66,6 +80,12 @@
         <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
       </a-card>
     </a-card>
+
+    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+      <template #icon>
+        <PlusOutlined style="font-size: 20px" />
+      </template>
+    </a-float-button>
   </a-drawer>
   <a-drawer :open="false"> Hi </a-drawer>
   <!--

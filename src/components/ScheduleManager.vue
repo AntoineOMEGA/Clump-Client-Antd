@@ -24,8 +24,8 @@
     <a-badge-ribbon :text="scheduleCategories[scheduleCategories.findIndex((scheduleCategory) => scheduleCategory._id === schedule.scheduleCategoryID)].title" :color="scheduleCategories[scheduleCategories.findIndex((scheduleCategory) => scheduleCategory._id === schedule.scheduleCategoryID)].color" style="top: -5px; right: 5px" v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())">
       <a-card style="margin: 10px; margin-bottom: 15px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
         <template #extra>
-          <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar" @click="console.log('Open Calendar')" />
-          <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateScheduleForm(schedule)" />
+          <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px; margin-top: 20px" key="calendar" @click="console.log('Open Calendar')" />
+          <EditOutlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureUpdateScheduleForm(schedule)" />
         </template>
         <a-descriptions v-if="scheduleFilterSettings.details" bordered>
           <a-descriptions-item label="Duration">{{ schedule.startDate + ' to ' + schedule.endDate }}</a-descriptions-item>
@@ -40,7 +40,7 @@
     <a-badge-ribbon :text="scheduleCategory.color" :color="scheduleCategory.color" style="top: -5px; right: 5px">
       <a-card :title="scheduleCategory.title" style="margin: 10px">
         <template #extra>
-          <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureUpdateScheduleCategoryForm(scheduleCategory)" />
+          <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureUpdateScheduleCategoryForm(scheduleCategory)" />
         </template>
       </a-card>
     </a-badge-ribbon>
