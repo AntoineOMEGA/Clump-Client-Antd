@@ -9,7 +9,6 @@
   </a-tabs>
 </template>
 
-
 <script setup>
 import EventTemplateViewer from '@/components/EventTemplateViewer.vue';
 import EventTemplateManager from '@/components/EventTemplateManager.vue';

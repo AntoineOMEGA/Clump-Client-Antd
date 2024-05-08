@@ -1,13 +1,11 @@
 <template>
-  <a-float-button type="primary" @click="clumpOverlayVisible = !clumpOverlayVisible"
-    style="height: 60px; width: 60px; right: 100px">
+  <a-float-button type="primary" @click="clumpOverlayVisible = !clumpOverlayVisible" style="height: 60px; width: 60px; right: 100px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
   </a-float-button>
 
-  <a-float-button type="primary" @click="clumpJoinOverlayVisible = !clumpJoinOverlayVisible"
-    style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="clumpJoinOverlayVisible = !clumpJoinOverlayVisible" style="height: 60px; width: 60px">
     <template #icon>
       <EnterOutlined style="font-size: 20px" />
     </template>
@@ -28,23 +26,16 @@
       <a-card v-if="clumpFormErrorMessage != ''" title="clumpFormErrorMessage"> </a-card>
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!clumpFormData._id" @click="createClump()">
-          Create Clump
-        </a-button>
-        <a-button type="primary" size="large" block v-if="clumpFormData._id" @click="updateClump()">
-          Update Clump
-        </a-button>
-        <a-button type="primary" size="large" block danger v-if="clumpFormData._id" @click="deleteClump()">
-          Delete Clump
-        </a-button>
+        <a-button type="primary" size="large" block v-if="!clumpFormData._id" @click="createClump()"> Create Clump </a-button>
+        <a-button type="primary" size="large" block v-if="clumpFormData._id" @click="updateClump()"> Update Clump </a-button>
+        <a-button type="primary" size="large" block danger v-if="clumpFormData._id" @click="deleteClump()"> Delete Clump </a-button>
       </a-flex>
     </a-form>
   </a-drawer>
 
   <a-drawer v-model:open="clumpJoinOverlayVisible" @close="resetClumpJoinFormData()">
     <a-form>
-      <a-input class="mb-2" size="large" addonBefore="Invite Token"
-        v-model:value="clumpJoinFormData.inviteToken"></a-input>
+      <a-input class="mb-2" size="large" addonBefore="Invite Token" v-model:value="clumpJoinFormData.inviteToken"></a-input>
 
       <a-card v-if="clumpJoinFormErrorMessage != ''" title="clumpJoinFormErrorMessage"> </a-card>
 
@@ -56,13 +47,13 @@
 </template>
 
 <script setup>
-import { SelectOutlined, EditOutlined, PlusOutlined, EnterOutlined } from '@ant-design/icons-vue'
+import { SelectOutlined, EditOutlined, PlusOutlined, EnterOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
 export default {
   mounted() {
-    this.getClumps()
+    this.getClumps();
   },
   data() {
     return {
@@ -91,29 +82,29 @@ export default {
       roles: { red: { title: 'Admin' } },
       members: {},
       toggle: undefined
-    }
+    };
   },
 
   methods: {
     resetClumpFormData() {
-      this.clumpOverlayVisible = false
+      this.clumpOverlayVisible = false;
       this.clumpFormData = {
         title: ''
-      }
-      this.clumpFormErrorMessage - ''
+      };
+      this.clumpFormErrorMessage - '';
     },
     resetClumpJoinFormData() {
-      this.clumpJoinOverlayVisible = false
+      this.clumpJoinOverlayVisible = false;
       this.clumpJoinFormData = {
         inviteToken: ''
-      }
-      this.clumpJoinFormErrorMessage - ''
+      };
+      this.clumpJoinFormErrorMessage - '';
     },
     configureClumpFormData(clump) {
-      this.clumpFormData.title = clump.title
-      this.clumpFormData._id = clump._id
+      this.clumpFormData.title = clump.title;
+      this.clumpFormData._id = clump._id;
 
-      this.clumpOverlayVisible = true
+      this.clumpOverlayVisible = true;
     },
     createClump() {
       fetch('/api/v1/clumps', {
@@ -127,13 +118,13 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 201) {
-            this.clumpFormData.title = ''
-            this.clumpOverlayVisible = false
+            this.clumpFormData.title = '';
+            this.clumpOverlayVisible = false;
           } else {
-            this.clumpFormErrorMessage = data.message
+            this.clumpFormErrorMessage = data.message;
           }
-        })
-      })
+        });
+      });
     },
     joinClump() {
       fetch('/api/v1/members', {
@@ -147,14 +138,14 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 201) {
-            this.clumpJoinFormData.title = ''
-            this.clumpJoinOverlayVisible = false
-            this.getClumps()
+            this.clumpJoinFormData.title = '';
+            this.clumpJoinOverlayVisible = false;
+            this.getClumps();
           } else {
-            this.clumpJoinFormErrorMessage = data.message
+            this.clumpJoinFormErrorMessage = data.message;
           }
-        })
-      })
+        });
+      });
     },
     updateClump(clumpID) {
       fetch('/api/v1/clumps/' + clumpID, {
@@ -168,49 +159,47 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 200) {
-            this.clumpFormData.title = ''
-            this.clumpOverlayVisible = false
+            this.clumpFormData.title = '';
+            this.clumpOverlayVisible = false;
 
-            let indexOfUpdatedClump = this.clumps.findIndex(
-              (clump) => clump._id === data.data.clump._id
-            )
-            this.clumps[indexOfUpdatedClump] = data.data.clump
+            let indexOfUpdatedClump = this.clumps.findIndex((clump) => clump._id === data.data.clump._id);
+            this.clumps[indexOfUpdatedClump] = data.data.clump;
           } else {
-            this.clumpFormErrorMessage = data.message
+            this.clumpFormErrorMessage = data.message;
           }
-        })
-      })
+        });
+      });
     },
     getClumps() {
       fetch('/api/v1/clumps', {
         method: 'GET'
       }).then((response) => {
         response.json().then((data) => {
-          this.clumps = data.data.clumps
-          this.roles = data.data.roles
-          this.members = data.data.members
-        })
-      })
+          this.clumps = data.data.clumps;
+          this.roles = data.data.roles;
+          this.members = data.data.members;
+        });
+      });
     },
     leaveClump(memberID) {
       fetch('/api/v1/members/' + memberID, {
         method: 'DELETE'
       }).then((response) => {
         response.json().then((data) => {
-          this.clumps = data.data.clumps
-          this.roles = data.data.roles
-        })
-      })
+          this.clumps = data.data.clumps;
+          this.roles = data.data.roles;
+        });
+      });
     },
     getClump(clumpID) {
       fetch('/api/v1/clumps/' + clumpID, {
         method: 'GET'
       }).then((response) => {
         response.json().then((data) => {
-          console.log(data)
-        })
-      })
+          console.log(data);
+        });
+      });
     }
   }
-}
+};
 </script>

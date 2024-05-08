@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-import MembersView from '../components/MembersView.vue'
+import MembersView from '../components/MembersView.vue';
 </script>

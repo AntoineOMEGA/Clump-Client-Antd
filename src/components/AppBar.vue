@@ -10,13 +10,7 @@
     </a-row>
   </a-page-header>
 
-  <a-drawer
-    :open="displayMenu"
-    placement="top"
-    :closable="false"
-    @close="displayMenu = !displayMenu"
-    :height="windowHeight"
-  >
+  <a-drawer :open="displayMenu" placement="top" :closable="false" @close="displayMenu = !displayMenu" :height="windowHeight">
     <a-row :wrap="false">
       <a-col flex="none">
         <a-button type="text" size="large" @click="displayMenu = !displayMenu"> Close </a-button>
@@ -26,17 +20,59 @@
       </a-col>
     </a-row>
     <a-menu mode="inline" style="border: none">
-      <a-menu-item @click="$router.push('/schedules')" key="schedules"> Schedules </a-menu-item>
-      <a-menu-item @click="$router.push('/event-templates')" key="event templates">
+      <a-menu-item
+        @click="
+          $router.push('/schedules');
+          displayMenu = !displayMenu;
+        "
+        key="schedules"
+      >
+        Schedules
+      </a-menu-item>
+      <a-menu-item
+        @click="
+          $router.push('/event-templates');
+          displayMenu = !displayMenu;
+        "
+        key="event templates"
+      >
         Event Templates
       </a-menu-item>
       <a-sub-menu title="Permissions">
-        <a-menu-item @click="$router.push('/members')" key="members">Members</a-menu-item>
-        <a-menu-item @click="$router.push('/roles')" key="roles">Roles</a-menu-item>
+        <a-menu-item
+          @click="
+            $router.push('/members');
+            displayMenu = !displayMenu;
+          "
+          key="members"
+          >Members</a-menu-item
+        >
+        <a-menu-item
+          @click="
+            $router.push('/roles');
+            displayMenu = !displayMenu;
+          "
+          key="roles"
+          >Roles</a-menu-item
+        >
       </a-sub-menu>
       <a-sub-menu title="Settings">
-        <a-menu-item @click="$router.push('/clumps')" key="clumps"> Clumps </a-menu-item>
-        <a-menu-item @click="$router.push('/my-account')" key="my-account">
+        <a-menu-item
+          @click="
+            $router.push('/clumps');
+            displayMenu = !displayMenu;
+          "
+          key="clumps"
+        >
+          Clumps
+        </a-menu-item>
+        <a-menu-item
+          @click="
+            $router.push('/my-account');
+            displayMenu = !displayMenu;
+          "
+          key="my-account"
+        >
           My Account
         </a-menu-item>
       </a-sub-menu>
@@ -54,11 +90,11 @@ export default {
       displayMenu: false,
       noAppBarPages: ['Clump App', 'Login', 'Sign Up'],
       windowHeight: window.innerHeight
-    }
+    };
   },
 
   methods: {}
-}
+};
 </script>
 
 <style scoped>

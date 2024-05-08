@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-import RolesView from '../components/RolesView.vue'
+import RolesView from '../components/RolesView.vue';
 </script>

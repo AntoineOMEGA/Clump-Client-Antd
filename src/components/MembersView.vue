@@ -19,22 +19,22 @@ export default {
     return {
       users: {},
       members: [],
-      roles: {},
-    }
+      roles: {}
+    };
   },
 
   methods: {
     getMembers() {
       fetch('/api/v1/members', {
-        method: 'GET',
-      }).then(response => {
-        response.json().then(data => {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
           this.members = data.data.members;
           this.users = data.data.users;
           this.roles = data.data.roles;
-        })
-      })
+        });
+      });
     }
   }
-}
+};
 </script>

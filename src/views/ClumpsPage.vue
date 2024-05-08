@@ -5,5 +5,5 @@
 </template>
 
 <script setup>
-import ClumpsView from '../components/ClumpsView.vue'
+import ClumpsView from '../components/ClumpsView.vue';
 </script>

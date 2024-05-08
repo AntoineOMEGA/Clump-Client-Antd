@@ -9,7 +9,6 @@
   </a-tabs>
 </template>
 
-
 <script setup>
 import ScheduleViewer from '@/components/ScheduleViewer.vue';
 import ScheduleManager from '@/components/ScheduleManager.vue';
