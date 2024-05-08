@@ -11,11 +11,13 @@
   </div>
 
   <div>
-    <a-flex justify="space-around" align="middle" gap="middle">
-      <a-date-picker placeholder="Start Date" v-model="startDate"></a-date-picker>
-      <a-date-picker placeholder="End Date" v-model="endDate"></a-date-picker>
+    <a-flex justify="space-around" align="middle" gap="middle"
+      style="padding: 5px; margin: 10px; background-color: #333333; border-radius: 5px;">
+      <a-date-picker placeholder="Start Date" v-model="startDate" format="MM-DD-YY" size="large"></a-date-picker>
+      <a-date-picker placeholder="End Date" v-model="endDate" format="MM-DD-YY" size="large"></a-date-picker>
+      <a-button @click="getCombineScheduleData(startDate, endDate)" size="large" type="primary">Load</a-button>
     </a-flex>
-    <a-button @click="getCombineScheduleData(startDate, endDate)" size="large">Load Selected Dates</a-button>
+
   </div>
 
   <a-alert message="Error" :description="getSchedulesErrorMessage" type="error" class="mb-2"
@@ -126,17 +128,6 @@ export default {
           'ByMonth': { 'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12 },
         }
       }
-    }
-  },
-  computed: {
-    generatedMonthDays() {
-      let monthDays = {};
-      for (let dayExtended of Object.keys(this.recurrenceRuleOptions.advFreq.ByDayExtended)) {
-        for (let day of Object.keys(this.recurrenceRuleOptions.advFreq.ByDay)) {
-          monthDays[dayExtended + ' ' + day] = this.recurrenceRuleOptions.advFreq.ByDayExtended[dayExtended] + this.recurrenceRuleOptions.advFreq.ByDay[day];
-        }
-      }
-      return monthDays;
     }
   },
   methods: {
@@ -315,7 +306,7 @@ export default {
 
       this.eventFormData.startDate = new Date(event.startDateTime).toISOString().substring(0, 10);
       this.eventFormData.endDate = new Date(event.endDateTime).toISOString().substring(0, 10);
-      this.eventFormData.startTime = this.convertToLocalTime(new Date(event.startDateTime).toLocaleTimeString('it-IT').substring(0, 5));
+      this.eventFormData.startTime = this.convertTocalTime(new Date(event.startDateTime).toLocaleTimeString('it-IT').substring(0, 5));
       this.eventFormData.endTime = this.convertToLocalTime(new Date(event.endDateTime).toLocaleTimeString('it-IT').substring(0, 5));
 
       this.eventFormData.recurrence = event.recurrence;
