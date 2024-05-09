@@ -49,7 +49,9 @@
   <a-drawer v-model:open="scheduleEditOverlayVisible" @close="resetForm()">
     <a-form>
       <a-input class="mb-2" size="large" addonBefore="Title" v-model:value="scheduleFormData.title"></a-input>
-      <a-select class="mb-2" size="large" addonBefore="Category" v-model:value="scheduleFormData.scheduleCategoryID" :items="scheduleCategories" item-title="title" item-value="_id"></a-select>
+      <a-select class="mb-2" size="large" addonBefore="Category" v-model:value="scheduleFormData.scheduleCategoryID">
+        <a-select-option v-for="scheduleCategory in scheduleCategories" :value="scheduleCategory._id" :key="scheduleCategory._id">{{ scheduleCategory.title }}</a-select-option>
+      </a-select>
       <div class="d-flex justify-space-between">
         <a-input class="mb-2" size="large" addonBefore="Start Date" v-model:value="scheduleFormData.startDate" type="date"></a-input>
         <a-input class="mb-2" size="large" addonBefore="End Date" v-model:value="scheduleFormData.endDate" type="date"></a-input>
@@ -70,8 +72,7 @@
     <a-form>
       <a-input class="mb-2" size="large" addonBefore="Title" v-model:value="scheduleCategoryFormData.title"></a-input>
       <a-input class="mb-2" size="large" addonBefore="Description" v-model:value="scheduleCategoryFormData.description"></a-input>
-      <a-select class="mb-2" size="large" addonBefore="Color" v-model:value="scheduleCategoryFormData.color" :items="colors" :color="scheduleCategoryFormData.color"></a-select>
-
+      <a-input class="mb-2" size="large" addonBefore="Color" type="color" v-model:value="scheduleCategoryFormData.color"></a-input>
       <a-alert message="Error" :description="scheduleCategoryFormErrorMessage" type="error" class="mb-2" v-if="scheduleCategoryFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle">
@@ -111,7 +112,7 @@ export default {
       scheduleCategoryFormData: {
         title: '',
         description: '',
-        color: 'white'
+        color: '#ff0000'
       },
       scheduleCategoryFormErrorMessage: '',
       schedules: [
