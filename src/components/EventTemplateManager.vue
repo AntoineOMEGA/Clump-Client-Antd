@@ -1,5 +1,6 @@
 <template>
-  <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
+  <a-float-button type="primary" style="height: 60px; width: 60px"
+    @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -14,8 +15,11 @@
   </a-flex>
 
   <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
-    <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
-      <template #extra><edit-outlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" /></template>
+    <a-card style="margin: 10px"
+      v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())"
+      :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
+      <template #extra><edit-outlined style="font-size: 1.5rem" key="edit"
+          @click="configureUpdateEventTemplateForm(eventTemplate)" /></template>
       <a-descriptions v-if="toggleMoreDetails" bordered>
         <a-descriptions-item label="Location">{{ eventTemplate.location }}</a-descriptions-item>
         <a-descriptions-item label="Description">{{ eventTemplate.description }}</a-descriptions-item>
@@ -49,9 +53,12 @@
       </a-card>
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id" @click="createEventTemplate()">Create</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="updateEventTemplate()">Save</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="deleteEventTemplate()">Delete</a-button>
+        <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id"
+          @click="createEventTemplate()">Create</a-button>
+        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
+          @click="updateEventTemplate()">Save</a-button>
+        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
+          @click="deleteEventTemplate()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -59,11 +66,13 @@
   <a-drawer v-model:open="shiftEditOverlayVisible" @close="resetShiftForm()">
     <a-form>
       <div>
-        <a-time-picker class="mb-2" addonBefore="Start Time" size="large" format="hh:mm A" use12-hours :minute-step="15" v-model:value="shiftFormData.startTime"></a-time-picker>
+        <a-time-picker class="mb-2" addonBefore="Start Time" size="large" format="hh:mm A" use12-hours :minute-step="15"
+          v-model:value="shiftFormData.startTime"></a-time-picker>
       </div>
 
       <div>
-        <a-time-picker class="mb-2" addonBefore="End Time" size="large" format="hh:mm A" use12-hours :minute-step="15" v-model:value="shiftFormData.endTime" valueFormat="HH:mm A"></a-time-picker>
+        <a-time-picker class="mb-2" addonBefore="End Time" size="large" format="hh:mm A" use12-hours :minute-step="15"
+          v-model:value="shiftFormData.endTime" valueFormat="HH:mm A"></a-time-picker>
       </div>
 
       <a-card v-if="shiftFormErrorMessage != ''">
@@ -73,7 +82,8 @@
       <a-flex justify="space-around" align="middle" gap="middle">
         <a-button type="primary" size="large" block v-if="!shiftFormData._id" @click="createShift()">Create</a-button>
         <a-button type="primary" size="large" block v-if="shiftFormData._id" @click="updateShift()">Save</a-button>
-        <a-button type="primary" size="large" block danger v-if="shiftFormData._id" @click="deleteShift()">Delete</a-button>
+        <a-button type="primary" size="large" block danger v-if="shiftFormData._id"
+          @click="deleteShift()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -99,29 +109,7 @@ export default {
         comments: ''
       },
       eventTemplateFormErrorMessage: '',
-      eventTemplates: [
-        {
-          _id: 'red',
-          title: 'Red',
-          location: '30 N 80 E Main St.',
-          description: 'Red Rocks are super awesome! Help the rocks thrive.',
-          comments: 'Red Too is a super long comment that is completely unnecessary but needed for this test of how the formatting works.'
-        },
-        {
-          _id: 'green',
-          title: 'Green',
-          location: 'Green Tree',
-          description: 'Green Rocks',
-          comments: 'Green Too'
-        },
-        {
-          _id: 'blue',
-          title: 'Blue',
-          location: 'Blue Tree',
-          description: 'Blue Rocks',
-          comments: 'Blue Too'
-        }
-      ],
+      eventTemplates: [],
       eventTemplateFilterSettings: {
         location: false,
         description: false,
@@ -135,7 +123,6 @@ export default {
       },
       shiftFormErrorMessage: '',
       shifts: [],
-      showShifts: false,
       toggleMoreDetails: false
     };
   },

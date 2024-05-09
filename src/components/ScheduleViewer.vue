@@ -1,5 +1,6 @@
 <template>
-  <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+  <a-float-button type="primary" style="height: 60px; width: 60px"
+    @click="eventEditOverlayVisible = !eventEditOverlayVisible">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -10,7 +11,8 @@
   </div>
 
   <div>
-    <a-flex justify="space-around" align="middle" gap="middle" style="padding: 5px; margin: 10px; background-color: #333333; border-radius: 10px">
+    <a-flex justify="space-around" align="middle" gap="middle"
+      style="padding: 5px; margin: 10px; background-color: #333333; border-radius: 10px">
       <a-date-picker placeholder="Start Date" format="MM-DD-YY" size="large"></a-date-picker>
       <a-date-picker placeholder="End Date" format="MM-DD-YY" size="large"></a-date-picker>
       <a-button @click="getCombineScheduleData(startDate, endDate)" size="large" type="primary">Load</a-button>
@@ -28,12 +30,15 @@
   <div>
     <a-badge-ribbon v-for="i in 3" :key="i" text="Category" color="orange" style="top: -5px; right: 5px">
       <a-card style="margin: 10px" title="Florian.Antoine" :bodyStyle="{ padding: '0' }">
-        <template #extra><EyeOutlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="exampleViewOpen = !exampleViewOpen" /></template>
+        <template #extra>
+          <EyeOutlined style="font-size: 1.5rem; margin-top: 20px" key="edit"
+            @click="eventEditOverlayVisible = !eventEditOverlayVisible" />
+        </template>
       </a-card>
     </a-badge-ribbon>
   </div>
 
-  <a-drawer v-model:open="exampleViewOpen">
+  <a-drawer v-model:open="eventEditOverlayVisible">
     <a-card style="margin-bottom: 20px; background-color: #333333" :bodyStyle="{ padding: '5px' }">
       <a-flex justify="space-between">
         <a-statistic title="Total Hours" :value="35" style="padding: 20px">
@@ -42,23 +47,22 @@
           </template>
         </a-statistic>
 
-        <a @click="scheduleFilterSettings.details = !scheduleFilterSettings.details" style="padding: 20px">Show Breakdown</a>
+        <a @click="scheduleFilterSettings.details = !scheduleFilterSettings.details" style="padding: 20px">
+          Show Breakdown
+        </a>
       </a-flex>
       <div v-if="scheduleFilterSettings.details">
         <a-descriptions style="background-color: #222; border-radius: 8px" bordered>
-          <a-descriptions-item label="ROC">6 hrs</a-descriptions-item>
-          <a-descriptions-item label="Family Search Center">10 hrs</a-descriptions-item>
-          <a-descriptions-item label="Historic Sites: Brigham Young Home">6 hrs</a-descriptions-item>
-          <a-descriptions-item label="ROC">6 hrs</a-descriptions-item>
-          <a-descriptions-item label="ROC">6 hrs</a-descriptions-item>
-          <a-descriptions-item label="ROC">6 hrs</a-descriptions-item>
           <a-descriptions-item label="ROC">6 hrs</a-descriptions-item>
         </a-descriptions>
       </div>
     </a-card>
 
-    <a-card title="Tuesday 17th, March 2024" style="background-color: #333; margin-bottom: 20px" :bodyStyle="{ padding: '5px' }">
-      <a-button style="height: auto; text-align: left; margin-bottom: 10px; padding: 15px; padding-top: 10px; padding-bottom: 10px" block>
+    <a-card title="Tuesday 17th, March 2024" style="background-color: #333; margin-bottom: 20px"
+      :bodyStyle="{ padding: '5px' }">
+      <a-button
+        style="height: auto; text-align: left; margin-bottom: 10px; padding: 15px; padding-top: 10px; padding-bottom: 10px"
+        block>
         <a-flex justify="space-between">
           <div>
             <a-typography-title :level="5">9:00am - 12:00pm</a-typography-title>
@@ -67,18 +71,10 @@
           <EyeOutlined style="font-size: 1.2rem" />
         </a-flex>
       </a-button>
-      <a-button style="height: auto; text-align: left; margin-bottom: 10px; padding: 15px; padding-top: 10px; padding-bottom: 10px" block>
-        <a-flex justify="space-between">
-          <div>
-            <a-typography-title :level="5">1:00pm - 5:00pm</a-typography-title>
-            <a-typography-text>Family Search</a-typography-text>
-          </div>
-          <EyeOutlined style="font-size: 1.2rem" />
-        </a-flex>
-      </a-button>
     </a-card>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px"
+      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
@@ -94,71 +90,13 @@ import { PlusOutlined, EyeOutlined, ClockCircleOutlined } from '@ant-design/icon
 export default {
   data() {
     return {
-      show: [],
-      scheduleEditOverlayVisible: false,
-      scheduleCategoryEditOverlayVisible: false,
-      scheduleSelect: true,
-      scheduleBind: false,
-      scheduleFormData: {
-        title: '',
-        scheduleCategoryID: '',
-        startDate: new Date().toISOString().substring(0, 10),
-        endDate: new Date().toISOString().substring(0, 10),
-        comments: ''
-      },
-      scheduleFormErrorMessage: '',
-      scheduleCategoryFormData: {
-        title: '',
-        description: '',
-        color: 'white'
-      },
-      scheduleCategoryFormErrorMessage: '',
-      schedules: [
-        {
-          _id: 'antoine',
-          title: 'Florian.Antoine',
-          scheduleCategoryID: 'red',
-          startDate: new Date().toISOString().substring(0, 10),
-          endDate: new Date().toISOString().substring(0, 10),
-          comments: 'Well not sure'
-        },
-        {
-          _id: 'dave',
-          title: 'unknown.dave',
-          scheduleCategoryID: 'green',
-          startDate: new Date().toISOString().substring(0, 10),
-          endDate: new Date().toISOString().substring(0, 10),
-          comments: 'Well not sure'
-        },
-        {
-          _id: 'jen',
-          title: 'Iguana.Jenna',
-          scheduleCategoryID: 'green',
-          startDate: new Date().toISOString().substring(0, 10),
-          endDate: new Date().toISOString().substring(0, 10),
-          comments: 'Well not sure'
-        }
-      ],
-      scheduleCategories: [
-        {
-          _id: 'red',
-          title: 'Red G',
-          description: 'Red Group',
-          color: 'red'
-        },
-        {
-          _id: 'green',
-          title: 'St. George South',
-          description: 'Green Group',
-          color: 'green'
-        }
-      ],
-      colors: ['white', 'red', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange'],
+      eventEditOverlayVisible: false,
+      schedules: [],
+      scheduleCategories: [],
       scheduleFilterSettings: {
         details: false,
         search: ''
       },
-      exampleViewOpen: false
     };
   }
 };

@@ -21,14 +21,23 @@
   </a-flex>
 
   <template v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="schedule._id">
-    <a-badge-ribbon :text="scheduleCategories[scheduleCategories.findIndex((scheduleCategory) => scheduleCategory._id === schedule.scheduleCategoryID)].title" :color="scheduleCategories[scheduleCategories.findIndex((scheduleCategory) => scheduleCategory._id === schedule.scheduleCategoryID)].color" style="top: -5px; right: 5px" v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())">
+    <a-badge-ribbon
+      :text="scheduleCategories[scheduleCategories.findIndex((scheduleCategory) => scheduleCategory._id === schedule.scheduleCategoryID)].title"
+      :color="scheduleCategories[scheduleCategories.findIndex((scheduleCategory) => scheduleCategory._id === schedule.scheduleCategoryID)].color"
+      style="top: -5px; right: 5px"
+      v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())">
       <a-card style="margin: 10px; margin-bottom: 15px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
         <template #extra>
-          <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px; margin-top: 20px" key="calendar" @click="console.log('Open Calendar')" />
-          <EditOutlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureUpdateScheduleForm(schedule)" />
+          <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px; margin-top: 20px" key="calendar"
+            @click="console.log('Open Calendar')" />
+          <EditOutlined style="font-size: 1.5rem; margin-top: 20px" key="edit"
+            @click="configureUpdateScheduleForm(schedule)" />
         </template>
         <a-descriptions v-if="scheduleFilterSettings.details" bordered>
-          <a-descriptions-item label="Duration">{{ schedule.startDate + ' to ' + schedule.endDate }}</a-descriptions-item>
+          <a-descriptions-item label="Duration">
+            {{ dayjs(schedule.startDate).format('MM-DD-YYYY') + ' to ' +
+    dayjs(schedule.endDate).format('MM-DD-YYYY') }}
+          </a-descriptions-item>
           <a-descriptions-item label="Comments">{{ schedule.comments }}</a-descriptions-item>
         </a-descriptions>
       </a-card>
@@ -40,7 +49,8 @@
     <a-badge-ribbon :text="scheduleCategory.color" :color="scheduleCategory.color" style="top: -5px; right: 5px">
       <a-card :title="scheduleCategory.title" style="margin: 10px">
         <template #extra>
-          <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureUpdateScheduleCategoryForm(scheduleCategory)" />
+          <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit"
+            @click="configureUpdateScheduleCategoryForm(scheduleCategory)" />
         </template>
       </a-card>
     </a-badge-ribbon>
@@ -48,37 +58,60 @@
 
   <a-drawer v-model:open="scheduleEditOverlayVisible" @close="resetForm()">
     <a-form>
-      <a-input class="mb-2" size="large" addonBefore="Title" v-model:value="scheduleFormData.title"></a-input>
-      <a-select class="mb-2" size="large" addonBefore="Category" v-model:value="scheduleFormData.scheduleCategoryID">
-        <a-select-option v-for="scheduleCategory in scheduleCategories" :value="scheduleCategory._id" :key="scheduleCategory._id">{{ scheduleCategory.title }}</a-select-option>
+      Title
+      <a-input class="mb-2" size="large" v-model:value="scheduleFormData.title"></a-input>
+      Category
+      <a-select class="mb-2" size="large" v-model:value="scheduleFormData.scheduleCategoryID" style="width: 100%">
+        <a-select-option v-for="scheduleCategory in scheduleCategories" :value="scheduleCategory._id"
+          :key="scheduleCategory._id">{{ scheduleCategory.title }}</a-select-option>
       </a-select>
-      <div class="d-flex justify-space-between">
-        <a-input class="mb-2" size="large" addonBefore="Start Date" v-model:value="scheduleFormData.startDate" type="date"></a-input>
-        <a-input class="mb-2" size="large" addonBefore="End Date" v-model:value="scheduleFormData.endDate" type="date"></a-input>
-      </div>
-      <a-textarea class="mb-2" size="large" addonBefore="Comments" v-model:value="scheduleFormData.comments"></a-textarea>
+      <a-flex justify="space-around" align="middle" gap="middle">
+        <div>
+          Start Date
+          <a-date-picker class="mb-2" size="large" v-model:value="scheduleFormData.startDate"
+            format="MM-DD-YYYY"></a-date-picker>
+        </div>
+        <div>
+          End Date
+          <a-date-picker class="mb-2" size="large" v-model:value="scheduleFormData.endDate"
+            format="MM-DD-YYYY"></a-date-picker>
+        </div>
+      </a-flex>
+      Comments
+      <a-textarea class="mb-2" size="large" v-model:value="scheduleFormData.comments"></a-textarea>
 
-      <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2" v-if="scheduleFormErrorMessage != ''" />
+      <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2"
+        v-if="scheduleFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button v-if="!scheduleFormData._id" type="primary" size="large" block @click="createSchedule()">Create</a-button>
-        <a-button v-if="scheduleFormData._id" type="primary" size="large" block @click="updateSchedule()">Save</a-button>
-        <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger @click="deleteSchedule()">Archive</a-button>
+        <a-button v-if="!scheduleFormData._id" type="primary" size="large" block
+          @click="createSchedule()">Create</a-button>
+        <a-button v-if="scheduleFormData._id" type="primary" size="large" block
+          @click="updateSchedule()">Save</a-button>
+        <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger
+          @click="deleteSchedule()">Archive</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
 
   <a-drawer v-model:open="scheduleCategoryEditOverlayVisible" @close="resetForm()">
     <a-form>
-      <a-input class="mb-2" size="large" addonBefore="Title" v-model:value="scheduleCategoryFormData.title"></a-input>
-      <a-input class="mb-2" size="large" addonBefore="Description" v-model:value="scheduleCategoryFormData.description"></a-input>
-      <a-input class="mb-2" size="large" addonBefore="Color" type="color" v-model:value="scheduleCategoryFormData.color"></a-input>
-      <a-alert message="Error" :description="scheduleCategoryFormErrorMessage" type="error" class="mb-2" v-if="scheduleCategoryFormErrorMessage != ''" />
+      Title
+      <a-input class="mb-2" size="large" v-model:value="scheduleCategoryFormData.title"></a-input>
+      Description
+      <a-input class="mb-2" size="large" v-model:value="scheduleCategoryFormData.description"></a-input>
+      Color
+      <a-input class="mb-2" size="large" type="color" v-model:value="scheduleCategoryFormData.color"></a-input>
+      <a-alert message="Error" :description="scheduleCategoryFormErrorMessage" type="error" class="mb-2"
+        v-if="scheduleCategoryFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!scheduleCategoryFormData._id" @click="createScheduleCategory()">Create</a-button>
-        <a-button type="primary" size="large" block v-if="scheduleCategoryFormData._id" @click="updateScheduleCategory()">Save</a-button>
-        <a-button type="primary" size="large" block danger v-if="scheduleCategoryFormData._id" @click="deleteScheduleCategory()">Delete</a-button>
+        <a-button type="primary" size="large" block v-if="!scheduleCategoryFormData._id"
+          @click="createScheduleCategory()">Create</a-button>
+        <a-button type="primary" size="large" block v-if="scheduleCategoryFormData._id"
+          @click="updateScheduleCategory()">Save</a-button>
+        <a-button type="primary" size="large" block danger v-if="scheduleCategoryFormData._id"
+          @click="deleteScheduleCategory()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -86,6 +119,7 @@
 
 <script setup>
 import { PlusOutlined, EditOutlined, CalendarOutlined } from '@ant-design/icons-vue';
+import dayjs from 'dayjs';
 </script>
 
 <script>
@@ -99,13 +133,11 @@ export default {
       show: [],
       scheduleEditOverlayVisible: false,
       scheduleCategoryEditOverlayVisible: false,
-      scheduleSelect: true,
-      scheduleBind: false,
       scheduleFormData: {
         title: '',
         scheduleCategoryID: '',
-        startDate: new Date().toISOString().substring(0, 10),
-        endDate: new Date().toISOString().substring(0, 10),
+        startDate: dayjs(),
+        endDate: dayjs(),
         comments: ''
       },
       scheduleFormErrorMessage: '',
@@ -115,47 +147,8 @@ export default {
         color: '#ff0000'
       },
       scheduleCategoryFormErrorMessage: '',
-      schedules: [
-        {
-          _id: 'antoine',
-          title: 'Florian.Antoine',
-          scheduleCategoryID: 'red',
-          startDate: new Date().toISOString().substring(0, 10),
-          endDate: new Date().toISOString().substring(0, 10),
-          comments: 'Well not sure'
-        },
-        {
-          _id: 'dave',
-          title: 'unknown.dave',
-          scheduleCategoryID: 'green',
-          startDate: new Date().toISOString().substring(0, 10),
-          endDate: new Date().toISOString().substring(0, 10),
-          comments: 'Well not sure'
-        },
-        {
-          _id: 'jen',
-          title: 'Iguana.Jenna',
-          scheduleCategoryID: 'green',
-          startDate: new Date().toISOString().substring(0, 10),
-          endDate: new Date().toISOString().substring(0, 10),
-          comments: 'Well not sure'
-        }
-      ],
-      scheduleCategories: [
-        {
-          _id: 'red',
-          title: 'Red G',
-          description: 'Red Group',
-          color: 'red'
-        },
-        {
-          _id: 'green',
-          title: 'St. George South',
-          description: 'Green Group',
-          color: 'green'
-        }
-      ],
-      colors: ['white', 'red', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange'],
+      schedules: [],
+      scheduleCategories: [],
       scheduleFilterSettings: {
         details: false,
         search: ''
@@ -181,16 +174,14 @@ export default {
     },
     resetForm() {
       this.scheduleEditOverlayVisible = false;
-      this.scheduleSelect = true;
       this.scheduleCreateEdit = false;
-      this.scheduleBind = false;
       this.scheduleCategoryCreateEdit = false;
 
       this.scheduleFormData = {
         title: '',
         scheduleCategoryID: '',
-        startDate: new Date().toISOString().substring(0, 10),
-        endDate: new Date().toISOString().substring(0, 10),
+        startDate: dayjs(),
+        endDate: dayjs(),
         comments: ''
       };
       this.scheduleFormErrorMessage = '';
@@ -198,7 +189,7 @@ export default {
       this.scheduleCategoryFormData = {
         title: '',
         description: '',
-        color: 'white'
+        color: '#ffffff'
       };
       this.scheduleCategoryFormErrorMessage = '';
     },
@@ -242,35 +233,8 @@ export default {
       this.scheduleFormData.scheduleCategoryID = schedule.scheduleCategoryID;
       this.scheduleFormData._id = schedule._id;
       this.scheduleFormData.comments = schedule.comments;
-      let tempStartDate = new Date(schedule.startDate).toLocaleString('en-US').substring(0, 16);
-      this.scheduleFormData.startDate = tempStartDate.split('/')[2].substring(0, 4) + '-';
-
-      if (tempStartDate.split('/')[0].length == 1) {
-        this.scheduleFormData.startDate = this.scheduleFormData.startDate + '0' + tempStartDate.split('/')[0] + '-';
-      } else {
-        this.scheduleFormData.startDate = this.scheduleFormData.startDate + tempStartDate.split('/')[0] + '-';
-      }
-
-      if (tempStartDate.split('/')[1].length == 1) {
-        this.scheduleFormData.startDate = this.scheduleFormData.startDate + '0' + tempStartDate.split('/')[1];
-      } else {
-        this.scheduleFormData.startDate = this.scheduleFormData.startDate + tempStartDate.split('/')[1];
-      }
-
-      let tempEndDate = new Date(schedule.endDate).toLocaleString('en-US').substring(0, 16);
-      this.scheduleFormData.endDate = tempEndDate.split('/')[2].substring(0, 4) + '-';
-
-      if (tempEndDate.split('/')[0].length == 1) {
-        this.scheduleFormData.endDate = this.scheduleFormData.endDate + '0' + tempEndDate.split('/')[0] + '-';
-      } else {
-        this.scheduleFormData.endDate = this.scheduleFormData.endDate + tempEndDate.split('/')[0] + '-';
-      }
-
-      if (tempEndDate.split('/')[1].length == 1) {
-        this.scheduleFormData.endDate = this.scheduleFormData.endDate + '0' + tempEndDate.split('/')[1];
-      } else {
-        this.scheduleFormData.endDate = this.scheduleFormData.endDate + tempEndDate.split('/')[1];
-      }
+      this.scheduleFormData.startDate = dayjs(schedule.startDate);
+      this.scheduleFormData.endDate = dayjs(schedule.endDate);
 
       this.scheduleEditOverlayVisible = true;
     },
