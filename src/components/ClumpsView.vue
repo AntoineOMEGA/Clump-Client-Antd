@@ -21,7 +21,10 @@
 
   <a-drawer v-model:open="clumpOverlayVisible" @close="resetClumpFormData()">
     <a-form>
-      <a-input class="mb-2" size="large" addonBefore="Title" v-model:value="clumpFormData.title"></a-input>
+      <div class="mb-2">
+        Title
+        <a-input size="large" v-model:value="clumpFormData.title"></a-input>
+      </div>
 
       <a-card v-if="clumpFormErrorMessage != ''" title="clumpFormErrorMessage"> </a-card>
 
@@ -35,7 +38,10 @@
 
   <a-drawer v-model:open="clumpJoinOverlayVisible" @close="resetClumpJoinFormData()">
     <a-form>
-      <a-input class="mb-2" size="large" addonBefore="Invite Token" v-model:value="clumpJoinFormData.inviteToken"></a-input>
+      <div class="mb-2">
+        Invite Token
+        <a-input size="large" v-model:value="clumpJoinFormData.inviteToken"></a-input>
+      </div>
 
       <a-card v-if="clumpJoinFormErrorMessage != ''" title="clumpJoinFormErrorMessage"> </a-card>
 

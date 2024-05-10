@@ -60,7 +60,7 @@
             <a-typography-title :level="5">9:00am - 12:00pm</a-typography-title>
             <a-typography-text>ROC Indexing</a-typography-text>
           </div>
-          <EditOutlined style="font-size: 1.2rem" />
+          <EditOutlined style="font-size: 1.2rem" @click="configureEventForm(event)" />
         </a-flex>
       </a-button>
     </a-card>

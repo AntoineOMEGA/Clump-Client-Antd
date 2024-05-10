@@ -1,6 +1,5 @@
 <template>
-  <a-float-button type="primary" style="height: 60px; width: 60px"
-    @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
+  <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -15,11 +14,8 @@
   </a-flex>
 
   <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
-    <a-card style="margin: 10px"
-      v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())"
-      :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
-      <template #extra><edit-outlined style="font-size: 1.5rem" key="edit"
-          @click="configureUpdateEventTemplateForm(eventTemplate)" /></template>
+    <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
+      <template #extra><edit-outlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" /></template>
       <a-descriptions v-if="toggleMoreDetails" bordered>
         <a-descriptions-item label="Location">{{ eventTemplate.location }}</a-descriptions-item>
         <a-descriptions-item label="Description">{{ eventTemplate.description }}</a-descriptions-item>
@@ -30,10 +26,25 @@
 
   <a-drawer v-model:open="eventTemplateEditOverlayVisible" @close="resetEventTemplateForm()">
     <a-form>
-      <a-input v-model:value="eventTemplateFormData.title" addonBefore="Title" class="mb-2"></a-input>
-      <a-input v-model:value="eventTemplateFormData.location" addonBefore="Location" class="mb-2"></a-input>
-      <a-input v-model:value="eventTemplateFormData.description" addonBefore="Description" class="mb-2"></a-input>
-      <a-input addonBefore="Comments" v-model:value="eventTemplateFormData.comments" class="mb-2"></a-input>
+      <div class="mb-2">
+        Title
+        <a-input v-model:value="eventTemplateFormData.title" size="large"></a-input>
+      </div>
+
+      <div class="mb-2">
+        Location
+        <a-input v-model:value="eventTemplateFormData.location" size="large"></a-input>
+      </div>
+
+      <div class="mb-2">
+        Description
+        <a-input v-model:value="eventTemplateFormData.description" size="large"></a-input>
+      </div>
+
+      <div class="mb-2">
+        Comments
+        <a-textarea v-model:value="eventTemplateFormData.comments" size="large"></a-textarea>
+      </div>
 
       <a-card class="mb-2">
         <a-card-meta title="Shifts"></a-card-meta>
@@ -53,26 +64,27 @@
       </a-card>
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id"
-          @click="createEventTemplate()">Create</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
-          @click="updateEventTemplate()">Save</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
-          @click="deleteEventTemplate()">Delete</a-button>
+        <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id" @click="createEventTemplate()">Create</a-button>
+        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="updateEventTemplate()">Save</a-button>
+        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="deleteEventTemplate()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
 
   <a-drawer v-model:open="shiftEditOverlayVisible" @close="resetShiftForm()">
     <a-form>
-      <div>
-        <a-time-picker class="mb-2" addonBefore="Start Time" size="large" format="hh:mm A" use12-hours :minute-step="15"
-          v-model:value="shiftFormData.startTime"></a-time-picker>
-      </div>
+      <div class="mb-2">
+        <a-flex>
+          <div>
+            Start Time
+            <a-time-picker size="large" format="hh:mm A" use12-hours :minute-step="15" v-model:value="shiftFormData.startTime"></a-time-picker>
+          </div>
 
-      <div>
-        <a-time-picker class="mb-2" addonBefore="End Time" size="large" format="hh:mm A" use12-hours :minute-step="15"
-          v-model:value="shiftFormData.endTime" valueFormat="HH:mm A"></a-time-picker>
+          <div>
+            End Time
+            <a-time-picker size="large" format="hh:mm A" use12-hours :minute-step="15" v-model:value="shiftFormData.endTime" valueFormat="HH:mm A"></a-time-picker>
+          </div>
+        </a-flex>
       </div>
 
       <a-card v-if="shiftFormErrorMessage != ''">
@@ -82,8 +94,7 @@
       <a-flex justify="space-around" align="middle" gap="middle">
         <a-button type="primary" size="large" block v-if="!shiftFormData._id" @click="createShift()">Create</a-button>
         <a-button type="primary" size="large" block v-if="shiftFormData._id" @click="updateShift()">Save</a-button>
-        <a-button type="primary" size="large" block danger v-if="shiftFormData._id"
-          @click="deleteShift()">Delete</a-button>
+        <a-button type="primary" size="large" block danger v-if="shiftFormData._id" @click="deleteShift()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
