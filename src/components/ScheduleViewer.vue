@@ -1,6 +1,5 @@
 <template>
-  <a-float-button type="primary" style="height: 60px; width: 60px"
-    @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+  <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -11,8 +10,7 @@
   </div>
 
   <div>
-    <a-flex justify="space-around" align="middle" gap="middle"
-      style="padding: 5px; margin: 10px; background-color: #333333; border-radius: 10px">
+    <a-flex justify="space-around" align="middle" gap="middle" style="padding: 5px; margin: 10px; background-color: #333333; border-radius: 10px">
       <a-date-picker placeholder="Start Date" format="MM-DD-YY" size="large"></a-date-picker>
       <a-date-picker placeholder="End Date" format="MM-DD-YY" size="large"></a-date-picker>
       <a-button @click="getCombineScheduleData(startDate, endDate)" size="large" type="primary">Load</a-button>
@@ -31,8 +29,7 @@
     <a-badge-ribbon v-for="i in 3" :key="i" text="Category" color="orange" style="top: -5px; right: 5px">
       <a-card style="margin: 10px" title="Florian.Antoine" :bodyStyle="{ padding: '0' }">
         <template #extra>
-          <EyeOutlined style="font-size: 1.5rem; margin-top: 20px" key="edit"
-            @click="scheduleOverlayVisible = !scheduleOverlayVisible" />
+          <EyeOutlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="scheduleOverlayVisible = !scheduleOverlayVisible" />
         </template>
       </a-card>
     </a-badge-ribbon>
@@ -47,9 +44,7 @@
           </template>
         </a-statistic>
 
-        <a @click="scheduleFilterSettings.details = !scheduleFilterSettings.details" style="padding: 20px">
-          Show Breakdown
-        </a>
+        <a @click="scheduleFilterSettings.details = !scheduleFilterSettings.details" style="padding: 20px"> Show Breakdown </a>
       </a-flex>
       <div v-if="scheduleFilterSettings.details">
         <a-descriptions style="background-color: #222; border-radius: 8px" bordered>
@@ -58,45 +53,38 @@
       </div>
     </a-card>
 
-    <a-card title="Tuesday 17th, March 2024" style="background-color: #333; margin-bottom: 20px"
-      :bodyStyle="{ padding: '5px' }">
-      <a-button
-        style="height: auto; text-align: left; margin-bottom: 10px; padding: 15px; padding-top: 10px; padding-bottom: 10px"
-        block>
+    <a-card title="Tuesday 17th, March 2024" style="background-color: #333; margin-bottom: 20px" :bodyStyle="{ padding: '5px' }">
+      <a-button style="height: auto; text-align: left; margin-bottom: 10px; padding: 15px; padding-top: 10px; padding-bottom: 10px" block>
         <a-flex justify="space-between">
           <div>
             <a-typography-title :level="5">9:00am - 12:00pm</a-typography-title>
             <a-typography-text>ROC Indexing</a-typography-text>
           </div>
-          <EyeOutlined style="font-size: 1.2rem" />
+          <EditOutlined style="font-size: 1.2rem" />
         </a-flex>
       </a-button>
     </a-card>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px"
-      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
     </a-float-button>
   </a-drawer>
 
-
   <a-drawer v-model:open="eventEditOverlayVisible" @close="resetForm()">
     <a-form>
       <div class="mb-2">
         Schedule
         <a-select v-model:value="eventFormData.scheduleID" size="large" style="width: 100%" allowClear>
-          <a-select-option v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))"
-            :value="schedule._id" :key="schedule._id">{{ schedule.title }}</a-select-option>
+          <a-select-option v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="schedule._id" :key="schedule._id">{{ schedule.title }}</a-select-option>
         </a-select>
       </div>
 
       <div class="mb-2">
         Event Template
         <a-select v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
-          <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))"
-            :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
+          <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
         </a-select>
       </div>
 
@@ -137,13 +125,11 @@
         <a-flex justify="space-around" align="middle" gap="middle">
           <div>
             Start Time
-            <a-time-picker size="large" v-model:value:value="eventFormData.startTime" format="h:mm A" :minute-step="5"
-              allowClear></a-time-picker>
+            <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
           </div>
           <div>
             End Time
-            <a-time-picker size="large" v-model:value:value="eventFormData.endTime" format="h:mm A" :minute-step="5"
-              allowClear></a-time-picker>
+            <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
           </div>
         </a-flex>
       </div>
@@ -152,13 +138,11 @@
         <a-flex justify="space-around" align="middle" gap="middle">
           <div>
             Start Date
-            <a-date-picker size="large" v-model:value:value="eventFormData.startDate" format="MM-DD-YYYY"
-              allowClear></a-date-picker>
+            <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY" allowClear></a-date-picker>
           </div>
           <div>
             End Date
-            <a-date-picker size="large" v-model:value:value="eventFormData.endDate" format="MM-DD-YYYY"
-              allowClear></a-date-picker>
+            <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY" allowClear></a-date-picker>
           </div>
         </a-flex>
       </div>
@@ -180,8 +164,7 @@
       <div v-if="['Yearly by Day', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)" class="mb-2">
         Month
         <a-select v-model:value="eventFormData.recurrence.ByMonth" size="large" style="width: 100%" allowClear>
-          <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.advFreq.ByMonth)" :value="month"
-            :key="month">
+          <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.advFreq.ByMonth)" :value="month" :key="month">
             {{ month }}
           </a-select-option>
         </a-select>
@@ -189,8 +172,7 @@
 
       <div v-if="['Monthly by Day', 'Yearly by Day'].includes(eventFormData.recurrence.frequency)" class="mb-2">
         Occurrences of Week Days in Month
-        <a-select v-model:value="eventFormData.recurrence.ByDayMonthly" size="large" style="width: 100%" allowClear
-          mode="multiple">
+        <a-select v-model:value="eventFormData.recurrence.ByDayMonthly" size="large" style="width: 100%" allowClear mode="multiple">
           <a-select-option v-for="monthDay in Object.keys(generatedMonthDays)" :value="monthDay" :key="monthDay">
             {{ monthDay }}
           </a-select-option>
@@ -199,10 +181,8 @@
 
       <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
         Days of Week
-        <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear
-          mode="multiple">
-          <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)" :value="weekDay"
-            :key="weekDay">
+        <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear mode="multiple">
+          <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)" :value="weekDay" :key="weekDay">
             {{ weekDay }}
           </a-select-option>
         </a-select>
@@ -210,10 +190,8 @@
 
       <div v-if="['Monthly by Date', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)" class="mb-2">
         Day in Month
-        <a-select v-model:value="eventFormData.recurrence.ByMonthDay" size="large" style="width: 100%" allowClear
-          mode="multiple">
-          <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.advFreq.ByMonthDay)"
-            :value="dayInMonth" :key="dayInMonth">
+        <a-select v-model:value="eventFormData.recurrence.ByMonthDay" size="large" style="width: 100%" allowClear mode="multiple">
+          <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.advFreq.ByMonthDay)" :value="dayInMonth" :key="dayInMonth">
             {{ dayInMonth }}
           </a-select-option>
         </a-select>
@@ -221,25 +199,22 @@
 
       <div v-if="eventFormData.recurrence.frequency != 'Once'" class="mb-2">
         Until Date
-        <a-date-picker size="large" v-model:value="eventFormData.until" format="MM-DD-YYYY" style="width: 100%"
-          allowClear></a-date-picker>
+        <a-date-picker size="large" v-model:value="eventFormData.until" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
       </div>
     </a-form>
 
-    <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2"
-      v-if="eventFormErrorMessage != ''" />
+    <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
 
     <a-flex justify="space-around" align="middle" gap="middle">
       <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
       <a-button v-if="eventFormData._id" type="primary" size="large" block @click="updateEvent()">Save</a-button>
-      <a-button v-if="eventFormData._id" type="primary" size="large" block danger
-        @click="deleteEvent()">Delete</a-button>
+      <a-button v-if="eventFormData._id" type="primary" size="large" block danger @click="deleteEvent()">Delete</a-button>
     </a-flex>
   </a-drawer>
 </template>
 
 <script setup>
-import { PlusOutlined, EyeOutlined, ClockCircleOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined, EyeOutlined, EditOutlined, ClockCircleOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 </script>
 
@@ -254,10 +229,10 @@ export default {
         description: '',
         location: '',
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        startDate: '',
-        endDate: '',
-        startTime: '',
-        endTime: '',
+        startDate: dayjs(),
+        endDate: dayjs(),
+        startTime: dayjs(),
+        endTime: dayjs(),
         recurrence: {
           frequency: 'Once',
           interval: 0,
@@ -345,7 +320,7 @@ export default {
       scheduleFilterSettings: {
         details: false,
         search: ''
-      },
+      }
     };
   },
   computed: {
@@ -370,8 +345,8 @@ export default {
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         startDate: dayjs(),
         endDate: dayjs(),
-        startTime: '',
-        endTime: '',
+        startTime: dayjs(),
+        endTime: dayjs(),
         recurrence: {
           frequency: 'Once',
           interval: 0,
@@ -398,8 +373,8 @@ export default {
         title: this.eventFormData.title,
         description: this.eventFormData.description,
         location: this.eventFormData.location,
-        startDateTime: new Date(this.eventFormData.startDate + 'T' + this.convertToMilitaryTime(this.eventFormData.startTime) + ':00'),
-        endDateTime: new Date(this.eventFormData.endDate + 'T' + this.convertToMilitaryTime(this.eventFormData.endTime) + ':00'),
+        startDateTime: dayjs(this.eventFormData.startDate + 'T' + this.eventFormData.startTime),
+        endDateTime: dayjs(this.eventFormData.endDate + 'T' + this.eventFormData.endTime),
 
         shiftID: this.eventFormData.shiftID,
 
@@ -464,10 +439,10 @@ export default {
       this.eventFormData.description = event.description;
       this.eventFormData.location = event.location;
 
-      this.eventFormData.startDate = new Date(event.startDateTime).toISOString().substring(0, 10);
-      this.eventFormData.endDate = new Date(event.endDateTime).toISOString().substring(0, 10);
-      this.eventFormData.startTime = this.convertToLocalTime(new Date(event.startDateTime).toLocaleTimeString('it-IT').substring(0, 5));
-      this.eventFormData.endTime = this.convertToLocalTime(new Date(event.endDateTime).toLocaleTimeString('it-IT').substring(0, 5));
+      this.eventFormData.startDate = dayjs(event.startDateTime);
+      this.eventFormData.endDate = dayjs(event.startDateTime);
+      this.eventFormData.startTime = dayjs(event.startDateTime);
+      this.eventFormData.endTime = dayjs(event.startDateTime);
 
       this.eventFormData.recurrence = event.recurrence;
 
