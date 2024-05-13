@@ -1,10 +1,13 @@
 <template>
   <a-tabs centered type="card">
-    <a-tab-pane key="event-template-viewer" tab="Viewer">
-      <EventTemplateViewer />
-    </a-tab-pane>
-    <a-tab-pane key="event-template-manager" tab="Manager">
+    <a-tab-pane key="event-template-manager" tab="Event Templates">
       <EventTemplateManager />
+    </a-tab-pane>
+    <a-tab-pane key="event-template-manager" tab="Tags">
+      <EventTemplateManager />
+    </a-tab-pane>
+    <a-tab-pane key="event-template-viewer" tab="Analytics">
+      <EventTemplateViewer />
     </a-tab-pane>
   </a-tabs>
 </template>

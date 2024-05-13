@@ -1,5 +1,6 @@
 <template>
-  <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
+  <a-float-button type="primary" style="height: 60px; width: 60px"
+    @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -9,18 +10,16 @@
     <a-input size="large" addonBefore="Search" v-model:value="eventTemplateFilterSettings.search"></a-input>
   </div>
 
-  <a-flex style="padding: 8px; padding-right: 20px" justify="right" class="mb-2">
-    <a @click="toggleMoreDetails = !toggleMoreDetails">Show Details</a>
-  </a-flex>
-
   <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
-    <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
-      <template #extra><edit-outlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" /></template>
-      <a-descriptions v-if="toggleMoreDetails" bordered>
-        <a-descriptions-item label="Location">{{ eventTemplate.location }}</a-descriptions-item>
-        <a-descriptions-item label="Description">{{ eventTemplate.description }}</a-descriptions-item>
-        <a-descriptions-item label="Comments">{{ eventTemplate.comments }}</a-descriptions-item>
-      </a-descriptions>
+    <a-card style="margin: 10px"
+      v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())"
+      :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
+      <template #extra>
+        <CalendarOutlined style="font-size: 1.5rem; margin-right: 10px" key="edit"
+          @click="eventTemplateScheduleVisible = !eventTemplateScheduleVisible" />
+        <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
+
+      </template>
     </a-card>
   </div>
 
@@ -64,9 +63,12 @@
       </a-card>
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id" @click="createEventTemplate()">Create</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="updateEventTemplate()">Save</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="deleteEventTemplate()">Delete</a-button>
+        <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id"
+          @click="createEventTemplate()">Create</a-button>
+        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
+          @click="updateEventTemplate()">Save</a-button>
+        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
+          @click="deleteEventTemplate()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -77,12 +79,14 @@
         <a-flex>
           <div>
             Start Time
-            <a-time-picker size="large" format="hh:mm A" use12-hours :minute-step="15" v-model:value="shiftFormData.startTime"></a-time-picker>
+            <a-time-picker size="large" format="hh:mm A" use12-hours :minute-step="15"
+              v-model:value="shiftFormData.startTime"></a-time-picker>
           </div>
 
           <div>
             End Time
-            <a-time-picker size="large" format="hh:mm A" use12-hours :minute-step="15" v-model:value="shiftFormData.endTime" valueFormat="HH:mm A"></a-time-picker>
+            <a-time-picker size="large" format="hh:mm A" use12-hours :minute-step="15"
+              v-model:value="shiftFormData.endTime" valueFormat="HH:mm A"></a-time-picker>
           </div>
         </a-flex>
       </div>
@@ -94,14 +98,62 @@
       <a-flex justify="space-around" align="middle" gap="middle">
         <a-button type="primary" size="large" block v-if="!shiftFormData._id" @click="createShift()">Create</a-button>
         <a-button type="primary" size="large" block v-if="shiftFormData._id" @click="updateShift()">Save</a-button>
-        <a-button type="primary" size="large" block danger v-if="shiftFormData._id" @click="deleteShift()">Delete</a-button>
+        <a-button type="primary" size="large" block danger v-if="shiftFormData._id"
+          @click="deleteShift()">Delete</a-button>
       </a-flex>
     </a-form>
+  </a-drawer>
+
+  <a-drawer v-model:open="eventTemplateScheduleVisible">
+    <a-card style="margin-bottom: 20px; background-color: #333333">
+      <a-statistic title="Total Hours" :value="480">
+        <template #suffix>
+          <ClockCircleOutlined />
+        </template>
+      </a-statistic>
+    </a-card>
+
+    <a-card title="Tuesday 17th, March 2024" :bodyStyle="{ padding: '5px' }"
+      style="margin-bottom: 10px; background-color: #333">
+      <a-card title="9:00am - 12:00pm | Shift" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
+        <template #extra>
+          <a-badge color="#22a2ff" count="4" style="color: #fff">
+            <UserOutlined style="font-size: 1.2rem" />
+          </a-badge>
+        </template>
+        <a-card title="9:00am - 11:00am" style="background-color: #333" :bodyStyle="{ padding: '5px' }">
+          <a-tag color="#ffb7f5"
+            style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px"
+            @click="console.log('hi')">Bart.Anthony</a-tag>
+        </a-card>
+        <a-card title="9:00am - 12:00pm" style="background-color: #333" :bodyStyle="{ padding: '5px' }">
+          <a-tag color="#ffb735"
+            style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
+        </a-card>
+      </a-card>
+      <a-card title="1:00 - 4:00pm" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
+        <template #extra>
+          <a-badge color="#22a2ff" count="4" style="color: #fff">
+            <UserOutlined style="font-size: 1.2rem" />
+          </a-badge>
+        </template>
+        <a-tag color="#ffb7f5"
+          style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Bart.Anthony</a-tag>
+
+      </a-card>
+    </a-card>
+
+    <a-float-button type="primary" style="height: 60px; width: 60px"
+      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+      <template #icon>
+        <PlusOutlined style="font-size: 20px" />
+      </template>
+    </a-float-button>
   </a-drawer>
 </template>
 
 <script setup>
-import { EditOutlined, PlusOutlined } from '@ant-design/icons-vue';
+import { EditOutlined, PlusOutlined, CalendarOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
@@ -112,6 +164,7 @@ export default {
   },
   data() {
     return {
+      eventTemplateScheduleVisible: false,
       eventTemplateEditOverlayVisible: false,
       eventTemplateFormData: {
         title: '',
