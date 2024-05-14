@@ -6,17 +6,15 @@
     </template>
   </a-float-button>
 
-  <div style="margin: 10px">
+  <div style="margin: 10px;margin-bottom: 15px;">
     <a-input size="large" addonBefore="Search" v-model:value="scheduleFilterSettings.search"></a-input>
   </div>
 
   <template v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="schedule._id">
-    <a-badge-ribbon
-      :text="scheduleTags[scheduleTags.findIndex((scheduleTag) => scheduleTag._id === schedule.scheduleTagID)].title"
-      :color="scheduleTags[scheduleTags.findIndex((scheduleTag) => scheduleTag._id === schedule.scheduleTagID)].color"
-      style="top: -5px; right: 5px"
+    <a-badge-ribbon :text="tags[tags.findIndex((tag) => tag._id === schedule.primaryTagID)].title"
+      :color="tags[tags.findIndex((tag) => tag._id === schedule.primaryTagID)].color" style="top: -5px; right: 5px"
       v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())">
-      <a-card style="margin: 10px; margin-bottom: 15px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
+      <a-card style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
         <template #extra>
           <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px; margin-top: 20px" key="calendar"
             @click="console.log('Open Calendar')" />
@@ -42,9 +40,10 @@
 
       <div class="mb-2">
         Tag
-        <a-select size="large" v-model:value="scheduleFormData.scheduleTagID" style="width: 100%">
-          <a-select-option v-for="scheduleTag in scheduleTags" :value="scheduleTag._id" :key="scheduleTag._id">{{
-    scheduleTag.title }}</a-select-option>
+        <a-select size="large" v-model:value="scheduleFormData.primaryTagID" style="width: 100%">
+          <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
+            {{ tag.title }}
+          </a-select-option>
         </a-select>
       </div>
 
@@ -90,21 +89,21 @@ import dayjs from 'dayjs';
 export default {
   mounted() {
     this.getSchedules();
-    this.getScheduleTags();
+    this.getTags();
   },
   data() {
     return {
       scheduleEditOverlayVisible: false,
       scheduleFormData: {
         title: '',
-        scheduleTagID: '',
+        primaryTagID: '',
         startDate: dayjs(),
         endDate: dayjs(),
         comments: ''
       },
       scheduleFormErrorMessage: '',
       schedules: [],
-      scheduleTags: [],
+      tags: [],
       scheduleFilterSettings: {
         details: false,
         search: ''
@@ -116,7 +115,7 @@ export default {
       this.scheduleEditOverlayVisible = false;
       this.scheduleFormData = {
         title: '',
-        scheduleTagID: '',
+        primaryTagID: '',
         startDate: dayjs(),
         endDate: dayjs(),
         comments: ''
@@ -142,7 +141,7 @@ export default {
         },
         body: JSON.stringify({
           title: this.scheduleFormData.title,
-          scheduleTagID: this.scheduleFormData.scheduleTagID,
+          primaryTagID: this.scheduleFormData.primaryTagID,
           startDate: this.scheduleFormData.startDate,
           endDate: this.scheduleFormData.endDate,
           comments: this.scheduleFormData.comments
@@ -160,7 +159,7 @@ export default {
     },
     configureScheduleForm(schedule) {
       this.scheduleFormData.title = schedule.title;
-      this.scheduleFormData.scheduleTagID = schedule.scheduleTagID;
+      this.scheduleFormData.primaryTagID = schedule.primaryTagID;
       this.scheduleFormData._id = schedule._id;
       this.scheduleFormData.comments = schedule.comments;
       this.scheduleFormData.startDate = dayjs(schedule.startDate);
@@ -176,7 +175,7 @@ export default {
         },
         body: JSON.stringify({
           title: this.scheduleFormData.title,
-          scheduleTagID: this.scheduleFormData.scheduleTagID,
+          primaryTagID: this.scheduleFormData.primaryTagID,
           comments: this.scheduleFormData.comments
         })
       }).then((response) => {
@@ -208,13 +207,13 @@ export default {
         });
       });
     },
-    getScheduleTags() {
-      fetch('/api/v1/schedule-tags', {
+    getTags() {
+      fetch('/api/v1/tags', {
         method: 'GET'
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 200) {
-            this.scheduleTags = data.data.scheduleTags;
+            this.tags = data.data.tags;
           }
         });
       });
