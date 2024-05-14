@@ -11,10 +11,10 @@
   </div>
 
   <template v-for="tag in tags" :key="tag._id">
-    <a-badge-ribbon :text="tag.color" :color="tag.color" style="top: -5px; right: 5px">
+    <a-badge-ribbon :text="tag.color" :color="tag.color" style="right: 5px">
       <a-card :title="tag.title" style="margin: 10px">
         <template #extra>
-          <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configuretagForm(tag)" />
+          <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureTagForm(tag)" />
         </template>
       </a-card>
     </a-badge-ribbon>
@@ -35,8 +35,9 @@
       <div class="mb-2">
         Type
         <a-select size="large" v-model:value="tagFormData.type" style="width: 100%">
-          <a-select-option value="normal" key="normal">Normal</a-select-option>
-          <a-select-option value="primary" key="primary">Primary</a-select-option>
+          <a-select-option value="normal" key="normal">Schedule</a-select-option>
+          <a-select-option value="primary" key="primary">Event Template</a-select-option>
+          <a-select-option value="normal" key="normal">Organizational</a-select-option>
         </a-select>
       </div>
 

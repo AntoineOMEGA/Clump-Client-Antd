@@ -12,7 +12,7 @@
 
   <template v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="schedule._id">
     <a-badge-ribbon :text="tags[tags.findIndex((tag) => tag._id === schedule.primaryTagID)].title"
-      :color="tags[tags.findIndex((tag) => tag._id === schedule.primaryTagID)].color" style="top: -5px; right: 5px"
+      :color="tags[tags.findIndex((tag) => tag._id === schedule.primaryTagID)].color" style="right: 5px"
       v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())">
       <a-card style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
         <template #extra>
