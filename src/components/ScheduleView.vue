@@ -11,24 +11,23 @@
   </div>
 
   <template v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="schedule._id">
-    <a-badge-ribbon :text="tags[tags.findIndex((tag) => tag._id === schedule.primaryTagID)].title"
-      :color="tags[tags.findIndex((tag) => tag._id === schedule.primaryTagID)].color" style="right: 5px"
-      v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())">
-      <a-card style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
-        <template #extra>
-          <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px; margin-top: 20px" key="calendar"
-            @click="console.log('Open Calendar')" />
-          <EditOutlined style="font-size: 1.5rem; margin-top: 20px" key="edit"
-            @click="configureScheduleForm(schedule)" />
-        </template>
-        <a-descriptions v-if="scheduleFilterSettings.details" bordered>
-          <a-descriptions-item label="Duration">
-            {{ dayjs(schedule.startDate).format('MM-DD-YYYY') + ' to ' + dayjs(schedule.endDate).format('MM-DD-YYYY') }}
-          </a-descriptions-item>
-          <a-descriptions-item label="Comments">{{ schedule.comments }}</a-descriptions-item>
-        </a-descriptions>
-      </a-card>
-    </a-badge-ribbon>
+    <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())"
+      style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
+      <template #extra>
+        <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px; margin-top: 20px" key="calendar"
+          @click="console.log('Open Calendar')" />
+        <EditOutlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureScheduleForm(schedule)" />
+      </template>
+      <a-descriptions v-if="scheduleFilterSettings.details" bordered>
+        <a-descriptions-item label="Duration">
+          {{ dayjs(schedule.startDate).format('MM-DD-YYYY') + ' to ' + dayjs(schedule.endDate).format('MM-DD-YYYY') }}
+        </a-descriptions-item>
+        <a-descriptions-item label="Comments">{{ schedule.comments }}</a-descriptions-item>
+      </a-descriptions>
+      <div>
+        <a-tag color="#f50">#f50</a-tag>
+      </div>
+    </a-card>
   </template>
 
   <a-drawer v-model:open="scheduleEditOverlayVisible" @close="resetScheduleForm()">
@@ -40,7 +39,7 @@
 
       <div class="mb-2">
         Tag
-        <a-select size="large" v-model:value="scheduleFormData.primaryTagID" style="width: 100%">
+        <a-select size="large" v-model:value="scheduleFormData.primaryTagID" style="width: 100%" mode="multiple">
           <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
             {{ tag.title }}
           </a-select-option>
@@ -96,7 +95,7 @@ export default {
       scheduleEditOverlayVisible: false,
       scheduleFormData: {
         title: '',
-        primaryTagID: '',
+        tagIDs: [],
         startDate: dayjs(),
         endDate: dayjs(),
         comments: ''
@@ -115,7 +114,7 @@ export default {
       this.scheduleEditOverlayVisible = false;
       this.scheduleFormData = {
         title: '',
-        primaryTagID: '',
+        tagIDs: [],
         startDate: dayjs(),
         endDate: dayjs(),
         comments: ''
@@ -141,7 +140,7 @@ export default {
         },
         body: JSON.stringify({
           title: this.scheduleFormData.title,
-          primaryTagID: this.scheduleFormData.primaryTagID,
+          tagIDs: [],
           startDate: this.scheduleFormData.startDate,
           endDate: this.scheduleFormData.endDate,
           comments: this.scheduleFormData.comments
@@ -159,7 +158,7 @@ export default {
     },
     configureScheduleForm(schedule) {
       this.scheduleFormData.title = schedule.title;
-      this.scheduleFormData.primaryTagID = schedule.primaryTagID;
+      this.scheduleFormData.tagIDs = schedule.tagIDs;
       this.scheduleFormData._id = schedule._id;
       this.scheduleFormData.comments = schedule.comments;
       this.scheduleFormData.startDate = dayjs(schedule.startDate);
@@ -175,7 +174,7 @@ export default {
         },
         body: JSON.stringify({
           title: this.scheduleFormData.title,
-          primaryTagID: this.scheduleFormData.primaryTagID,
+          tagIDs: this.scheduleFormData.tagIDs,
           comments: this.scheduleFormData.comments
         })
       }).then((response) => {
