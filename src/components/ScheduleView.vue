@@ -18,7 +18,7 @@
           @click="configureScheduleViewer(schedule)" />
         <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureScheduleForm(schedule)" />
       </template>
-      <div style="padding: 10px; background-color: #333333;">
+      <div style="padding: 10px; background-color: #333333;" v-if="schedule.tagIDs.length > 0">
         <a-tag v-for="tagID in schedule.tagIDs" :key="tagID"
           :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
           {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
@@ -219,8 +219,8 @@
         Days of Week
         <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear
           mode="multiple">
-          <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)" :value="weekDay"
-            :key="weekDay">
+          <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)"
+            :value="recurrenceRuleOptions.advFreq.ByDay[weekDay]" :key="weekDay">
             {{ weekDay }}
           </a-select-option>
         </a-select>
@@ -265,7 +265,9 @@ import dayjs from 'dayjs';
 export default {
   mounted() {
     this.getSchedules();
+    this.getEventTemplates();
     this.getTags();
+    this.fetchCombine();
   },
   data() {
     return {
@@ -280,6 +282,7 @@ export default {
       },
       scheduleFormErrorMessage: '',
       schedules: [],
+      eventTemplates: [],
       tags: [],
       scheduleFilterSettings: {
         details: false,
@@ -314,7 +317,15 @@ export default {
 
       timeZones: new Intl.Locale('en-US').timeZones,
       recurrenceRuleOptions: {
-        freq: ['Once', 'Daily', 'Weekly', 'Monthly by Day', 'Monthly by Date', 'Yearly by Day', 'Yearly by Date'],
+        freq: [
+          'Once',
+          'Daily',
+          'Weekly',
+          //'Monthly by Day',
+          //'Monthly by Date',
+          //'Yearly by Day',
+          //'Yearly by Date'
+        ],
         advFreq: {
           ByDay: {
             Monday: 'MO',
@@ -375,8 +386,6 @@ export default {
           }
         }
       },
-
-      eventTemplates: [],
     };
   },
   computed: {
@@ -492,6 +501,17 @@ export default {
         });
       });
     },
+    getEventTemplates() {
+      fetch('/api/v1/event-templates', {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            this.eventTemplates = data.data.eventTemplates;
+          }
+        });
+      });
+    },
     getTags() {
       fetch('/api/v1/tags', {
         method: 'GET'
@@ -531,24 +551,29 @@ export default {
       this.eventFormErrorMessage = '';
     },
     createEvent() {
-      if (this.eventFormData.eventTemplateID != '') {
-        this.eventFormData.title = this.objectifiedEventTemplates[this.eventFormData.eventTemplateID].title;
-        this.eventFormData.description = this.objectifiedEventTemplates[this.eventFormData.eventTemplateID].description;
-        this.eventFormData.location = this.objectifiedEventTemplates[this.eventFormData.eventTemplateID].location;
+      let eventBody;
+
+      if (this.eventFormData.eventTemplateID == '') {
+        eventBody = {
+          title: this.eventFormData.title,
+          description: this.eventFormData.description,
+          location: this.eventFormData.location,
+          startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.startTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.startTime, "HH:mm:ss").second()),
+          endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.endTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.endTime, "HH:mm:ss").second()),
+
+          scheduleID: this.eventFormData.scheduleID,
+        };
+      } else {
+        eventBody = {
+          startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.startTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.startTime, "HH:mm:ss").second()),
+          endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.endTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.endTime, "HH:mm:ss").second()),
+
+          shiftID: this.eventFormData.shiftID,
+
+          scheduleID: this.eventFormData.scheduleID,
+          eventTemplateID: this.eventFormData.eventTemplateID
+        };
       }
-
-      let eventBody = {
-        title: this.eventFormData.title,
-        description: this.eventFormData.description,
-        location: this.eventFormData.location,
-        startDateTime: dayjs(this.eventFormData.startDate + 'T' + this.eventFormData.startTime),
-        endDateTime: dayjs(this.eventFormData.endDate + 'T' + this.eventFormData.endTime),
-
-        shiftID: this.eventFormData.shiftID,
-
-        scheduleID: this.eventFormData.scheduleID,
-        eventTemplateID: this.eventFormData.eventTemplateID
-      };
 
       if (this.eventFormData.recurrence.frequency == 'Once') {
         eventBody.recurrence = {
@@ -702,6 +727,15 @@ export default {
           } else {
             this.eventFormErrorMessage = data.message;
           }
+        });
+      });
+    },
+    fetchCombine() {
+      fetch('/api/v1/schedules/combine', {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          console.log(data);
         });
       });
     }

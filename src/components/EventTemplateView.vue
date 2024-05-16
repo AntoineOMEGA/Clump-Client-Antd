@@ -19,7 +19,7 @@
           @click="eventTemplateScheduleVisible = !eventTemplateScheduleVisible" />
         <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
       </template>
-      <div style="padding: 10px; background-color: #333333;">
+      <div style="padding: 10px; background-color: #333333;" v-if="eventTemplate.tagIDs.length > 0">
         <a-tag v-for="tagID in eventTemplate.tagIDs" :key="tagID"
           :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
           {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
