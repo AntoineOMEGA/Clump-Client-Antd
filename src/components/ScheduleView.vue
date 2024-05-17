@@ -451,8 +451,8 @@ export default {
       };
       this.eventFormErrorMessage = '';
     },
-    createEvent() {
-      let eventBody;
+    createEventBody() {
+      let eventBody = {};
 
       if (this.eventFormData.eventTemplateID == '') {
         eventBody = {
@@ -497,6 +497,11 @@ export default {
         }
       }
 
+      return eventBody;
+    },
+    createEvent() {
+      let eventBody = this.createEventBody();
+
       fetch('/api/v1/events', {
         method: 'POST',
         headers: {
@@ -534,45 +539,7 @@ export default {
       this.eventEditAdvanced = false;
     },
     updateEvent() {
-      if (this.eventFormData.eventTemplateID != '') {
-        this.eventFormData.title = this.objectifiedEventTemplates[this.eventFormData.eventTemplateID].title;
-        this.eventFormData.description = this.objectifiedEventTemplates[this.eventFormData.eventTemplateID].description;
-        this.eventFormData.location = this.objectifiedEventTemplates[this.eventFormData.eventTemplateID].location;
-      }
-
-      let eventBody = {
-        title: this.eventFormData.title,
-        description: this.eventFormData.description,
-        location: this.eventFormData.location,
-        startDateTime: this.eventFormData.startDate + 'T' + this.convertToMilitaryTime(this.eventFormData.startTime) + ':00',
-        endDateTime: this.eventFormData.endDate + 'T' + this.convertToMilitaryTime(this.eventFormData.endTime) + ':00',
-
-        shiftID: this.eventFormData.shiftID,
-
-        scheduleID: this.eventFormData.scheduleID,
-        eventTemplateID: this.eventFormData.eventTemplateID
-      };
-
-      if (this.eventFormData.recurrence.frequency == 'Once') {
-        eventBody.recurrence = {
-          frequency: 'Once'
-        };
-      } else {
-        eventBody.recurrence = {};
-
-        eventBody.recurrence.interval = this.eventFormData.recurrence.interval;
-
-        if (this.eventFormData.until != '') {
-          eventBody.until = new Date(this.eventFormData.until);
-        }
-
-        if (this.eventFormData.recurrence.frequency == 'Daily') {
-          eventBody.recurrence.frequency = 'Daily';
-        } else if (this.eventFormData.recurrence.frequency == 'Weekly') {
-          eventBody.recurrence.frequency = 'Weekly';
-          eventBody.recurrence.byDay = this.eventFormData.recurrence.byDay;
-        }
-      }
+      let eventBody = this.createEventBody();
 
       fetch('/api/v1/events/' + this.eventFormData._id, {
         method: 'PUT',
