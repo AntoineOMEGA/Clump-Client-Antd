@@ -190,29 +190,9 @@
         </a-select>
       </div>
 
-      <div v-if="['Daily', 'Weekly', 'Monthly by Day'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+      <div v-if="['Daily', 'Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
         Interval
         <a-input type="number" v-model:value="eventFormData.recurrence.interval" allowClear></a-input>
-      </div>
-
-      <div v-if="['Yearly by Day', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)" class="mb-2">
-        Month
-        <a-select v-model:value="eventFormData.recurrence.ByMonth" size="large" style="width: 100%" allowClear>
-          <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.advFreq.ByMonth)" :value="month"
-            :key="month">
-            {{ month }}
-          </a-select-option>
-        </a-select>
-      </div>
-
-      <div v-if="['Monthly by Day', 'Yearly by Day'].includes(eventFormData.recurrence.frequency)" class="mb-2">
-        Occurrences of Week Days in Month
-        <a-select v-model:value="eventFormData.recurrence.ByDayMonthly" size="large" style="width: 100%" allowClear
-          mode="multiple">
-          <a-select-option v-for="monthDay in Object.keys(generatedMonthDays)" :value="monthDay" :key="monthDay">
-            {{ monthDay }}
-          </a-select-option>
-        </a-select>
       </div>
 
       <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
@@ -226,16 +206,6 @@
         </a-select>
       </div>
 
-      <div v-if="['Monthly by Date', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)" class="mb-2">
-        Day in Month
-        <a-select v-model:value="eventFormData.recurrence.ByMonthDay" size="large" style="width: 100%" allowClear
-          mode="multiple">
-          <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.advFreq.ByMonthDay)"
-            :value="dayInMonth" :key="dayInMonth">
-            {{ dayInMonth }}
-          </a-select-option>
-        </a-select>
-      </div>
 
       <div v-if="eventFormData.recurrence.frequency != 'Once'" class="mb-2">
         Until Date
@@ -304,10 +274,7 @@ export default {
           frequency: 'Once',
           interval: 0,
           count: 0,
-          byDay: [],
-          byDayMonthly: [],
-          byMonth: 0,
-          byMonthDay: [0]
+          byDay: []
         },
         until: '',
         scheduleID: '',
@@ -320,11 +287,7 @@ export default {
         freq: [
           'Once',
           'Daily',
-          'Weekly',
-          //'Monthly by Day',
-          //'Monthly by Date',
-          //'Yearly by Day',
-          //'Yearly by Date'
+          'Weekly'
         ],
         advFreq: {
           ByDay: {
@@ -336,68 +299,9 @@ export default {
             Saturday: 'SA',
             Sunday: 'SU'
           },
-          ByDayExtended: { '1st': 1, '2nd': 2, '3rd': 3, '4th': 4, '5th': 5, Last: -1 },
-          ByMonthDay: {
-            '1st': 1,
-            '2nd': 2,
-            '3rd': 3,
-            '4th': 4,
-            '5th': 5,
-            '6th': 6,
-            '7th': 7,
-            '8th': 8,
-            '9th': 9,
-            '10th': 10,
-            '11th': 11,
-            '12th': 12,
-            '13th': 13,
-            '14th': 14,
-            '15th': 15,
-            '16th': 16,
-            '17th': 17,
-            '18th': 18,
-            '19th': 19,
-            '20th': 20,
-            '21st': 21,
-            '22nd': 22,
-            '23rd': 23,
-            '24th': 24,
-            '25th': 25,
-            '26th': 26,
-            '27th': 27,
-            '28th': 28,
-            '29th': 29,
-            '30th': 30,
-            '31st': 31
-          },
-          ByMonth: {
-            January: 1,
-            February: 2,
-            March: 3,
-            April: 4,
-            May: 5,
-            June: 6,
-            July: 7,
-            August: 8,
-            September: 9,
-            October: 10,
-            November: 11,
-            December: 12
-          }
         }
       },
     };
-  },
-  computed: {
-    generatedMonthDays() {
-      let monthDays = {};
-      for (let dayExtended of Object.keys(this.recurrenceRuleOptions.advFreq.ByDayExtended)) {
-        for (let day of Object.keys(this.recurrenceRuleOptions.advFreq.ByDay)) {
-          monthDays[dayExtended + ' ' + day] = this.recurrenceRuleOptions.advFreq.ByDayExtended[dayExtended] + this.recurrenceRuleOptions.advFreq.ByDay[day];
-        }
-      }
-      return monthDays;
-    }
   },
   methods: {
     configureScheduleViewer(schedule) {
@@ -540,9 +444,6 @@ export default {
           interval: 0,
           count: 0,
           byDay: [],
-          byDayMonthly: [],
-          byMonth: 0,
-          byMonthDay: [0]
         },
         until: '',
         scheduleID: '',
@@ -593,20 +494,6 @@ export default {
         } else if (this.eventFormData.recurrence.frequency == 'Weekly') {
           eventBody.recurrence.frequency = 'Weekly';
           eventBody.recurrence.byDay = this.eventFormData.recurrence.byDay;
-        } else if (this.eventFormData.recurrence.frequency == 'Monthly by Day') {
-          eventBody.recurrence.frequency = 'Monthly by Day';
-          eventBody.recurrence.byDayMonthly = this.eventFormData.recurrence.byDayMonthly;
-        } else if (this.eventFormData.recurrence.frequency == 'Monthly by Date') {
-          eventBody.recurrence.frequency = 'Monthly by Date';
-          eventBody.recurrence.byMonthDay = this.eventFormData.recurrence.byMonthDay;
-        } else if (this.eventFormData.recurrence.frequency == 'Yearly by Day') {
-          eventBody.recurrence.frequency = 'Yearly by Day';
-          eventBody.recurrence.byDayMonthly = this.eventFormData.recurrence.byDayMonthly;
-          eventBody.recurrence.byMonth = this.eventFormData.recurrence.byMonth;
-        } else if (this.eventFormData.recurrence.frequency == 'Yearly by Date') {
-          eventBody.recurrence.frequency = 'Yearly by Date';
-          eventBody.recurrence.byMonthDay = this.eventFormData.recurrence.byMonthDay;
-          eventBody.recurrence.byMonth = this.eventFormData.recurrence.byMonth;
         }
       }
 
@@ -684,20 +571,6 @@ export default {
         } else if (this.eventFormData.recurrence.frequency == 'Weekly') {
           eventBody.recurrence.frequency = 'Weekly';
           eventBody.recurrence.byDay = this.eventFormData.recurrence.byDay;
-        } else if (this.eventFormData.recurrence.frequency == 'Monthly by Day') {
-          eventBody.recurrence.frequency = 'Monthly by Day';
-          eventBody.recurrence.byDayMonthly = this.eventFormData.recurrence.byDayMonthly;
-        } else if (this.eventFormData.recurrence.frequency == 'Monthly by Date') {
-          eventBody.recurrence.frequency = 'Monthly by Date';
-          eventBody.recurrence.byMonthDay = this.eventFormData.recurrence.byMonthDay;
-        } else if (this.eventFormData.recurrence.frequency == 'Yearly by Day') {
-          eventBody.recurrence.frequency = 'Yearly by Day';
-          eventBody.recurrence.byDayMonthly = this.eventFormData.recurrence.byDayMonthly;
-          eventBody.recurrence.byMonth = this.eventFormData.recurrence.byMonth;
-        } else if (this.eventFormData.recurrence.frequency == 'Yearly by Date') {
-          eventBody.recurrence.frequency = 'Yearly by Date';
-          eventBody.recurrence.byMonthDay = this.eventFormData.recurrence.byMonthDay;
-          eventBody.recurrence.byMonth = this.eventFormData.recurrence.byMonth;
         }
       }
 
