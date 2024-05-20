@@ -141,16 +141,7 @@
           </a-select-option>
         </a-select>
       </div>
-      <!--
-      <div v-if="eventFormData.eventTemplateID" class="mb-2">
-        Shift
-        <a-select v-model:value="eventFormData.shiftID">
-          <a-select-option v-for="shift in timeZones" :value="timeZone" :key="timeZone">
-            {{ timeZone }}
-          </a-select-option>
-        </a-select>
-      </div>
-      -->
+
       <div class="mb-2">
         <a-flex justify="space-around" align="middle" gap="middle">
           <div>
@@ -279,7 +270,6 @@ export default {
         until: '',
         scheduleID: '',
         eventTemplateID: '',
-        shiftID: ''
       },
 
       timeZones: new Intl.Locale('en-US').timeZones,
@@ -469,8 +459,6 @@ export default {
           startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.startTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.startTime, "HH:mm:ss").second()),
           endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.endTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.endTime, "HH:mm:ss").second()),
 
-          shiftID: this.eventFormData.shiftID,
-
           scheduleID: this.eventFormData.scheduleID,
           eventTemplateID: this.eventFormData.eventTemplateID
         };
@@ -533,7 +521,6 @@ export default {
 
       this.eventFormData.scheduleID = event.scheduleID;
       this.eventFormData.eventTemplateID = event.eventTemplateID;
-      this.eventFormData.shiftID = event.shiftID;
 
       this.eventEditOverlayVisible = true;
       this.eventEditAdvanced = false;

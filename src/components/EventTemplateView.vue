@@ -59,19 +59,6 @@
         <a-textarea v-model:value="eventTemplateFormData.comments" size="large"></a-textarea>
       </div>
 
-      <a-card class="mb-2">
-        <a-card-meta title="Shifts"></a-card-meta>
-        <p v-if="!eventTemplateFormData._id">You must create the Event Template before creating shifts.</p>
-        <div v-if="eventTemplateFormData._id">
-          <div v-for="shift in shifts" :key="shift._id">
-            <a-card v-if="shift.eventTemplateID == eventTemplateFormData._id" @click="configureUpdateShiftForm(shift)">
-              <a-card-meta :title="shift.startTime + ' - ' + shift.endTime"></a-card-meta>
-            </a-card>
-          </div>
-          <a-button @click="shiftEditOverlayVisible = !shiftEditOverlayVisible">New Shift</a-button>
-        </div>
-      </a-card>
-
       <a-card v-if="eventTemplateFormErrorMessage != ''">
         <a-card-meta :title="eventTemplateFormErrorMessage"></a-card-meta>
       </a-card>
@@ -83,37 +70,6 @@
           @click="updateEventTemplate()">Save</a-button>
         <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
           @click="deleteEventTemplate()">Delete</a-button>
-      </a-flex>
-    </a-form>
-  </a-drawer>
-
-  <a-drawer v-model:open="shiftEditOverlayVisible" @close="resetShiftForm()">
-    <a-form>
-      <div class="mb-2">
-        <a-flex>
-          <div>
-            Start Time
-            <a-time-picker size="large" format="hh:mm A" use12-hours :minute-step="15"
-              v-model:value="shiftFormData.startTime"></a-time-picker>
-          </div>
-
-          <div>
-            End Time
-            <a-time-picker size="large" format="hh:mm A" use12-hours :minute-step="15"
-              v-model:value="shiftFormData.endTime" valueFormat="HH:mm A"></a-time-picker>
-          </div>
-        </a-flex>
-      </div>
-
-      <a-card v-if="shiftFormErrorMessage != ''">
-        <a-card-meta :title="shiftFormErrorMessage"></a-card-meta>
-      </a-card>
-
-      <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!shiftFormData._id" @click="createShift()">Create</a-button>
-        <a-button type="primary" size="large" block v-if="shiftFormData._id" @click="updateShift()">Save</a-button>
-        <a-button type="primary" size="large" block danger v-if="shiftFormData._id"
-          @click="deleteShift()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -174,7 +130,6 @@ import { EditOutlined, PlusOutlined, CalendarOutlined } from '@ant-design/icons-
 export default {
   mounted() {
     this.getEventTemplates();
-    this.getShifts();
     this.getTags();
   },
   data() {
@@ -193,13 +148,6 @@ export default {
       eventTemplateFilterSettings: {
         search: ''
       },
-      shiftEditOverlayVisible: false,
-      shiftFormData: {
-        startTime: '',
-        endTime: ''
-      },
-      shiftFormErrorMessage: '',
-      shifts: [],
       tags: [],
       toggleMoreDetails: false
     };
@@ -312,90 +260,6 @@ export default {
         });
       });
     },
-    getShifts() {
-      fetch('/api/v1/shifts', {
-        method: 'GET'
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 200) {
-            this.shifts = data.data.shifts;
-          }
-        });
-      });
-    },
-    resetShiftForm() {
-      this.shiftFormData = {
-        startTime: '',
-        endTime: ''
-      };
-      this.shiftEditOverlayVisible = false;
-      this.shiftFormErrorMessage = '';
-    },
-    createShift() {
-      fetch('/api/v1/shifts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          eventTemplateID: this.eventTemplateFormData._id,
-          startTime: this.shiftFormData.startTime,
-          endTime: this.shiftFormData.endTime
-        })
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 201) {
-            this.shifts.push(data.data.shift);
-            this.resetShiftForm();
-          } else {
-            this.shiftFormErrorMessage = data.message;
-          }
-        });
-      });
-    },
-    configureUpdateShiftForm(shift) {
-      this.shiftFormData._id = shift._id;
-      this.shiftFormData.startTime = shift.startTime;
-      this.shiftFormData.endTime = shift.endTime;
-
-      this.shiftEditOverlayVisible = true;
-    },
-    updateShift() {
-      fetch('/api/v1/shifts/' + this.shiftFormData._id, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          startTime: this.shiftFormData.startTime,
-          endTime: this.shiftFormData.endTime
-        })
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 200) {
-            let indexOfUpdatedShift = this.shifts.findIndex((shift) => shift._id === data.data.shift._id);
-            this.shifts[indexOfUpdatedShift] = data.data.shift;
-            this.resetShiftForm();
-          } else {
-            this.shiftFormErrorMessage = data.message;
-          }
-        });
-      });
-    },
-    deleteShift() {
-      fetch('/api/v1/shifts/' + this.shiftFormData._id, {
-        method: 'DELETE'
-      }).then((response) => {
-        if (response.status === 204) {
-          let indexOfDeletedShift = this.shifts.findIndex((shift) => shift._id === this.shiftFormData._id);
-          this.shifts.splice(indexOfDeletedShift, 1);
-
-          this.resetShiftForm();
-        } else {
-          this.shiftFormErrorMessage = response.status;
-        }
-      });
-    }
   }
 };
 </script>
