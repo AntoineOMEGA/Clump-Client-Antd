@@ -1,6 +1,5 @@
 <template>
-  <a-float-button type="primary" style="height: 60px; width: 60px"
-    @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
+  <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -11,17 +10,13 @@
   </div>
 
   <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
-    <a-card style="margin: 10px"
-      v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())"
-      :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
+    <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
       <template #extra>
-        <CalendarOutlined style="font-size: 1.5rem; margin-right: 10px" key="edit"
-          @click="eventTemplateScheduleVisible = !eventTemplateScheduleVisible" />
+        <CalendarOutlined style="font-size: 1.5rem; margin-right: 10px" key="edit" @click="eventTemplateScheduleVisible = !eventTemplateScheduleVisible" />
         <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
       </template>
-      <div style="padding: 10px; background-color: #333333;" v-if="eventTemplate.tagIDs.length > 0">
-        <a-tag v-for="tagID in eventTemplate.tagIDs" :key="tagID"
-          :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+      <div style="padding: 10px; background-color: #333333" v-if="eventTemplate.tagIDs.length > 0">
+        <a-tag v-for="tagID in eventTemplate.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
           {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
         </a-tag>
       </div>
@@ -54,22 +49,14 @@
         <a-input v-model:value="eventTemplateFormData.description" size="large"></a-input>
       </div>
 
-      <div class="mb-2">
-        Comments
-        <a-textarea v-model:value="eventTemplateFormData.comments" size="large"></a-textarea>
-      </div>
-
       <a-card v-if="eventTemplateFormErrorMessage != ''">
         <a-card-meta :title="eventTemplateFormErrorMessage"></a-card-meta>
       </a-card>
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id"
-          @click="createEventTemplate()">Create</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
-          @click="updateEventTemplate()">Save</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
-          @click="deleteEventTemplate()">Delete</a-button>
+        <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id" @click="createEventTemplate()">Create</a-button>
+        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="updateEventTemplate()">Save</a-button>
+        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="deleteEventTemplate()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -83,8 +70,7 @@
       </a-statistic>
     </a-card>
 
-    <a-card title="Tuesday 17th, March 2024" :bodyStyle="{ padding: '5px' }"
-      style="margin-bottom: 10px; background-color: #333">
+    <a-card title="Tuesday 17th, March 2024" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 10px; background-color: #333">
       <a-card title="9:00am - 12:00pm | Shift" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
         <template #extra>
           <a-badge color="#22a2ff" count="4" style="color: #fff">
@@ -92,13 +78,10 @@
           </a-badge>
         </template>
         <a-card title="9:00am - 11:00am" style="background-color: #333" :bodyStyle="{ padding: '5px' }">
-          <a-tag color="#ffb7f5"
-            style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px"
-            @click="console.log('hi')">Bart.Anthony</a-tag>
+          <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px" @click="console.log('hi')">Bart.Anthony</a-tag>
         </a-card>
         <a-card title="9:00am - 12:00pm" style="background-color: #333" :bodyStyle="{ padding: '5px' }">
-          <a-tag color="#ffb735"
-            style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
+          <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
         </a-card>
       </a-card>
       <a-card title="1:00 - 4:00pm" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
@@ -107,14 +90,11 @@
             <UserOutlined style="font-size: 1.2rem" />
           </a-badge>
         </template>
-        <a-tag color="#ffb7f5"
-          style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Bart.Anthony</a-tag>
-
+        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Bart.Anthony</a-tag>
       </a-card>
     </a-card>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px"
-      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
@@ -140,8 +120,7 @@ export default {
         title: '',
         tagIDs: [],
         location: '',
-        description: '',
-        comments: ''
+        description: ''
       },
       eventTemplateFormErrorMessage: '',
       eventTemplates: [],
@@ -184,8 +163,7 @@ export default {
           title: this.eventTemplateFormData.title,
           tagIDs: this.eventTemplateFormData.tagIDs,
           location: this.eventTemplateFormData.location,
-          description: this.eventTemplateFormData.description,
-          comments: this.eventTemplateFormData.comments
+          description: this.eventTemplateFormData.description
         })
       }).then((response) => {
         response.json().then((data) => {
@@ -204,7 +182,6 @@ export default {
       this.eventTemplateFormData.tagIDs = eventTemplate.tagIDs;
       this.eventTemplateFormData.description = eventTemplate.description;
       this.eventTemplateFormData.location = eventTemplate.location;
-      this.eventTemplateFormData.comments = eventTemplate.comments;
 
       this.eventTemplateEditOverlayVisible = true;
     },
@@ -218,8 +195,7 @@ export default {
           title: this.eventTemplateFormData.title,
           tagIDs: this.eventTemplateFormData.tagIDs,
           location: this.eventTemplateFormData.location,
-          description: this.eventTemplateFormData.description,
-          comments: this.eventTemplateFormData.comments
+          description: this.eventTemplateFormData.description
         })
       }).then((response) => {
         response.json().then((data) => {
@@ -259,7 +235,7 @@ export default {
           }
         });
       });
-    },
+    }
   }
 };
 </script>

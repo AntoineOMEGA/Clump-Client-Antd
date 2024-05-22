@@ -1,26 +1,22 @@
 <template>
-  <a-float-button type="primary" @click="scheduleEditOverlayVisible = !scheduleEditOverlayVisible"
-    style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="scheduleEditOverlayVisible = !scheduleEditOverlayVisible" style="height: 60px; width: 60px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
   </a-float-button>
 
-  <div style="margin: 10px;margin-bottom: 15px;">
+  <div style="margin: 10px; margin-bottom: 15px">
     <a-input size="large" addonBefore="Search" v-model:value="scheduleFilterSettings.search"></a-input>
   </div>
 
   <template v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="schedule._id">
-    <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())"
-      style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
+    <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())" style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
       <template #extra>
-        <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar"
-          @click="configureScheduleViewer(schedule)" />
+        <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar" @click="configureScheduleViewer(schedule)" />
         <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureScheduleForm(schedule)" />
       </template>
-      <div style="padding: 10px; background-color: #333333;" v-if="schedule.tagIDs.length > 0">
-        <a-tag v-for="tagID in schedule.tagIDs" :key="tagID"
-          :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+      <div style="padding: 10px; background-color: #333333" v-if="schedule.tagIDs.length > 0">
+        <a-tag v-for="tagID in schedule.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
           {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
         </a-tag>
       </div>
@@ -28,11 +24,8 @@
   </template>
 
   <a-drawer v-model:open="scheduleViewerOverlayVisible">
-    <a-card title="Tuesday 17th, March 2024" style="background-color: #333; margin-bottom: 20px"
-      :bodyStyle="{ padding: '5px' }">
-      <a-button
-        style="height: auto; text-align: left; margin-bottom: 10px; padding: 15px; padding-top: 10px; padding-bottom: 10px"
-        block>
+    <a-card title="Tuesday 17th, March 2024" style="background-color: #333; margin-bottom: 20px" :bodyStyle="{ padding: '5px' }">
+      <a-button style="height: auto; text-align: left; margin-bottom: 10px; padding: 15px; padding-top: 10px; padding-bottom: 10px" block>
         <a-flex justify="space-between">
           <div>
             <a-typography-title :level="5">9:00am - 12:00pm</a-typography-title>
@@ -43,8 +36,7 @@
       </a-button>
     </a-card>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px"
-      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
@@ -80,41 +72,29 @@
         </a-flex>
       </div>
 
-      <div class="mb-2">
-        Comments
-        <a-textarea size="large" v-model:value="scheduleFormData.comments"></a-textarea>
-      </div>
-
-      <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2"
-        v-if="scheduleFormErrorMessage != ''" />
+      <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2" v-if="scheduleFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button v-if="!scheduleFormData._id" type="primary" size="large" block
-          @click="createSchedule()">Create</a-button>
-        <a-button v-if="scheduleFormData._id" type="primary" size="large" block
-          @click="updateSchedule()">Save</a-button>
-        <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger
-          @click="deleteSchedule()">Archive</a-button>
+        <a-button v-if="!scheduleFormData._id" type="primary" size="large" block @click="createSchedule()">Create</a-button>
+        <a-button v-if="scheduleFormData._id" type="primary" size="large" block @click="updateSchedule()">Save</a-button>
+        <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger @click="deleteSchedule()">Archive</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
-
 
   <a-drawer v-model:open="eventEditOverlayVisible" @close="resetEventForm()">
     <a-form>
       <div class="mb-2">
         Schedule
         <a-select v-model:value="eventFormData.scheduleID" size="large" style="width: 100%" allowClear>
-          <a-select-option v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))"
-            :value="schedule._id" :key="schedule._id">{{ schedule.title }}</a-select-option>
+          <a-select-option v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="schedule._id" :key="schedule._id">{{ schedule.title }}</a-select-option>
         </a-select>
       </div>
 
       <div class="mb-2">
         Event Template
         <a-select v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
-          <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))"
-            :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
+          <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
         </a-select>
       </div>
 
@@ -146,13 +126,11 @@
         <a-flex justify="space-around" align="middle" gap="middle">
           <div>
             Start Time
-            <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5"
-              allowClear></a-time-picker>
+            <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
           </div>
           <div>
             End Time
-            <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5"
-              allowClear></a-time-picker>
+            <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
           </div>
         </a-flex>
       </div>
@@ -161,13 +139,11 @@
         <a-flex justify="space-around" align="middle" gap="middle">
           <div>
             Start Date
-            <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY"
-              allowClear></a-date-picker>
+            <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY" allowClear></a-date-picker>
           </div>
           <div>
             End Date
-            <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY"
-              allowClear></a-date-picker>
+            <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY" allowClear></a-date-picker>
           </div>
         </a-flex>
       </div>
@@ -188,31 +164,25 @@
 
       <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
         Days of Week
-        <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear
-          mode="multiple">
-          <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)"
-            :value="recurrenceRuleOptions.advFreq.ByDay[weekDay]" :key="weekDay">
+        <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear mode="multiple">
+          <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)" :value="recurrenceRuleOptions.advFreq.ByDay[weekDay]" :key="weekDay">
             {{ weekDay }}
           </a-select-option>
         </a-select>
       </div>
 
-
       <div v-if="eventFormData.recurrence.frequency != 'Once'" class="mb-2">
         Until Date
-        <a-date-picker size="large" v-model:value="eventFormData.until" format="MM-DD-YYYY" style="width: 100%"
-          allowClear></a-date-picker>
+        <a-date-picker size="large" v-model:value="eventFormData.until" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
       </div>
     </a-form>
 
-    <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2"
-      v-if="eventFormErrorMessage != ''" />
+    <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
 
     <a-flex justify="space-around" align="middle" gap="middle">
       <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
       <a-button v-if="eventFormData._id" type="primary" size="large" block @click="updateEvent()">Save</a-button>
-      <a-button v-if="eventFormData._id" type="primary" size="large" block danger
-        @click="deleteEvent()">Delete</a-button>
+      <a-button v-if="eventFormData._id" type="primary" size="large" block danger @click="deleteEvent()">Delete</a-button>
     </a-flex>
   </a-drawer>
 </template>
@@ -238,8 +208,7 @@ export default {
         title: '',
         tagIDs: [],
         startDate: dayjs(),
-        endDate: dayjs(),
-        comments: ''
+        endDate: dayjs()
       },
       scheduleFormErrorMessage: '',
       schedules: [],
@@ -269,16 +238,12 @@ export default {
         },
         until: '',
         scheduleID: '',
-        eventTemplateID: '',
+        eventTemplateID: ''
       },
 
       timeZones: new Intl.Locale('en-US').timeZones,
       recurrenceRuleOptions: {
-        freq: [
-          'Once',
-          'Daily',
-          'Weekly'
-        ],
+        freq: ['Once', 'Daily', 'Weekly'],
         advFreq: {
           ByDay: {
             Monday: 'MO',
@@ -288,9 +253,9 @@ export default {
             Friday: 'FR',
             Saturday: 'SA',
             Sunday: 'SU'
-          },
+          }
         }
-      },
+      }
     };
   },
   methods: {
@@ -305,8 +270,7 @@ export default {
         title: '',
         tagIDs: [],
         startDate: dayjs(),
-        endDate: dayjs(),
-        comments: ''
+        endDate: dayjs()
       };
       this.scheduleFormErrorMessage = '';
     },
@@ -331,8 +295,7 @@ export default {
           title: this.scheduleFormData.title,
           tagIDs: this.scheduleFormData.tagIDs,
           startDate: this.scheduleFormData.startDate,
-          endDate: this.scheduleFormData.endDate,
-          comments: this.scheduleFormData.comments
+          endDate: this.scheduleFormData.endDate
         })
       }).then((response) => {
         response.json().then((data) => {
@@ -349,7 +312,6 @@ export default {
       this.scheduleFormData.title = schedule.title;
       this.scheduleFormData.tagIDs = schedule.tagIDs;
       this.scheduleFormData._id = schedule._id;
-      this.scheduleFormData.comments = schedule.comments;
       this.scheduleFormData.startDate = dayjs(schedule.startDate);
       this.scheduleFormData.endDate = dayjs(schedule.endDate);
 
@@ -363,8 +325,7 @@ export default {
         },
         body: JSON.stringify({
           title: this.scheduleFormData.title,
-          tagIDs: this.scheduleFormData.tagIDs,
-          comments: this.scheduleFormData.comments
+          tagIDs: this.scheduleFormData.tagIDs
         })
       }).then((response) => {
         response.json().then((data) => {
@@ -433,7 +394,7 @@ export default {
           frequency: 'Once',
           interval: 0,
           count: 0,
-          byDay: [],
+          byDay: []
         },
         until: '',
         scheduleID: '',
@@ -449,15 +410,15 @@ export default {
           title: this.eventFormData.title,
           description: this.eventFormData.description,
           location: this.eventFormData.location,
-          startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.startTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.startTime, "HH:mm:ss").second()),
-          endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.endTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.endTime, "HH:mm:ss").second()),
+          startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
+          endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
 
-          scheduleID: this.eventFormData.scheduleID,
+          scheduleID: this.eventFormData.scheduleID
         };
       } else {
         eventBody = {
-          startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.startTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.startTime, "HH:mm:ss").second()),
-          endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, "HH:mm:ss").hour()).minute(dayjs(this.eventFormData.endTime, "HH:mm:ss").minute()).second(dayjs(this.eventFormData.endTime, "HH:mm:ss").second()),
+          startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
+          endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
 
           scheduleID: this.eventFormData.scheduleID,
           eventTemplateID: this.eventFormData.eventTemplateID
