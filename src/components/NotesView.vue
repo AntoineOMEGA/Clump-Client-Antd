@@ -1,5 +1,6 @@
 <template>
-  <a-float-button type="primary" @click="noteEditOverlayVisible = !noteEditOverlayVisible" style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="noteEditOverlayVisible = !noteEditOverlayVisible"
+    style="height: 60px; width: 60px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -15,6 +16,7 @@
         <template #extra>
           <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureNoteForm(note)" />
         </template>
+        <p>{{ note.note }}</p>
       </a-card>
     </a-badge-ribbon>
   </template>
@@ -40,12 +42,14 @@
         </a-select>
       </div>
 
-      <a-alert message="Error" :description="noteFormErrorMessage" type="error" class="mb-2" v-if="noteFormErrorMessage != ''" />
+      <a-alert message="Error" :description="noteFormErrorMessage" type="error" class="mb-2"
+        v-if="noteFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle">
         <a-button type="primary" size="large" block v-if="!noteFormData._id" @click="createNote()">Create</a-button>
         <a-button type="primary" size="large" block v-if="noteFormData._id" @click="updateNote()">Save</a-button>
-        <a-button type="primary" size="large" block danger v-if="noteFormData._id" @click="deleteNote()">Delete</a-button>
+        <a-button type="primary" size="large" block danger v-if="noteFormData._id"
+          @click="deleteNote()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -65,8 +69,8 @@ export default {
       noteEditOverlayVisible: false,
       noteFormData: {
         title: '',
-        color: '#ff0000',
-        type: ''
+        note: '',
+        tagIDs: []
       },
       noteFormErrorMessage: '',
       notes: [],
@@ -81,8 +85,8 @@ export default {
       this.noteEditOverlayVisible = false;
       this.noteFormData = {
         title: '',
-        color: '#ffffff',
-        type: ''
+        note: '',
+        tagIDs: []
       };
       this.noteFormErrorMessage = '';
     },
@@ -105,8 +109,8 @@ export default {
         },
         body: JSON.stringify({
           title: this.noteFormData.title,
-          color: this.noteFormData.color,
-          type: this.noteFormData.type
+          note: this.noteFormData.note,
+          tagIDs: this.noteFormData.tagIDs,
         })
       }).then((response) => {
         response.json().then((data) => {
@@ -121,8 +125,8 @@ export default {
     },
     configureNoteForm(note) {
       this.noteFormData.title = note.title;
-      this.noteFormData.color = note.color;
-      this.noteFormData.type = note.type;
+      this.noteFormData.note = note.note;
+      this.noteFormData.tagIDs = note.tagIDs;
       this.noteFormData._id = note._id;
 
       this.noteEditOverlayVisible = true;
@@ -135,8 +139,8 @@ export default {
         },
         body: JSON.stringify({
           title: this.noteFormData.title,
-          color: this.noteFormData.color,
-          type: this.noteFormData.type
+          note: this.noteFormData.note,
+          tagIDs: this.noteFormData.tagIDs
         })
       }).then((response) => {
         response.json().then((data) => {
