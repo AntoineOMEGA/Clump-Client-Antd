@@ -1,6 +1,5 @@
 <template>
-  <a-float-button type="primary" @click="noteEditOverlayVisible = !noteEditOverlayVisible"
-    style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="noteEditOverlayVisible = !noteEditOverlayVisible" style="height: 60px; width: 60px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -11,14 +10,17 @@
   </div>
 
   <template v-for="note in notes" :key="note._id">
-    <a-badge-ribbon :text="note.type" :color="note.color" style="right: 5px">
-      <a-card :title="note.title" style="margin: 10px">
-        <template #extra>
-          <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureNoteForm(note)" />
-        </template>
-        <p>{{ note.note }}</p>
-      </a-card>
-    </a-badge-ribbon>
+    <a-card :title="note.title" style="margin: 10px" :bodyStyle="{ padding: '0' }">
+      <template #extra>
+        <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureNoteForm(note)" />
+      </template>
+      <p>{{ note.note }}</p>
+      <div style="padding: 10px; background-color: #333333" v-if="note.tagIDs.length > 0">
+        <a-tag v-for="tagID in note.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+          {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
+        </a-tag>
+      </div>
+    </a-card>
   </template>
 
   <a-drawer v-model:open="noteEditOverlayVisible" @close="resetNoteForm()">
@@ -42,14 +44,12 @@
         </a-select>
       </div>
 
-      <a-alert message="Error" :description="noteFormErrorMessage" type="error" class="mb-2"
-        v-if="noteFormErrorMessage != ''" />
+      <a-alert message="Error" :description="noteFormErrorMessage" type="error" class="mb-2" v-if="noteFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle">
         <a-button type="primary" size="large" block v-if="!noteFormData._id" @click="createNote()">Create</a-button>
         <a-button type="primary" size="large" block v-if="noteFormData._id" @click="updateNote()">Save</a-button>
-        <a-button type="primary" size="large" block danger v-if="noteFormData._id"
-          @click="deleteNote()">Delete</a-button>
+        <a-button type="primary" size="large" block danger v-if="noteFormData._id" @click="deleteNote()">Delete</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -62,6 +62,7 @@ import { PlusOutlined, EditOutlined } from '@ant-design/icons-vue';
 <script>
 export default {
   mounted() {
+    this.getTags();
     this.getNotes();
   },
   data() {
@@ -77,7 +78,8 @@ export default {
       noteFilterSettings: {
         details: false,
         search: ''
-      }
+      },
+      tags: []
     };
   },
   methods: {
@@ -110,7 +112,7 @@ export default {
         body: JSON.stringify({
           title: this.noteFormData.title,
           note: this.noteFormData.note,
-          tagIDs: this.noteFormData.tagIDs,
+          tagIDs: this.noteFormData.tagIDs
         })
       }).then((response) => {
         response.json().then((data) => {
@@ -166,6 +168,17 @@ export default {
             this.resetNoteForm();
           } else {
             this.noteFormErrorMessage = data.message;
+          }
+        });
+      });
+    },
+    getTags() {
+      fetch('/api/v1/tags', {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            this.tags = data.data.tags;
           }
         });
       });
