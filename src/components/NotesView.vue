@@ -12,9 +12,9 @@
   <template v-for="note in notes" :key="note._id">
     <a-card :title="note.title" style="margin: 10px" :bodyStyle="{ padding: '0' }">
       <template #extra>
-        <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureNoteForm(note)" />
+        <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureNoteForm(note)" />
       </template>
-      <p>{{ note.note }}</p>
+      <p style="padding: 10px; margin: 0 !important">{{ note.note }}</p>
       <div style="padding: 10px; background-color: #333333" v-if="note.tagIDs.length > 0">
         <a-tag v-for="tagID in note.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
           {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
@@ -32,7 +32,7 @@
 
       <div class="mb-2">
         Note
-        <a-textarea autosize v-model:value="noteFormData.note"></a-textarea>
+        <a-textarea :auto-size="{ minRows: 2, maxRows: 6 }" v-model:value="noteFormData.note"></a-textarea>
       </div>
 
       <div class="mb-2">

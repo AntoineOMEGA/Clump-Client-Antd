@@ -12,7 +12,6 @@
   <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
     <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
       <template #extra>
-        <CalendarOutlined style="font-size: 1.5rem; margin-right: 10px" key="edit" @click="eventTemplateScheduleVisible = !eventTemplateScheduleVisible" />
         <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
       </template>
       <div style="padding: 10px; background-color: #333333" v-if="eventTemplate.tagIDs.length > 0">
@@ -31,22 +30,22 @@
       </div>
 
       <div class="mb-2">
-        Tag
-        <a-select size="large" v-model:value="eventTemplateFormData.tagIDs" style="width: 100%" mode="multiple">
-          <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
-            {{ tag.title }}
-          </a-select-option>
-        </a-select>
-      </div>
-
-      <div class="mb-2">
         Location
         <a-input v-model:value="eventTemplateFormData.location" size="large"></a-input>
       </div>
 
       <div class="mb-2">
         Description
-        <a-input v-model:value="eventTemplateFormData.description" size="large"></a-input>
+        <a-textarea :auto-size="{ minRows: 2, maxRows: 6 }" v-model:value="eventTemplateFormData.description"></a-textarea>
+      </div>
+
+      <div class="mb-2">
+        Tag
+        <a-select size="large" v-model:value="eventTemplateFormData.tagIDs" style="width: 100%" mode="multiple">
+          <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
+            {{ tag.title }}
+          </a-select-option>
+        </a-select>
       </div>
 
       <a-card v-if="eventTemplateFormErrorMessage != ''">
@@ -60,50 +59,10 @@
       </a-flex>
     </a-form>
   </a-drawer>
-
-  <a-drawer v-model:open="eventTemplateScheduleVisible">
-    <a-card style="margin-bottom: 20px; background-color: #333333">
-      <a-statistic title="Total Hours" :value="480">
-        <template #suffix>
-          <ClockCircleOutlined />
-        </template>
-      </a-statistic>
-    </a-card>
-
-    <a-card title="Tuesday 17th, March 2024" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 10px; background-color: #333">
-      <a-card title="9:00am - 12:00pm | Shift" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
-        <template #extra>
-          <a-badge color="#22a2ff" count="4" style="color: #fff">
-            <UserOutlined style="font-size: 1.2rem" />
-          </a-badge>
-        </template>
-        <a-card title="9:00am - 11:00am" style="background-color: #333" :bodyStyle="{ padding: '5px' }">
-          <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px" @click="console.log('hi')">Bart.Anthony</a-tag>
-        </a-card>
-        <a-card title="9:00am - 12:00pm" style="background-color: #333" :bodyStyle="{ padding: '5px' }">
-          <a-tag color="#ffb735" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Black.Tom</a-tag>
-        </a-card>
-      </a-card>
-      <a-card title="1:00 - 4:00pm" :bodyStyle="{ padding: '5px' }" style="margin-bottom: 5px">
-        <template #extra>
-          <a-badge color="#22a2ff" count="4" style="color: #fff">
-            <UserOutlined style="font-size: 1.2rem" />
-          </a-badge>
-        </template>
-        <a-tag color="#ffb7f5" style="margin: 5px; padding: 5px; padding-left: 10px; padding-right: 10px; border-radius: 10px">Bart.Anthony</a-tag>
-      </a-card>
-    </a-card>
-
-    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
-      <template #icon>
-        <PlusOutlined style="font-size: 20px" />
-      </template>
-    </a-float-button>
-  </a-drawer>
 </template>
 
 <script setup>
-import { EditOutlined, PlusOutlined, CalendarOutlined } from '@ant-design/icons-vue';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
@@ -114,7 +73,6 @@ export default {
   },
   data() {
     return {
-      eventTemplateScheduleVisible: false,
       eventTemplateEditOverlayVisible: false,
       eventTemplateFormData: {
         title: '',
