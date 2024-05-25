@@ -24,12 +24,12 @@
   </template>
 
   <a-drawer v-model:open="scheduleViewerOverlayVisible">
-    <a-card title="Tuesday 17th, March 2024" style="background-color: #333; margin-bottom: 20px" :bodyStyle="{ padding: '5px' }">
+    <a-card v-for="event in events.sort((a, b) => (a.startDateTime > b.startDateTime ? 1 : -1))" :key="event._id" :title="event.title" style="background-color: #333; margin-bottom: 20px" :bodyStyle="{ padding: '5px' }">
       <a-button style="height: auto; text-align: left; margin-bottom: 10px; padding: 15px; padding-top: 10px; padding-bottom: 10px" block>
         <a-flex justify="space-between">
           <div>
-            <a-typography-title :level="5">9:00am - 12:00pm</a-typography-title>
-            <a-typography-text>ROC Indexing</a-typography-text>
+            <a-typography-title :level="5">{{ dayjs(event.startDateTime).format('DD/MM/YYYY') }} to {{ dayjs(event.endDateTime).format('DD/MM/YYYY') }}</a-typography-title>
+            <a-typography-text>{{ dayjs(event.startDateTime).format('h:mm A') }} to {{ dayjs(event.endDateTime).format('h:mm A') }}</a-typography-text>
           </div>
           <EditOutlined style="font-size: 1.2rem" @click="configureEventForm(event)" />
         </a-flex>
@@ -195,10 +195,11 @@ import dayjs from 'dayjs';
 <script>
 export default {
   mounted() {
+    this.getTags();
     this.getSchedules();
     this.getEventTemplates();
-    this.getTags();
-    this.fetchCombine();
+    this.getEvents();
+    //this.fetchCombine();
   },
   data() {
     return {
@@ -213,6 +214,7 @@ export default {
       scheduleFormErrorMessage: '',
       schedules: [],
       eventTemplates: [],
+      events: [],
       tags: [],
       scheduleFilterSettings: {
         details: false,
@@ -374,6 +376,17 @@ export default {
         response.json().then((data) => {
           if (response.status === 200) {
             this.tags = data.data.tags;
+          }
+        });
+      });
+    },
+    getEvents() {
+      fetch('/api/v1/events', {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            this.events = data.data.events;
           }
         });
       });
