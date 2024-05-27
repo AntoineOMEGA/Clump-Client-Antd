@@ -23,7 +23,15 @@
     </a-card>
   </template>
 
-  <a-drawer v-model:open="scheduleViewerOverlayVisible">
+  <a-drawer v-model:open="scheduleViewerOverlayVisible" style="padding: 5px">
+    <a-flex justify="space-between" class="mb-2">
+      <a-date-picker size="large" picker="week" format="[Week of] MM/DD" v-model:value="selectedWeek" />
+      <div>
+        <a-button size="large"><CaretLeftOutlined style="font-size: 1.2rem" @click="changeWeek('backward')" /></a-button>
+        <a-button size="large"><CaretRightOutlined style="font-size: 1.2rem" @click="changeWeek('forward')" /></a-button>
+      </div>
+    </a-flex>
+
     <a-card v-for="event in events.sort((a, b) => (a.startDateTime > b.startDateTime ? 1 : -1))" :key="event._id" :title="event.title" style="background-color: #333; margin-bottom: 20px" :bodyStyle="{ padding: '5px' }">
       <a-button style="height: auto; text-align: left; margin-bottom: 10px; padding: 15px; padding-top: 10px; padding-bottom: 10px" block>
         <a-flex justify="space-between">
@@ -35,6 +43,14 @@
         </a-flex>
       </a-button>
     </a-card>
+
+    <a-timeline>
+      <a-timeline-item color="red" v-for="event in events.sort((a, b) => (a.startDateTime > b.startDateTime ? 1 : -1))" :key="event._id">
+        <a-typography-title :level="5">{{ dayjs(event.startDateTime).format('DD/MM/YYYY') }} to {{ dayjs(event.endDateTime).format('DD/MM/YYYY') }}</a-typography-title>
+        <a-typography-text>{{ dayjs(event.startDateTime).format('h:mm A') }} to {{ dayjs(event.endDateTime).format('h:mm A') }}</a-typography-text>
+        <a-card :title="event.title"></a-card>
+      </a-timeline-item>
+    </a-timeline>
 
     <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
@@ -188,7 +204,7 @@
 </template>
 
 <script setup>
-import { PlusOutlined, EditOutlined, CalendarOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined, EditOutlined, CalendarOutlined, CaretRightOutlined, CaretLeftOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 </script>
 
@@ -203,6 +219,7 @@ export default {
   },
   data() {
     return {
+      selectedWeek: dayjs(),
       scheduleViewerOverlayVisible: false,
       scheduleEditOverlayVisible: false,
       scheduleFormData: {
@@ -261,6 +278,14 @@ export default {
     };
   },
   methods: {
+    changeWeek(direction) {
+      if (direction == 'forward') {
+        this.selectedWeek = this.selectedWeek.add(7, 'day');
+      }
+      if (direction == 'backward') {
+        this.selectedWeek = this.selectedWeek.subtract(7, 'day');
+      }
+    },
     configureScheduleViewer(schedule) {
       console.log(schedule);
       //Should make a request to server for events now
