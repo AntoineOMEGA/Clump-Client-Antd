@@ -1,5 +1,6 @@
 <template>
-  <a-float-button type="primary" @click="scheduleEditOverlayVisible = !scheduleEditOverlayVisible" style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="scheduleEditOverlayVisible = !scheduleEditOverlayVisible"
+    style="height: 60px; width: 60px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -10,13 +11,16 @@
   </div>
 
   <template v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="schedule._id">
-    <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())" style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
+    <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())"
+      style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
       <template #extra>
-        <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar" @click="configureScheduleViewer(schedule)" />
+        <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar"
+          @click="configureScheduleViewer(schedule)" />
         <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureScheduleForm(schedule)" />
       </template>
       <div style="padding: 10px; background-color: #333333" v-if="schedule.tagIDs.length > 0">
-        <a-tag v-for="tagID in schedule.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+        <a-tag v-for="tagID in schedule.tagIDs" :key="tagID"
+          :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
           {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
         </a-tag>
       </div>
@@ -40,11 +44,12 @@
       <a-timeline-item color="red" v-for="day in 6" :key="day">
         <a-typography-title :level="4">{{ dayjs(selectedWeek).day(day).format('MM/DD/YYYY') }}</a-typography-title>
         <div v-for="event in events.sort((a, b) => (a.startDateTime > b.startDateTime ? 1 : -1))" :key="event._id">
-          <a-card v-if="dayjs(event.startDateTime).format('MM/DD/YYYY') == dayjs(selectedWeek).day(day).format('MM/DD/YYYY')" :bodyStyle="{ padding: '15px' }" style="background-color: #333333; margin-bottom: 10px">
+          <a-card
+            v-if="dayjs(event.startDateTime).format('MM/DD/YYYY') == dayjs(selectedWeek).day(day).format('MM/DD/YYYY')"
+            :bodyStyle="{ padding: '15px' }" style="background-color: #333333; margin-bottom: 10px">
             <a-flex justify="space-between">
               <a-card-meta :title="event.title">
-                <template #description
-                  >{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
                   {{ dayjs(event.endDateTime).format('h:mm A') }}
                 </template>
               </a-card-meta>
@@ -55,7 +60,8 @@
       </a-timeline-item>
     </a-timeline>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px"
+      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
@@ -91,12 +97,16 @@
         </a-flex>
       </div>
 
-      <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2" v-if="scheduleFormErrorMessage != ''" />
+      <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2"
+        v-if="scheduleFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button v-if="!scheduleFormData._id" type="primary" size="large" block @click="createSchedule()">Create</a-button>
-        <a-button v-if="scheduleFormData._id" type="primary" size="large" block @click="updateSchedule()">Save</a-button>
-        <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger @click="deleteSchedule()">Archive</a-button>
+        <a-button v-if="!scheduleFormData._id" type="primary" size="large" block
+          @click="createSchedule()">Create</a-button>
+        <a-button v-if="scheduleFormData._id" type="primary" size="large" block
+          @click="updateSchedule()">Save</a-button>
+        <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger
+          @click="deleteSchedule()">Archive</a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -106,14 +116,16 @@
       <div class="mb-2">
         Schedule
         <a-select v-model:value="eventFormData.scheduleID" size="large" style="width: 100%" allowClear>
-          <a-select-option v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="schedule._id" :key="schedule._id">{{ schedule.title }}</a-select-option>
+          <a-select-option v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))"
+            :value="schedule._id" :key="schedule._id">{{ schedule.title }}</a-select-option>
         </a-select>
       </div>
 
       <div class="mb-2">
         Event Template
         <a-select v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
-          <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
+          <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))"
+            :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
         </a-select>
       </div>
 
@@ -145,11 +157,13 @@
         <a-flex justify="space-around" align="middle" gap="middle">
           <div>
             Start Time
-            <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
+            <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5"
+              allowClear></a-time-picker>
           </div>
           <div>
             End Time
-            <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
+            <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5"
+              allowClear></a-time-picker>
           </div>
         </a-flex>
       </div>
@@ -158,11 +172,13 @@
         <a-flex justify="space-around" align="middle" gap="middle">
           <div>
             Start Date
-            <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY" allowClear></a-date-picker>
+            <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY"
+              allowClear></a-date-picker>
           </div>
           <div>
             End Date
-            <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY" allowClear></a-date-picker>
+            <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY"
+              allowClear></a-date-picker>
           </div>
         </a-flex>
       </div>
@@ -183,8 +199,10 @@
 
       <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
         Days of Week
-        <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear mode="multiple">
-          <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)" :value="recurrenceRuleOptions.advFreq.ByDay[weekDay]" :key="weekDay">
+        <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear
+          mode="multiple">
+          <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)"
+            :value="recurrenceRuleOptions.advFreq.ByDay[weekDay]" :key="weekDay">
             {{ weekDay }}
           </a-select-option>
         </a-select>
@@ -192,31 +210,37 @@
 
       <div v-if="eventFormData.recurrence.frequency != 'Once'" class="mb-2">
         Until Date
-        <a-date-picker size="large" v-model:value="eventFormData.until" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
+        <a-date-picker size="large" v-model:value="eventFormData.until" format="MM-DD-YYYY" style="width: 100%"
+          allowClear></a-date-picker>
       </div>
     </a-form>
 
-    <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
+    <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2"
+      v-if="eventFormErrorMessage != ''" />
 
     <a-flex justify="space-around" align="middle" gap="middle">
       <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
-      <a-button v-if="eventFormData._id" type="primary" size="large" block @click="eventUpdatePopoverVisible = true">Save</a-button>
-      <a-button v-if="eventFormData._id" type="primary" size="large" block danger @click="eventDeletePopoverVisible = true">Delete</a-button>
+      <a-button v-if="eventFormData._id" type="primary" size="large" block
+        @click="eventUpdatePopoverVisible = true">Save</a-button>
+      <a-button v-if="eventFormData._id" type="primary" size="large" block danger
+        @click="eventDeletePopoverVisible = true">Delete</a-button>
     </a-flex>
 
     <a-popover v-model:open="eventUpdatePopoverVisible" title="Update Instances" trigger="click">
       <template #content>
-        <a-button type="primary" style="margin: 10px">This Event</a-button>
-        <a-button type="primary" style="margin: 10px">This and Following Events</a-button>
-        <a-button type="primary" style="margin: 10px">All Events</a-button>
+        <a-button type="primary" style="margin: 10px" @click="updateSingleInstance()">This Event</a-button>
+        <a-button type="primary" style="margin: 10px" @click="updateFollowingInstances()">This and Following
+          Events</a-button>
+        <a-button type="primary" style="margin: 10px" @Click="updateEvent()">All Events</a-button>
       </template>
     </a-popover>
 
     <a-popover v-model:open="eventDeletePopoverVisible" title="Delete Instances" trigger="click">
       <template #content>
-        <a-button type="primary" style="margin: 10px">This Event</a-button>
-        <a-button type="primary" style="margin: 10px">This and Following Events</a-button>
-        <a-button type="primary" style="margin: 10px">All Events</a-button>
+        <a-button type="primary" style="margin: 10px" @click="deleteSingleInstance()">This Event</a-button>
+        <a-button type="primary" style="margin: 10px" @click="deleteFollowingInstances()">This and Following
+          Events</a-button>
+        <a-button type="primary" style="margin: 10px" @click="deleteEvent()">All Events</a-button>
       </template>
     </a-popover>
   </a-drawer>
@@ -463,25 +487,15 @@ export default {
     createEventBody() {
       let eventBody = {};
 
-      if (this.eventFormData.eventTemplateID == '') {
-        eventBody = {
-          title: this.eventFormData.title,
-          description: this.eventFormData.description,
-          location: this.eventFormData.location,
-          startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
-          endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
+      eventBody = {
+        title: this.eventFormData.title,
+        description: this.eventFormData.description,
+        location: this.eventFormData.location,
+        startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
+        endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
 
-          scheduleID: this.eventFormData.scheduleID
-        };
-      } else {
-        eventBody = {
-          startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
-          endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
-
-          scheduleID: this.eventFormData.scheduleID,
-          eventTemplateID: this.eventFormData.eventTemplateID
-        };
-      }
+        scheduleID: this.eventFormData.scheduleID
+      };
 
       if (this.eventFormData.recurrence.frequency == 'Once') {
         eventBody.recurrence = {
@@ -544,12 +558,22 @@ export default {
       this.eventEditOverlayVisible = true;
       this.eventEditAdvanced = false;
     },
+    updateSingleInstance() {
+      let eventExceptionBody = {
+        scheduleID: this.eventFormData.scheduleID,
+        eventID: this.eventFormData._id,
+        startDateTime: this.eventFormData.startDateTime,
+        endDateTime: this.eventFormData.endDateTime,
+      }
+
+      let eventBody = {
+
+      }
+    },
+    updateFollowingInstances() {
+
+    },
     updateEvent() {
-      //Create Event & Create Event Exception (Single)
-
-      //Update Event & Create Event (All Instances after Date)
-
-      //Update Event (All Instances)
       let eventBody = this.createEventBody();
 
       fetch('/api/v1/events/' + this.eventFormData._id, {
@@ -568,8 +592,7 @@ export default {
         });
       });
     },
-    deleteEvent() {
-      //Create Event Exception (Single)
+    deleteSingleInstance() {
       let eventExceptionBody;
 
       fetch('/api/v1/events', {
@@ -587,8 +610,8 @@ export default {
           }
         });
       });
-
-      //Update Event (All Instances after Date)
+    },
+    deleteFollowingInstances() {
       let eventBody = this.createEventBody();
       fetch('/api/v1/events/' + this.eventFormData._id, {
         method: 'PUT',
@@ -605,8 +628,8 @@ export default {
           }
         });
       });
-
-      //Delete Event (All Instances)
+    },
+    deleteEvent() {
       fetch('/api/v1/events/' + this.eventFormData._id, {
         method: 'DELETE'
       }).then((response) => {
