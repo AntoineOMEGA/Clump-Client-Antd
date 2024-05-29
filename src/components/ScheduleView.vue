@@ -535,6 +535,7 @@ export default {
       this.eventEditAdvanced = false;
     },
     updateSingleInstance() {
+      //Create Event Exception
       let eventExceptionBody = {
         scheduleID: this.eventFormData.scheduleID,
         eventID: this.eventFormData._id,
@@ -558,6 +559,7 @@ export default {
         });
       });
 
+      //Create a 'Once' Event
       let eventBody = {
         title: this.eventFormData.title,
         description: this.eventFormData.description,
@@ -588,7 +590,46 @@ export default {
         });
       });
     },
-    updateFollowingInstances() {},
+    updateFollowingInstances() {
+      //Update 'UNTIL' Date on Existing Event
+      //let eventBody = this.createEventBody();
+      //Probably PATCH INSTEAD OF PUT
+
+      fetch('/api/v1/events/' + this.eventFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            console.log(data.data);
+          } else {
+            this.eventFormErrorMessage = data.message;
+          }
+        });
+      });
+
+      //CREATE NEW EVENT Following the 'UNTIL'
+      let eventBody = this.createEventBody();
+
+      fetch('/api/v1/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 201) {
+            this.resetEventForm();
+          } else {
+            this.eventFormErrorMessage = data.message;
+          }
+        });
+      });
+    },
     updateEvent() {
       let eventBody = this.createEventBody();
 
@@ -657,7 +698,14 @@ export default {
           }
         });
       });
-    }
+    },
+    createEventAttendant() {},
+    updateAttendantSingleInstance() {},
+    updateAttendantFollowingInstances() {},
+    updateEventAttendant() {},
+    deleteAttendantSingleInstance() {},
+    deleteAttendantFollowingInstances() {},
+    deleteEventAttendant() {}
   }
 };
 </script>
