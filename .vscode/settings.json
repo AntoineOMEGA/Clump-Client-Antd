@@ -3,5 +3,25 @@
     "source.fixAll": "explicit"
   },
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#33e2ff",
+    "activityBar.background": "#33e2ff",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#ff20df",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#33e2ff",
+    "statusBar.background": "#00dbff",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#00afcc",
+    "statusBarItem.remoteBackground": "#00dbff",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#00dbff",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#00dbff99",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "peacock.color": "#00DBFF"
 }

@@ -535,7 +535,7 @@ export default {
       this.eventEditAdvanced = false;
     },
     updateSingleInstance() {
-      //Create Event Exception
+      //TODO: Create Event Exception
       let eventExceptionBody = {
         scheduleID: this.eventFormData.scheduleID,
         eventID: this.eventFormData._id,
@@ -559,7 +559,7 @@ export default {
         });
       });
 
-      //Create a 'Once' Event
+      //TODO: Create a 'Once' Event
       let eventBody = {
         title: this.eventFormData.title,
         description: this.eventFormData.description,
@@ -591,9 +591,9 @@ export default {
       });
     },
     updateFollowingInstances() {
-      //Update 'UNTIL' Date on Existing Event
+      //TODO: Update 'UNTIL' Date on Existing Event
       //let eventBody = this.createEventBody();
-      //Probably PATCH INSTEAD OF PUT
+      //TODO: Probably PATCH INSTEAD OF PUT
 
       fetch('/api/v1/events/' + this.eventFormData._id, {
         method: 'PUT',
@@ -611,7 +611,7 @@ export default {
         });
       });
 
-      //CREATE NEW EVENT Following the 'UNTIL'
+      //TODO: CREATE NEW EVENT Following the 'UNTIL'
       let eventBody = this.createEventBody();
 
       fetch('/api/v1/events', {
