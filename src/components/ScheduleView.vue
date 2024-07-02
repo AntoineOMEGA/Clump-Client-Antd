@@ -117,22 +117,22 @@
         </a-select>
       </div>
 
-      <div v-if="!eventFormData.eventTemplateID" class="mb-2">
+      <div class="mb-2">
         Title
         <a-input size="large" v-model:value="eventFormData.title" allowClear></a-input>
       </div>
 
-      <div v-if="!eventFormData.eventTemplateID" class="mb-2">
+      <div class="mb-2">
         Location
         <a-input size="large" v-model:value="eventFormData.location" allowClear></a-input>
       </div>
 
-      <div v-if="!eventFormData.eventTemplateID" class="mb-2">
+      <div class="mb-2">
         Description
         <a-textarea size="large" v-model:value="eventFormData.description" allowClear></a-textarea>
       </div>
 
-      <div v-if="!eventFormData.eventTemplateID" class="mb-2">
+      <div class="mb-2">
         Time Zone
         <a-select v-model:value="eventFormData.timeZone" size="large" style="width: 100%" allowClear>
           <a-select-option v-for="timeZone in timeZones" :value="timeZone" :key="timeZone">
