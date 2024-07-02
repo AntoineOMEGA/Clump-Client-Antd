@@ -9,55 +9,59 @@
     <a-input size="large" addonBefore="Search" v-model:value="eventTemplateFilterSettings.search"></a-input>
   </div>
 
-  <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
-    <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
-      <template #extra>
-        <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
-      </template>
-      <div style="padding: 10px; background-color: #333333" v-if="eventTemplate.tagIDs.length > 0">
-        <a-tag v-for="tagID in eventTemplate.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
-          {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
-        </a-tag>
-      </div>
-    </a-card>
-  </div>
+  <a-spin :spinning="eventTemplateLoadSpinning">
+    <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
+      <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
+        <template #extra>
+          <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
+        </template>
+        <div style="padding: 10px; background-color: #333333" v-if="eventTemplate.tagIDs.length > 0">
+          <a-tag v-for="tagID in eventTemplate.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+            {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
+          </a-tag>
+        </div>
+      </a-card>
+    </div>
+  </a-spin>
 
   <a-drawer v-model:open="eventTemplateEditOverlayVisible" @close="resetEventTemplateForm()">
-    <a-form>
-      <div class="mb-2">
-        Title
-        <a-input v-model:value="eventTemplateFormData.title" size="large"></a-input>
-      </div>
+    <a-spin :spinning="eventTemplateSpinning">
+      <a-form>
+        <div class="mb-2">
+          Title
+          <a-input v-model:value="eventTemplateFormData.title" size="large"></a-input>
+        </div>
 
-      <div class="mb-2">
-        Location
-        <a-input v-model:value="eventTemplateFormData.location" size="large"></a-input>
-      </div>
+        <div class="mb-2">
+          Location
+          <a-input v-model:value="eventTemplateFormData.location" size="large"></a-input>
+        </div>
 
-      <div class="mb-2">
-        Description
-        <a-textarea :auto-size="{ minRows: 2, maxRows: 6 }" v-model:value="eventTemplateFormData.description"></a-textarea>
-      </div>
+        <div class="mb-2">
+          Description
+          <a-textarea :auto-size="{ minRows: 2, maxRows: 6 }" v-model:value="eventTemplateFormData.description"></a-textarea>
+        </div>
 
-      <div class="mb-2">
-        Tag
-        <a-select size="large" v-model:value="eventTemplateFormData.tagIDs" style="width: 100%" mode="multiple">
-          <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
-            {{ tag.title }}
-          </a-select-option>
-        </a-select>
-      </div>
+        <div class="mb-2">
+          Tag
+          <a-select size="large" v-model:value="eventTemplateFormData.tagIDs" style="width: 100%" mode="multiple">
+            <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
+              {{ tag.title }}
+            </a-select-option>
+          </a-select>
+        </div>
 
-      <a-card v-if="eventTemplateFormErrorMessage != ''">
-        <a-card-meta :title="eventTemplateFormErrorMessage"></a-card-meta>
-      </a-card>
+        <a-card v-if="eventTemplateFormErrorMessage != ''">
+          <a-card-meta :title="eventTemplateFormErrorMessage"></a-card-meta>
+        </a-card>
 
-      <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id" @click="createEventTemplate()">Create</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="updateEventTemplate()">Save</a-button>
-        <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="deleteEventTemplate()">Delete</a-button>
-      </a-flex>
-    </a-form>
+        <a-flex justify="space-around" align="middle" gap="middle">
+          <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id" @click="createEventTemplate()">Create</a-button>
+          <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="updateEventTemplate()">Save</a-button>
+          <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="deleteEventTemplate()">Delete</a-button>
+        </a-flex>
+      </a-form>
+    </a-spin>
   </a-drawer>
 </template>
 
@@ -74,6 +78,8 @@ export default {
   data() {
     return {
       eventTemplateEditOverlayVisible: false,
+      eventTemplateLoadSpinning: false,
+      eventTemplateSpinning: false,
       eventTemplateFormData: {
         title: '',
         tagIDs: [],
@@ -91,6 +97,7 @@ export default {
   },
   methods: {
     getEventTemplates() {
+      this.eventTemplateLoadSpinning = true;
       fetch('/api/v1/event-templates', {
         method: 'GET'
       }).then((response) => {
@@ -98,10 +105,12 @@ export default {
           if (response.status === 200) {
             this.eventTemplates = data.data.eventTemplates;
           }
+          this.eventTemplateLoadSpinning = false;
         });
       });
     },
     resetEventTemplateForm() {
+      this.eventTemplateSpinning = false;
       this.eventTemplateFormData = {
         title: '',
         tagIDs: [],
@@ -112,6 +121,7 @@ export default {
       this.eventTemplateFormErrorMessage = '';
     },
     createEventTemplate() {
+      this.eventTemplateSpinning = true;
       fetch('/api/v1/event-templates', {
         method: 'POST',
         headers: {
@@ -130,6 +140,7 @@ export default {
             this.resetEventTemplateForm();
           } else {
             this.eventTemplateFormErrorMessage = data.message;
+            this.eventTemplateSpinning = false;
           }
         });
       });
@@ -144,6 +155,7 @@ export default {
       this.eventTemplateEditOverlayVisible = true;
     },
     updateEventTemplate() {
+      this.eventTemplateSpinning = true;
       fetch('/api/v1/event-templates/' + this.eventTemplateFormData._id, {
         method: 'PUT',
         headers: {
@@ -163,24 +175,27 @@ export default {
             this.resetEventTemplateForm();
           } else {
             this.eventTemplateFormErrorMessage = data.message;
+            this.eventTemplateSpinning = false;
           }
         });
       });
     },
     deleteEventTemplate() {
+      this.eventTemplateSpinning = true;
       fetch('/api/v1/event-templates/' + this.eventTemplateFormData._id, {
         method: 'DELETE'
       }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 204) {
-            let indexOfDeletedEventTemplate = this.eventTemplates.findIndex((eventTemplate) => eventTemplate._id === this.eventTemplateFormData._id);
-            this.eventTemplates.splice(indexOfDeletedEventTemplate, 1);
+        if (response.status === 204) {
+          let indexOfDeletedEventTemplate = this.eventTemplates.findIndex((eventTemplate) => eventTemplate._id === this.eventTemplateFormData._id);
+          this.eventTemplates.splice(indexOfDeletedEventTemplate, 1);
 
-            this.resetEventTemplateForm();
-          } else {
+          this.resetEventTemplateForm();
+        } else {
+          response.json().then((data) => {
             this.eventTemplateFormErrorMessage = data.message;
-          }
-        });
+          });
+          this.eventTemplateSpinning = false;
+        }
       });
     },
     getTags() {

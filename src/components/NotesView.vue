@@ -9,49 +9,53 @@
     <a-input size="large" addonBefore="Search" v-model:value="noteFilterSettings.search"></a-input>
   </div>
 
-  <template v-for="note in notes" :key="note._id">
-    <a-card :title="note.title" style="margin: 10px" :bodyStyle="{ padding: '0' }">
-      <template #extra>
-        <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureNoteForm(note)" />
-      </template>
-      <p style="padding: 10px; margin: 0 !important">{{ note.note }}</p>
-      <div style="padding: 10px; background-color: #333333" v-if="note.tagIDs.length > 0">
-        <a-tag v-for="tagID in note.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
-          {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
-        </a-tag>
-      </div>
-    </a-card>
-  </template>
+  <a-spin :spinning="noteLoadSpinning">
+    <template v-for="note in notes" :key="note._id">
+      <a-card :title="note.title" style="margin: 10px" :bodyStyle="{ padding: '0' }">
+        <template #extra>
+          <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureNoteForm(note)" />
+        </template>
+        <p style="padding: 10px; margin: 0 !important; word-wrap: break-word">{{ note.note }}</p>
+        <div style="padding: 10px; background-color: #333333" v-if="note.tagIDs.length > 0">
+          <a-tag v-for="tagID in note.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+            {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
+          </a-tag>
+        </div>
+      </a-card>
+    </template>
+  </a-spin>
 
   <a-drawer v-model:open="noteEditOverlayVisible" @close="resetNoteForm()">
-    <a-form>
-      <div class="mb-2">
-        Title
-        <a-input size="large" v-model:value="noteFormData.title"></a-input>
-      </div>
+    <a-spin :spinning="noteSpinning">
+      <a-form>
+        <div class="mb-2">
+          Title
+          <a-input size="large" v-model:value="noteFormData.title"></a-input>
+        </div>
 
-      <div class="mb-2">
-        Note
-        <a-textarea :auto-size="{ minRows: 2, maxRows: 6 }" v-model:value="noteFormData.note"></a-textarea>
-      </div>
+        <div class="mb-2">
+          Note
+          <a-textarea :auto-size="{ minRows: 2, maxRows: 6 }" v-model:value="noteFormData.note"></a-textarea>
+        </div>
 
-      <div class="mb-2">
-        Tag
-        <a-select size="large" v-model:value="noteFormData.tagIDs" style="width: 100%" mode="multiple">
-          <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
-            {{ tag.title }}
-          </a-select-option>
-        </a-select>
-      </div>
+        <div class="mb-2">
+          Tag
+          <a-select size="large" v-model:value="noteFormData.tagIDs" style="width: 100%" mode="multiple">
+            <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
+              {{ tag.title }}
+            </a-select-option>
+          </a-select>
+        </div>
 
-      <a-alert message="Error" :description="noteFormErrorMessage" type="error" class="mb-2" v-if="noteFormErrorMessage != ''" />
+        <a-alert message="Error" :description="noteFormErrorMessage" type="error" class="mb-2" v-if="noteFormErrorMessage != ''" />
 
-      <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!noteFormData._id" @click="createNote()">Create</a-button>
-        <a-button type="primary" size="large" block v-if="noteFormData._id" @click="updateNote()">Save</a-button>
-        <a-button type="primary" size="large" block danger v-if="noteFormData._id" @click="deleteNote()">Delete</a-button>
-      </a-flex>
-    </a-form>
+        <a-flex justify="space-around" align="middle" gap="middle">
+          <a-button type="primary" size="large" block v-if="!noteFormData._id" @click="createNote()">Create</a-button>
+          <a-button type="primary" size="large" block v-if="noteFormData._id" @click="updateNote()">Save</a-button>
+          <a-button type="primary" size="large" block danger v-if="noteFormData._id" @click="deleteNote()">Delete</a-button>
+        </a-flex>
+      </a-form>
+    </a-spin>
   </a-drawer>
 </template>
 
@@ -68,6 +72,8 @@ export default {
   data() {
     return {
       noteEditOverlayVisible: false,
+      noteLoadSpinning: false,
+      noteSpinning: false,
       noteFormData: {
         title: '',
         note: '',
@@ -85,6 +91,7 @@ export default {
   methods: {
     resetNoteForm() {
       this.noteEditOverlayVisible = false;
+      this.noteSpinning = false;
       this.noteFormData = {
         title: '',
         note: '',
@@ -93,6 +100,7 @@ export default {
       this.noteFormErrorMessage = '';
     },
     getNotes() {
+      this.noteLoadSpinning = true;
       fetch('/api/v1/notes', {
         method: 'GET'
       }).then((response) => {
@@ -100,10 +108,12 @@ export default {
           if (response.status === 200) {
             this.notes = data.data.notes;
           }
+          this.noteLoadSpinning = false;
         });
       });
     },
     createNote() {
+      this.noteSpinning = true;
       fetch('/api/v1/notes', {
         method: 'POST',
         headers: {
@@ -121,6 +131,7 @@ export default {
             this.resetNoteForm();
           } else {
             this.noteFormErrorMessage = data.message;
+            this.noteSpinning = false;
           }
         });
       });
@@ -134,6 +145,7 @@ export default {
       this.noteEditOverlayVisible = true;
     },
     updateNote() {
+      this.noteSpinning = true;
       fetch('/api/v1/notes/' + this.noteFormData._id, {
         method: 'PUT',
         headers: {
@@ -153,23 +165,27 @@ export default {
             this.resetNoteForm();
           } else {
             this.noteFormErrorMessage = data.message;
+            this.noteSpinning = false;
           }
         });
       });
     },
     deleteNote() {
+      this.noteSpinning = true;
       fetch('/api/v1/notes/' + this.noteFormData._id, {
         method: 'DELETE'
       }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 204) {
-            this.getSchedules();
-            this.getNotes();
-            this.resetNoteForm();
-          } else {
+        if (response.status === 204) {
+          let indexOfDeletedNote = this.notes.findIndex((note) => note._id === this.noteFormData._id);
+          this.notes.splice(indexOfDeletedNote, 1);
+
+          this.resetNoteForm();
+        } else {
+          response.json().then((data) => {
             this.noteFormErrorMessage = data.message;
-          }
-        });
+            this.noteSpinning = false;
+          });
+        }
       });
     },
     getTags() {

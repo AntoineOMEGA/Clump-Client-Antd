@@ -1,55 +1,57 @@
 <template>
-  <a-float-button type="primary" @click="tagEditOverlayVisible = !tagEditOverlayVisible"
-    style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="tagEditOverlayVisible = !tagEditOverlayVisible" style="height: 60px; width: 60px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
   </a-float-button>
 
-  <div style="margin: 10px;margin-bottom: 15px;">
+  <div style="margin: 10px; margin-bottom: 15px">
     <a-input size="large" addonBefore="Search" v-model:value="tagFilterSettings.search"></a-input>
   </div>
 
-  <template v-for="tag in tags" :key="tag._id">
-    <a-badge-ribbon :text="tag.type" :color="tag.color" style="right: 5px">
-      <a-card :title="tag.title" style="margin: 10px">
-        <template #extra>
-          <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureTagForm(tag)" />
-        </template>
-      </a-card>
-    </a-badge-ribbon>
-  </template>
+  <a-spin :spinning="tagLoadSpinning">
+    <template v-for="tag in tags" :key="tag._id">
+      <a-badge-ribbon :text="tag.type" :color="tag.color" style="right: 5px">
+        <a-card :title="tag.title" style="margin: 10px">
+          <template #extra>
+            <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureTagForm(tag)" />
+          </template>
+        </a-card>
+      </a-badge-ribbon>
+    </template>
+  </a-spin>
 
   <a-drawer v-model:open="tagEditOverlayVisible" @close="resetTagForm()">
-    <a-form>
-      <div class="mb-2">
-        Title
-        <a-input size="large" v-model:value="tagFormData.title"></a-input>
-      </div>
+    <a-spin :spinning="tagSpinning">
+      <a-form>
+        <div class="mb-2">
+          Title
+          <a-input size="large" v-model:value="tagFormData.title"></a-input>
+        </div>
 
-      <div class="mb-2">
-        Color
-        <a-input size="large" type="color" v-model:value="tagFormData.color"></a-input>
-      </div>
+        <div class="mb-2">
+          Color
+          <a-input size="large" type="color" v-model:value="tagFormData.color"></a-input>
+        </div>
 
-      <div class="mb-2">
-        Type
-        <a-select size="large" v-model:value="tagFormData.type" style="width: 100%">
-          <a-select-option value="schedule" key="schedule">Schedule</a-select-option>
-          <a-select-option value="event-template" key="event-template">Event Template</a-select-option>
-          <a-select-option value="organizational" key="organizational">Organizational</a-select-option>
-        </a-select>
-      </div>
+        <div class="mb-2">
+          Type
+          <a-select size="large" v-model:value="tagFormData.type" style="width: 100%">
+            <a-select-option value="schedule" key="schedule">Schedule</a-select-option>
+            <a-select-option value="event-template" key="event-template">Event Template</a-select-option>
+            <a-select-option value="organizational" key="organizational">Organizational</a-select-option>
+          </a-select>
+        </div>
 
-      <a-alert message="Error" :description="tagFormErrorMessage" type="error" class="mb-2"
-        v-if="tagFormErrorMessage != ''" />
+        <a-alert message="Error" :description="tagFormErrorMessage" type="error" class="mb-2" v-if="tagFormErrorMessage != ''" />
 
-      <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!tagFormData._id" @click="createTag()">Create</a-button>
-        <a-button type="primary" size="large" block v-if="tagFormData._id" @click="updateTag()">Save</a-button>
-        <a-button type="primary" size="large" block danger v-if="tagFormData._id" @click="deleteTag()">Delete</a-button>
-      </a-flex>
-    </a-form>
+        <a-flex justify="space-around" align="middle" gap="middle">
+          <a-button type="primary" size="large" block v-if="!tagFormData._id" @click="createTag()">Create</a-button>
+          <a-button type="primary" size="large" block v-if="tagFormData._id" @click="updateTag()">Save</a-button>
+          <a-button type="primary" size="large" block danger v-if="tagFormData._id" @click="deleteTag()">Delete</a-button>
+        </a-flex>
+      </a-form>
+    </a-spin>
   </a-drawer>
 </template>
 
@@ -65,6 +67,8 @@ export default {
   data() {
     return {
       tagEditOverlayVisible: false,
+      tagLoadSpinning: false,
+      tagSpinning: false,
       tagFormData: {
         title: '',
         color: '#ff0000',
@@ -80,6 +84,7 @@ export default {
   },
   methods: {
     resetTagForm() {
+      this.tagSpinning = false;
       this.tagEditOverlayVisible = false;
       this.tagFormData = {
         title: '',
@@ -89,6 +94,7 @@ export default {
       this.tagFormErrorMessage = '';
     },
     getTags() {
+      this.tagLoadSpinning = true;
       fetch('/api/v1/tags', {
         method: 'GET'
       }).then((response) => {
@@ -96,10 +102,12 @@ export default {
           if (response.status === 200) {
             this.tags = data.data.tags;
           }
+          this.tagLoadSpinning = false;
         });
       });
     },
     createTag() {
+      this.tagSpinning = true;
       fetch('/api/v1/tags', {
         method: 'POST',
         headers: {
@@ -117,6 +125,7 @@ export default {
             this.resetTagForm();
           } else {
             this.tagFormErrorMessage = data.message;
+            this.tagSpinning = false;
           }
         });
       });
@@ -130,6 +139,7 @@ export default {
       this.tagEditOverlayVisible = true;
     },
     updateTag() {
+      this.tagSpinning = true;
       fetch('/api/v1/tags/' + this.tagFormData._id, {
         method: 'PUT',
         headers: {
@@ -149,21 +159,22 @@ export default {
             this.resetTagForm();
           } else {
             this.tagFormErrorMessage = data.message;
+            this.tagSpinning = false;
           }
         });
       });
     },
     deleteTag() {
+      this.tagSpinning = true;
       fetch('/api/v1/tags/' + this.tagFormData._id, {
         method: 'DELETE'
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 204) {
-            this.getSchedules();
-            this.getTags();
             this.resetTagForm();
           } else {
             this.tagFormErrorMessage = data.message;
+            this.tagSpinning = false;
           }
         });
       });
