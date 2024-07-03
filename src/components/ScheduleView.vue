@@ -110,12 +110,14 @@
   <a-drawer v-model:open="eventEditOverlayVisible" @close="resetEventForm()">
     <a-spin :spinning="eventSpinning">
       <a-form>
+        <!-- EVENT TEMPLATE SELECTION TODO: Figure it out later
         <div class="mb-2">
           Event Template
           <a-select v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
             <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
           </a-select>
         </div>
+        -->
 
         <div class="mb-2">
           Title
@@ -181,6 +183,7 @@
           <a-input type="number" v-model:value="eventFormData.recurrence.interval" allowClear></a-input>
         </div>
 
+        <!-- Select Days of Week to Repeat TODO: DO I REALLY WANT THIS???
         <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
           Days of Week
           <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear mode="multiple">
@@ -189,6 +192,7 @@
             </a-select-option>
           </a-select>
         </div>
+        -->
 
         <div v-if="eventFormData.recurrence.frequency != 'Once'" class="mb-2">
           Until Date
@@ -556,104 +560,6 @@ export default {
       this.eventEditOverlayVisible = true;
       this.eventEditAdvanced = false;
     },
-    updateSingleInstance() {
-      this.eventSpinning = true;
-      //TODO: Create Event Exception
-      let eventExceptionBody = {
-        scheduleID: this.eventFormData.scheduleID,
-        eventID: this.eventFormData._id,
-        startDateTime: this.eventFormData.startDateTime,
-        endDateTime: this.eventFormData.endDateTime
-      };
-
-      fetch('/api/v1/events/exceptions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(eventExceptionBody)
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 201) {
-            //this.resetEventForm();
-          } else {
-            this.eventFormErrorMessage = data.message;
-          }
-        });
-      });
-
-      //TODO: Create a 'Once' Event
-      let eventBody = {
-        title: this.eventFormData.title,
-        description: this.eventFormData.description,
-        location: this.eventFormData.location,
-        startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
-        endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
-
-        scheduleID: this.eventFormData.scheduleID,
-
-        recurrence: {
-          frequency: 'Once'
-        }
-      };
-
-      fetch('/api/v1/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(eventBody)
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 201) {
-            this.resetEventForm();
-          } else {
-            this.eventFormErrorMessage = data.message;
-          }
-        });
-      });
-    },
-    updateFollowingInstances() {
-      this.eventSpinning = true;
-      //TODO: Update 'UNTIL' Date on Existing Event
-      //let eventBody = this.createEventBody();
-      //TODO: Probably PATCH INSTEAD OF PUT
-
-      fetch('/api/v1/events/' + this.eventFormData._id, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(eventBody)
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 200) {
-            console.log(data.data);
-          } else {
-            this.eventFormErrorMessage = data.message;
-          }
-        });
-      });
-
-      //TODO: CREATE NEW EVENT Following the 'UNTIL'
-      let eventBody = this.createEventBody();
-
-      fetch('/api/v1/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(eventBody)
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 201) {
-            this.resetEventForm();
-          } else {
-            this.eventFormErrorMessage = data.message;
-          }
-        });
-      });
-    },
     updateEvent() {
       this.eventSpinning = true;
       let eventBody = this.createEventBody();
@@ -671,47 +577,6 @@ export default {
             let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
             this.events[indexOfUpdatedEvent] = data.data.event;
             this.resetEventForm();
-          } else {
-            this.eventFormErrorMessage = data.message;
-            this.eventSpinning = false;
-          }
-        });
-      });
-    },
-    deleteSingleInstance() {
-      this.eventSpinning = true;
-      let eventExceptionBody;
-
-      fetch('/api/v1/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(eventExceptionBody)
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 201) {
-            this.resetEventForm();
-          } else {
-            this.eventFormErrorMessage = data.message;
-            this.eventSpinning = false;
-          }
-        });
-      });
-    },
-    deleteFollowingInstances() {
-      this.eventSpinning = true;
-      let eventBody = this.createEventBody();
-      fetch('/api/v1/events/' + this.eventFormData._id, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(eventBody)
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 200) {
-            console.log(data.data);
           } else {
             this.eventFormErrorMessage = data.message;
             this.eventSpinning = false;
@@ -738,11 +603,7 @@ export default {
       });
     },
     createEventAttendant() {},
-    updateAttendantSingleInstance() {},
-    updateAttendantFollowingInstances() {},
     updateEventAttendant() {},
-    deleteAttendantSingleInstance() {},
-    deleteAttendantFollowingInstances() {},
     deleteEventAttendant() {}
   }
 };
