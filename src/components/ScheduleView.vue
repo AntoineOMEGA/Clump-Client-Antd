@@ -110,14 +110,12 @@
   <a-drawer v-model:open="eventEditOverlayVisible" @close="resetEventForm()">
     <a-spin :spinning="eventSpinning">
       <a-form>
-        <!-- EVENT TEMPLATE SELECTION TODO: Figure it out later
         <div class="mb-2">
           Event Template
-          <a-select v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
+          <a-select v-on:change="applyEventTemplate(eventFormData.eventTemplateID)" v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
             <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
           </a-select>
         </div>
-        -->
 
         <div class="mb-2">
           Title
@@ -559,6 +557,14 @@ export default {
 
       this.eventEditOverlayVisible = true;
       this.eventEditAdvanced = false;
+    },
+    applyEventTemplate(eventTemplateID) {
+      let indexOfEventTemplate = this.eventTemplates.findIndex((eventTemplate) => eventTemplate._id === eventTemplateID);
+      let eventTemplateToApply = this.eventTemplates[indexOfEventTemplate];
+      this.eventFormData.title = eventTemplateToApply.title;
+      this.eventFormData.location = eventTemplateToApply.location;
+      this.eventFormData.description = eventTemplateToApply.description;
+      this.eventFormData.tags = eventTemplateToApply.tags;
     },
     updateEvent() {
       this.eventSpinning = true;
