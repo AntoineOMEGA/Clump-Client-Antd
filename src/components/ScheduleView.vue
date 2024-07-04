@@ -110,7 +110,7 @@
   <a-drawer v-model:open="eventEditOverlayVisible" @close="resetEventForm()">
     <a-spin :spinning="eventSpinning">
       <a-form>
-        <div class="mb-2">
+        <div class="mb-2" v-if="!eventFormData._id">
           Event Template
           <a-select v-on:change="applyEventTemplate(eventFormData.eventTemplateID)" v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
             <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
@@ -559,12 +559,19 @@ export default {
       this.eventEditAdvanced = false;
     },
     applyEventTemplate(eventTemplateID) {
-      let indexOfEventTemplate = this.eventTemplates.findIndex((eventTemplate) => eventTemplate._id === eventTemplateID);
-      let eventTemplateToApply = this.eventTemplates[indexOfEventTemplate];
-      this.eventFormData.title = eventTemplateToApply.title;
-      this.eventFormData.location = eventTemplateToApply.location;
-      this.eventFormData.description = eventTemplateToApply.description;
-      this.eventFormData.tags = eventTemplateToApply.tags;
+      if (eventTemplateID != null) {
+        let indexOfEventTemplate = this.eventTemplates.findIndex((eventTemplate) => eventTemplate._id === eventTemplateID);
+        let eventTemplateToApply = this.eventTemplates[indexOfEventTemplate];
+        this.eventFormData.title = eventTemplateToApply.title;
+        this.eventFormData.location = eventTemplateToApply.location;
+        this.eventFormData.description = eventTemplateToApply.description;
+        this.eventFormData.tags = eventTemplateToApply.tags;
+      } else {
+        this.eventFormData.title = '';
+        this.eventFormData.location = '';
+        this.eventFormData.description = '';
+        this.eventFormData.tags = '';
+      }
     },
     updateEvent() {
       this.eventSpinning = true;
