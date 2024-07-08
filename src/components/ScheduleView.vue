@@ -176,7 +176,7 @@
           </a-select>
         </div>
 
-        <div v-if="['Daily', 'Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+        <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
           Interval
           <a-input type="number" v-model:value="eventFormData.recurrence.interval" allowClear></a-input>
         </div>
@@ -289,7 +289,7 @@ export default {
 
       timeZones: new Intl.Locale('en-US').timeZones,
       recurrenceRuleOptions: {
-        freq: ['Once', 'Daily', 'Weekly'],
+        freq: ['Once', 'Weekly'],
         advFreq: {
           ByDay: {
             Monday: 'MO',
@@ -506,9 +506,7 @@ export default {
           eventBody.until = new Date(this.eventFormData.until);
         }
 
-        if (this.eventFormData.recurrence.frequency == 'Daily') {
-          eventBody.recurrence.frequency = 'Daily';
-        } else if (this.eventFormData.recurrence.frequency == 'Weekly') {
+        if (this.eventFormData.recurrence.frequency == 'Weekly') {
           eventBody.recurrence.frequency = 'Weekly';
           eventBody.recurrence.byDay = this.eventFormData.recurrence.byDay;
         }
