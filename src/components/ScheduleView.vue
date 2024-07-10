@@ -208,17 +208,17 @@
 
       <a-popover v-model:open="eventUpdatePopoverVisible" title="Update Instances" trigger="click">
         <template #content>
-          <a-button type="primary" style="margin: 10px" @click="updateSingleInstance()">This Event</a-button>
-          <a-button type="primary" style="margin: 10px" @click="updateFollowingInstances()">This and Following Events</a-button>
-          <a-button type="primary" style="margin: 10px" @Click="updateEvent()">All Events</a-button>
+          <a-button type="primary" style="margin: 10px" @click="updateThisEvent()">This Event</a-button>
+          <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEvents()">This and Following Events</a-button>
+          <a-button type="primary" style="margin: 10px" @Click="updateAllEvents()">All Events</a-button>
         </template>
       </a-popover>
 
       <a-popover v-model:open="eventDeletePopoverVisible" title="Delete Instances" trigger="click">
         <template #content>
-          <a-button type="primary" style="margin: 10px" @click="deleteSingleInstance()">This Event</a-button>
-          <a-button type="primary" style="margin: 10px" @click="deleteFollowingInstances()">This and Following Events</a-button>
-          <a-button type="primary" style="margin: 10px" @click="deleteEvent()">All Events</a-button>
+          <a-button type="primary" style="margin: 10px" @click="deleteThisEvent()">This Event</a-button>
+          <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEvents()">This and Following Events</a-button>
+          <a-button type="primary" style="margin: 10px" @click="deleteAllEvents()">All Events</a-button>
         </template>
       </a-popover>
     </a-spin>
@@ -595,6 +595,9 @@ export default {
         });
       });
     },
+    updateThisEvent() {},
+    updateThisAndFollowingEvents() {},
+    updateAllEvents() {},
     deleteEvent() {
       this.eventSpinning = true;
       fetch('/api/v1/events/' + this.eventFormData._id, {
@@ -613,9 +616,9 @@ export default {
         }
       });
     },
-    createEventAttendant() {},
-    updateEventAttendant() {},
-    deleteEventAttendant() {}
+    deleteThisEvent() {},
+    deleteThisAndFollowingEvents() {},
+    deleteAllEvents() {}
   }
 };
 </script>
