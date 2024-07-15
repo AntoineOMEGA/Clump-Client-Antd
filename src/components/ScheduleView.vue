@@ -235,8 +235,6 @@ export default {
   mounted() {
     this.getTags();
     this.getSchedules();
-    this.getEventTemplates();
-    this.getEvents();
   },
   data() {
     return {
@@ -317,6 +315,8 @@ export default {
       //Should make a request to server for events now
       this.scheduleViewerOverlayVisible = true;
       this.eventFormData.scheduleID = schedule._id;
+
+      this.getEventsOnSchedule(schedule._id);
     },
     resetScheduleForm() {
       this.scheduleSpinning = false;
@@ -444,6 +444,19 @@ export default {
     getEvents() {
       this.eventLoadSpinning = true;
       fetch('/api/v1/events', {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            this.events = data.data.events;
+          }
+          this.eventLoadSpinning = false;
+        });
+      });
+    },
+    getEventsOnSchedule(scheduleID) {
+      this.eventLoadSpinning = true;
+      fetch('/api/v1/events/onSchedule/' + scheduleID, {
         method: 'GET'
       }).then((response) => {
         response.json().then((data) => {
