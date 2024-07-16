@@ -42,7 +42,7 @@
       <a-timeline-item color="red" v-for="day in 6" :key="day">
         <a-typography-title :level="4">{{ dayjs(selectedWeek).day(day).format('MM/DD/YYYY') }}</a-typography-title>
         <a-spin :spinning="eventLoadSpinning">
-          <div v-for="event in events.sort((a, b) => (a.startDateTime > b.startDateTime ? 1 : -1))" :key="event._id">
+          <div v-for="event in events.sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1))" :key="event._id">
             <a-card v-if="dayjs(event.startDateTime).format('MM/DD/YYYY') == dayjs(selectedWeek).day(day).format('MM/DD/YYYY')" :bodyStyle="{ padding: '15px' }" style="background-color: #333333; margin-bottom: 10px">
               <a-flex justify="space-between">
                 <a-card-meta :title="event.title">
@@ -169,32 +169,21 @@
 
         <div class="mb-2">
           Frequency
-          <a-select v-model:value="eventFormData.recurrence.frequency" size="large" style="width: 100%" allowClear>
+          <a-select v-model:value="eventFormData.frequency" size="large" style="width: 100%" allowClear>
             <a-select-option v-for="option in recurrenceRuleOptions.freq" :value="option" :key="option">
               {{ option }}
             </a-select-option>
           </a-select>
         </div>
 
-        <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+        <div v-if="eventFormData.frequency != 'Once'" class="mb-2">
           Interval
-          <a-input type="number" v-model:value="eventFormData.recurrence.interval" allowClear></a-input>
+          <a-input type="number" v-model:value="eventFormData.interval" allowClear></a-input>
         </div>
 
-        <!-- Select Days of Week to Repeat TODO: DO I REALLY WANT THIS???
-        <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
-          Days of Week
-          <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear mode="multiple">
-            <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)" :value="recurrenceRuleOptions.advFreq.ByDay[weekDay]" :key="weekDay">
-              {{ weekDay }}
-            </a-select-option>
-          </a-select>
-        </div>
-        -->
-
-        <div v-if="eventFormData.recurrence.frequency != 'Once'" class="mb-2">
+        <div v-if="eventFormData.frequency != 'Once'" class="mb-2">
           Until Date
-          <a-date-picker size="large" v-model:value="eventFormData.until" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
+          <a-date-picker size="large" v-model:value="eventFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
         </div>
       </a-form>
 
@@ -274,31 +263,16 @@ export default {
         endDate: dayjs(),
         startTime: dayjs(),
         endTime: dayjs(),
-        recurrence: {
-          frequency: 'Once',
-          interval: 0,
-          count: 0,
-          byDay: []
-        },
-        until: '',
+        frequency: 'Once',
+        interval: 0,
+        untilDateTime: dayjs(),
         scheduleID: '',
         eventTemplateID: ''
       },
 
       timeZones: new Intl.Locale('en-US').timeZones,
       recurrenceRuleOptions: {
-        freq: ['Once', 'Weekly'],
-        advFreq: {
-          ByDay: {
-            Monday: 'MO',
-            Tuesday: 'TU',
-            Wednesday: 'WE',
-            Thursday: 'TH',
-            Friday: 'FR',
-            Saturday: 'SA',
-            Sunday: 'SU'
-          }
-        }
+        freq: ['Once', 'Weekly']
       }
     };
   },
@@ -481,14 +455,9 @@ export default {
         endDate: dayjs(),
         startTime: dayjs(),
         endTime: dayjs(),
-        recurrence: {
-          frequency: 'Once',
-          interval: 0,
-          count: 0,
-          byDay: []
-        },
-        until: '',
-        scheduleID: '',
+        frequency: 'Once',
+        interval: 0,
+        untilDateTime: dayjs(),
         eventTemplateID: ''
       };
       this.eventFormErrorMessage = '';
@@ -503,27 +472,12 @@ export default {
         startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
         endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
 
-        scheduleID: this.eventFormData.scheduleID
+        scheduleID: this.eventFormData.scheduleID,
+
+        frequency: this.eventFormData.frequency,
+        interval: this.eventFormData.interval,
+        untilDateTime: this.eventFormData.untilDateTime
       };
-
-      if (this.eventFormData.recurrence.frequency == 'Once') {
-        eventBody.recurrence = {
-          frequency: 'Once'
-        };
-      } else {
-        eventBody.recurrence = {};
-
-        eventBody.recurrence.interval = this.eventFormData.recurrence.interval;
-
-        if (this.eventFormData.until != '') {
-          eventBody.until = new Date(this.eventFormData.until);
-        }
-
-        if (this.eventFormData.recurrence.frequency == 'Weekly') {
-          eventBody.recurrence.frequency = 'Weekly';
-          eventBody.recurrence.byDay = this.eventFormData.recurrence.byDay;
-        }
-      }
 
       return eventBody;
     },
@@ -550,7 +504,6 @@ export default {
       });
     },
     configureEventForm(event) {
-      this.eventFormData.scheduleID = event.scheduleID;
       this.eventFormData._id = event._id;
       this.eventFormData.title = event.title;
       this.eventFormData.description = event.description;
@@ -561,7 +514,9 @@ export default {
       this.eventFormData.startTime = dayjs(event.startDateTime);
       this.eventFormData.endTime = dayjs(event.startDateTime);
 
-      this.eventFormData.recurrence = event.recurrence;
+      this.eventFormData.frequency = event.frequency;
+      this.eventFormData.interval = event.interval;
+      this.eventFormData.untilDateTime = dayjs(event.untilDateTime);
 
       this.eventFormData.scheduleID = event.scheduleID;
       this.eventFormData.eventTemplateID = event.eventTemplateID;
@@ -608,9 +563,78 @@ export default {
         });
       });
     },
-    updateThisEvent() {},
-    updateThisAndFollowingEvents() {},
-    updateAllEvents() {},
+    updateThisEvent() {
+      this.eventSpinning = true;
+      let eventBody = this.createEventBody();
+
+      fetch('/api/v1/events/thisEvent/' + this.eventFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventSpinning = false;
+          if (response.status === 201) {
+            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
+            this.events[indexOfUpdatedEvent] = data.data.event;
+            this.resetEventForm();
+          } else {
+            this.eventFormErrorMessage = data.message;
+            this.eventSpinning = false;
+          }
+        });
+      });
+    },
+    updateThisAndFollowingEvents() {
+      this.eventSpinning = true;
+      let eventBody = this.createEventBody();
+
+      fetch('/api/v1/events/thisAndFollowingEvents/' + this.eventFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventSpinning = false;
+          if (response.status === 201) {
+            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.currentEvent._id);
+            this.events[indexOfUpdatedEvent] = data.data.currentEvent;
+            this.resetEventForm();
+          } else {
+            this.eventFormErrorMessage = data.message;
+            this.eventSpinning = false;
+          }
+        });
+      });
+    },
+    updateAllEvents() {
+      this.eventSpinning = true;
+      let eventBody = this.createEventBody();
+
+      fetch('/api/v1/events/allEvents/' + this.eventFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventSpinning = false;
+          if (response.status === 200) {
+            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
+            this.events[indexOfUpdatedEvent] = data.data.event;
+            this.resetEventForm();
+          } else {
+            this.eventFormErrorMessage = data.message;
+            this.eventSpinning = false;
+          }
+        });
+      });
+    },
     deleteEvent() {
       this.eventSpinning = true;
       fetch('/api/v1/events/' + this.eventFormData._id, {
@@ -629,9 +653,75 @@ export default {
         }
       });
     },
-    deleteThisEvent() {},
-    deleteThisAndFollowingEvents() {},
-    deleteAllEvents() {}
+    deleteThisEvent() {
+      this.eventSpinning = true;
+      let eventBody = { startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()) };
+
+      fetch('/api/v1/events/thisEvent/' + this.eventFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventSpinning = false;
+          if (response.status === 201) {
+            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
+            this.events[indexOfUpdatedEvent] = data.data.event;
+            this.resetEventForm();
+          } else {
+            this.eventFormErrorMessage = data.message;
+            this.eventSpinning = false;
+          }
+        });
+      });
+    },
+    deleteThisAndFollowingEvents() {
+      this.eventSpinning = true;
+      let eventBody = {
+        startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
+        untilDateTime: dayjs(this.eventFormData.untilDateTime)
+      };
+
+      fetch('/api/v1/events/thisEvent/' + this.eventFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventSpinning = false;
+          if (response.status === 201) {
+            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
+            this.events[indexOfUpdatedEvent] = data.data.event;
+            this.resetEventForm();
+          } else {
+            this.eventFormErrorMessage = data.message;
+            this.eventSpinning = false;
+          }
+        });
+      });
+    },
+    deleteAllEvents() {
+      this.eventSpinning = true;
+      fetch('/api/v1/events/' + this.eventFormData._id, {
+        method: 'DELETE'
+      }).then((response) => {
+        if (response.status === 204) {
+          let indexOfDeletedEvent = this.events.findIndex((event) => event._id === this.eventFormData._id);
+          this.events.splice(indexOfDeletedEvent, 1);
+
+          this.resetEventForm();
+        } else {
+          response.json().then((data) => {
+            this.eventFormErrorMessage = data.message;
+            this.eventSpinning = false;
+          });
+        }
+      });
+    }
   }
 };
 </script>
