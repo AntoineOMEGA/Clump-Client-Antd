@@ -658,7 +658,7 @@ export default {
       let eventBody = { startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()) };
 
       fetch('/api/v1/events/thisEvent/' + this.eventFormData._id, {
-        method: 'PUT',
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -684,8 +684,8 @@ export default {
         untilDateTime: dayjs(this.eventFormData.untilDateTime)
       };
 
-      fetch('/api/v1/events/thisEvent/' + this.eventFormData._id, {
-        method: 'PUT',
+      fetch('/api/v1/events/thisAndFollowingEvents/' + this.eventFormData._id, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -706,7 +706,7 @@ export default {
     },
     deleteAllEvents() {
       this.eventSpinning = true;
-      fetch('/api/v1/events/' + this.eventFormData._id, {
+      fetch('/api/v1/events/allEvents/' + this.eventFormData._id, {
         method: 'DELETE'
       }).then((response) => {
         if (response.status === 204) {
