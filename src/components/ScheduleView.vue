@@ -10,7 +10,7 @@
   </div>
 
   <a-spin :spinning="scheduleLoadSpinning">
-    <template v-for="schedule in schedules.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="schedule._id">
+    <template v-for="schedule in schedules.sort((a, b) => (a.title >= b.title ? 1 : -1))" :key="schedule._id">
       <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())" style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
         <template #extra>
           <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar" @click="configureScheduleViewer(schedule)" />
