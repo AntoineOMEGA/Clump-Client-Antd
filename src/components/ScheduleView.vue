@@ -693,7 +693,7 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           this.eventSpinning = false;
-          if (response.status === 201) {
+          if (response.status === 200) {
             let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
             this.events[indexOfUpdatedEvent] = data.data.event;
             this.resetEventForm();
