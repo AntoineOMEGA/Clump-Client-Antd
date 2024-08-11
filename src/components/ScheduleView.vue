@@ -39,11 +39,24 @@
     </a-flex>
 
     <a-timeline>
-      <a-timeline-item color="red" v-for="day in 6" :key="day">
-        <a-typography-title :level="4">{{ dayjs(selectedWeek).day(day).format('MM/DD/YYYY') }}</a-typography-title>
+      <a-timeline-item color="red" v-for="day in 7" :key="day - 1">
+        <a-typography-title :level="4">{{
+          dayjs(selectedWeek)
+            .day(day - 1)
+            .format('MM/DD/YYYY')
+        }}</a-typography-title>
         <a-spin :spinning="eventLoadSpinning">
           <div v-for="event in events.sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1))" :key="event._id">
-            <a-card v-if="dayjs(event.startDateTime).format('MM/DD/YYYY') == dayjs(selectedWeek).day(day).format('MM/DD/YYYY')" :bodyStyle="{ padding: '15px' }" style="background-color: #333333; margin-bottom: 10px">
+            <a-card
+              v-if="
+                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+                dayjs(selectedWeek)
+                  .day(day - 1)
+                  .format('MM/DD/YYYY')
+              "
+              :bodyStyle="{ padding: '15px' }"
+              style="background-color: #333333; margin-bottom: 10px"
+            >
               <a-flex justify="space-between">
                 <a-card-meta :title="event.title">
                   <template #description
