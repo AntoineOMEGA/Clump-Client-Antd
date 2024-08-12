@@ -57,7 +57,8 @@
               dayjs(selectedWeek)
                 .day(day - 1)
                 .format('MM/DD/YYYY')
-            " :bodyStyle="{ padding: '15px' }" style="background-color: #333333; margin-bottom: 10px">
+            " :bodyStyle="{ padding: '15px' }" style="background-color: #333333; margin-bottom: 10px"
+              @click="configureEventForm(event)">
               <a-flex justify="space-between">
                 <a-card-meta :title="event.title">
                   <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
@@ -72,7 +73,6 @@
                     </div>
                   </template>
                 </a-card-meta>
-                <EditOutlined style="font-size: 1.5rem" @click="configureEventForm(event)" />
               </a-flex>
             </a-card>
           </div>
