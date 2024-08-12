@@ -40,11 +40,13 @@
 
     <a-timeline>
       <a-timeline-item color="red" v-for="day in 7" :key="day - 1">
-        <a-typography-title :level="4">{{
-          dayjs(selectedWeek)
-            .day(day - 1)
-            .format('MM/DD/YYYY')
-        }}</a-typography-title>
+        <a-typography-title :level="4">
+          {{
+            dayjs(selectedWeek)
+              .day(day - 1)
+              .format('dddd [-] MM/DD/YYYY')
+          }}</a-typography-title
+        >
         <a-spin :spinning="eventLoadSpinning">
           <div v-for="event in events.sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1))" :key="event._id">
             <a-card
@@ -62,6 +64,12 @@
                   <template #description
                     >{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
+
+                    <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0">
+                      <a-tag v-for="attendee in attendees" :key="attendee">
+                        {{ attendee }}
+                      </a-tag>
+                    </div>
                   </template>
                 </a-card-meta>
                 <EditOutlined style="font-size: 1.5rem" @click="configureEventForm(event)" />
@@ -202,10 +210,26 @@
 
       <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
 
-      <a-flex justify="space-around" align="middle" gap="middle">
+      <a-flex justify="space-around" align="middle" gap="middle" class="mb-2">
         <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
         <a-button v-if="eventFormData._id" type="primary" size="large" block @click="eventUpdatePopoverVisible = true">Save</a-button>
         <a-button v-if="eventFormData._id" type="primary" size="large" block danger @click="eventDeletePopoverVisible = true">Delete</a-button>
+      </a-flex>
+
+      <a-form>
+        <div v-if="eventFormData._id" class="mb-2">
+          Attendees
+          <div style="padding: 10px; background-color: #333333" v-if="attendees.length > 0">
+            <a-tag v-for="attendee in attendees" :key="attendee">
+              {{ attendee }}
+              <EditOutlined style="font-size: 1rem" key="edit" @click="configureScheduleForm(schedule)" />
+            </a-tag>
+          </div>
+        </div>
+      </a-form>
+
+      <a-flex justify="space-around" align="middle" gap="middle">
+        <a-button v-if="eventFormData._id" type="primary" size="large" block @click="console.log('Added Attendee')">Add Attendee</a-button>
       </a-flex>
 
       <a-popover v-model:open="eventUpdatePopoverVisible" title="Update Instances" trigger="click">
@@ -286,7 +310,8 @@ export default {
       timeZones: new Intl.Locale('en-US').timeZones,
       recurrenceRuleOptions: {
         freq: ['Once', 'Weekly']
-      }
+      },
+      attendees: ['Florian.Antoine', 'Arslanian.Zachary', 'Wait.Camille', 'Smith.Conrad']
     };
   },
   methods: {
