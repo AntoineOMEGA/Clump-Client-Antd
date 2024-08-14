@@ -1,6 +1,5 @@
 <template>
-  <a-float-button type="primary" @click="scheduleEditOverlayVisible = !scheduleEditOverlayVisible"
-    style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="scheduleEditOverlayVisible = !scheduleEditOverlayVisible" style="height: 60px; width: 60px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -12,16 +11,13 @@
 
   <a-spin :spinning="scheduleLoadSpinning">
     <template v-for="schedule in schedules.sort((a, b) => (a.title >= b.title ? 1 : -1))" :key="schedule._id">
-      <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())"
-        style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
+      <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())" style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
         <template #extra>
-          <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar"
-            @click="configureScheduleViewer(schedule)" />
+          <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar" @click="configureScheduleViewer(schedule)" />
           <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureScheduleForm(schedule)" />
         </template>
         <div style="padding: 10px; background-color: #333333" v-if="schedule.tagIDs.length > 0">
-          <a-tag v-for="tagID in schedule.tagIDs" :key="tagID"
-            :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+          <a-tag v-for="tagID in schedule.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
             {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
           </a-tag>
         </div>
@@ -49,25 +45,29 @@
             dayjs(selectedWeek)
               .day(day - 1)
               .format('dddd [-] MM/DD/YYYY')
-          }}</a-typography-title>
+          }}</a-typography-title
+        >
         <a-spin :spinning="eventLoadSpinning">
           <div v-for="event in events.sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1))" :key="event._id">
-            <a-card v-if="
-              dayjs(event.startDateTime).format('MM/DD/YYYY') ==
-              dayjs(selectedWeek)
-                .day(day - 1)
-                .format('MM/DD/YYYY')
-            " :bodyStyle="{ padding: '15px' }" style="background-color: #333333; margin-bottom: 10px"
-              @click="configureEventForm(event)">
+            <a-card
+              v-if="
+                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+                dayjs(selectedWeek)
+                  .day(day - 1)
+                  .format('MM/DD/YYYY')
+              "
+              :bodyStyle="{ padding: '15px' }"
+              style="background-color: #333333; margin-bottom: 10px"
+              @click="configureEventForm(event)"
+            >
               <a-flex justify="space-between">
                 <a-card-meta :title="event.title">
-                  <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                  <template #description
+                    >{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
 
-                    <div style="padding: 5px; background-color: #333333"
-                      v-if="attendees.length > 0 && event.title.includes('Shift')">
-                      <a-tag v-for="attendee in attendees.sort()" style="font-size: 14px; margin: 5px" :key="attendee"
-                        :bordered="false">
+                    <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
+                      <a-tag v-for="attendee in attendees.sort()" style="font-size: 14px; margin: 5px" :key="attendee" :bordered="false">
                         {{ attendee }}
                       </a-tag>
                     </div>
@@ -80,8 +80,7 @@
       </a-timeline-item>
     </a-timeline>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px"
-      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
@@ -109,8 +108,7 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Date
-              <a-date-picker size="large" v-model:value="scheduleFormData.startDate"
-                format="MM-DD-YYYY"></a-date-picker>
+              <a-date-picker size="large" v-model:value="scheduleFormData.startDate" format="MM-DD-YYYY"></a-date-picker>
             </div>
             <div>
               End Date
@@ -119,16 +117,12 @@
           </a-flex>
         </div>
 
-        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2"
-          v-if="scheduleFormErrorMessage != ''" />
+        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2" v-if="scheduleFormErrorMessage != ''" />
 
         <a-flex justify="space-around" align="middle" gap="middle">
-          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block
-            @click="createSchedule()">Create</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block
-            @click="updateSchedule()">Save</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger
-            @click="deleteSchedule()">Delete</a-button>
+          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block @click="createSchedule()">Create</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block @click="updateSchedule()">Save</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger @click="deleteSchedule()">Delete</a-button>
         </a-flex>
       </a-form>
     </a-spin>
@@ -139,10 +133,8 @@
       <a-form>
         <div class="mb-2" v-if="!eventFormData._id">
           Event Template
-          <a-select v-on:change="applyEventTemplate(eventFormData.eventTemplateID)"
-            v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
-            <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))"
-              :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
+          <a-select v-on:change="applyEventTemplate(eventFormData.eventTemplateID)" v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
+            <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
           </a-select>
         </div>
 
@@ -174,13 +166,11 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Time
-              <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5"
-                allowClear></a-time-picker>
+              <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
             </div>
             <div>
               End Time
-              <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5"
-                allowClear></a-time-picker>
+              <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
             </div>
           </a-flex>
         </div>
@@ -189,13 +179,11 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Date
-              <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY"
-                allowClear></a-date-picker>
+              <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY" allowClear></a-date-picker>
             </div>
             <div>
               End Date
-              <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY"
-                allowClear></a-date-picker>
+              <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY" allowClear></a-date-picker>
             </div>
           </a-flex>
         </div>
@@ -225,27 +213,22 @@
 
         <div v-if="eventFormData.frequency != 'Once'" class="mb-2">
           Until Date
-          <a-date-picker size="large" v-model:value="eventFormData.untilDateTime" format="MM-DD-YYYY"
-            style="width: 100%" allowClear></a-date-picker>
+          <a-date-picker size="large" v-model:value="eventFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
         </div>
       </a-form>
 
-      <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2"
-        v-if="eventFormErrorMessage != ''" />
+      <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle" class="mb-2">
         <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
-        <a-button v-if="eventFormData._id" type="primary" size="large" block
-          @click="eventUpdatePopoverVisible = true">Save</a-button>
-        <a-button v-if="eventFormData._id" type="primary" size="large" block danger
-          @click="eventDeletePopoverVisible = true">Delete</a-button>
+        <a-button v-if="eventFormData._id" type="primary" size="large" block @click="eventUpdatePopoverVisible = true">Save</a-button>
+        <a-button v-if="eventFormData._id" type="primary" size="large" block danger @click="eventDeletePopoverVisible = true">Delete</a-button>
       </a-flex>
 
       <a-popover v-model:open="eventUpdatePopoverVisible" title="Update Instances" trigger="click">
         <template #content>
           <a-button type="primary" style="margin: 10px" @click="updateThisEvent()">This Event</a-button>
-          <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEvents()">This and Following
-            Events</a-button>
+          <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEvents()">This and Following Events</a-button>
           <a-button type="primary" style="margin: 10px" @Click="updateAllEvents()">All Events</a-button>
         </template>
       </a-popover>
@@ -253,8 +236,7 @@
       <a-popover v-model:open="eventDeletePopoverVisible" title="Delete Instances" trigger="click">
         <template #content>
           <a-button type="primary" style="margin: 10px" @click="deleteThisEvent()">This Event</a-button>
-          <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEvents()">This and Following
-            Events</a-button>
+          <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEvents()">This and Following Events</a-button>
           <a-button type="primary" style="margin: 10px" @click="deleteAllEvents()">All Events</a-button>
         </template>
       </a-popover>
@@ -323,7 +305,7 @@ export default {
         freq: ['Once', 'Weekly']
       },
       attendees: ['Florian.Antoine', 'Arslanian.Zachary', 'Wait.Camille', 'Smith.Conrad'],
-      attendeeOptions: ['Florian.Antoine', 'Arslanian.Zachary', 'Wait.Camille', 'Graves.Brayden', 'Smith.Conrad'],
+      attendeeOptions: ['Florian.Antoine', 'Arslanian.Zachary', 'Wait.Camille', 'Graves.Brayden', 'Smith.Conrad']
     };
   },
   methods: {
@@ -334,6 +316,7 @@ export default {
       if (direction == 'backward') {
         this.selectedWeek = this.selectedWeek.subtract(7, 'day');
       }
+      this.getEventsOnSchedule(this.eventFormData.scheduleID);
     },
     configureScheduleViewer(schedule) {
       //Should make a request to server for events now
@@ -480,7 +463,9 @@ export default {
     },
     getEventsOnSchedule(scheduleID) {
       this.eventLoadSpinning = true;
-      fetch('/api/v1/events/onSchedule/' + scheduleID, {
+      let startDateTime = this.selectedWeek.startOf('week');
+      let endDateTime = this.selectedWeek.endOf('week');
+      fetch('/api/v1/events/onSchedule/' + scheduleID + '?startDateTime=' + startDateTime.toISOString() + '&endDateTime=' + endDateTime.toISOString(), {
         method: 'GET'
       }).then((response) => {
         response.json().then((data) => {
