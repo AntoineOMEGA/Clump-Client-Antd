@@ -221,8 +221,8 @@
 
       <a-flex justify="space-around" align="middle" gap="middle" class="mb-2">
         <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
-        <a-button v-if="eventFormData._id" type="primary" size="large" block @click="eventUpdatePopoverVisible = true">Save</a-button>
-        <a-button v-if="eventFormData._id" type="primary" size="large" block danger @click="eventDeletePopoverVisible = true">Delete</a-button>
+        <a-button v-if="eventFormData._id" type="primary" size="large" block @click="updateDecision()">Save</a-button>
+        <a-button v-if="eventFormData._id" type="primary" size="large" block danger @click="deleteDecision()">Delete</a-button>
       </a-flex>
 
       <a-popover v-model:open="eventUpdatePopoverVisible" title="Update Instances" trigger="click">
@@ -493,7 +493,7 @@ export default {
         frequency: 'Once',
         interval: 0,
         untilDateTime: dayjs(),
-        eventTemplateID: ''
+        parentEventID: ''
       };
       this.eventFormErrorMessage = '';
     },
@@ -508,6 +508,7 @@ export default {
         endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
 
         scheduleID: this.eventFormData.scheduleID,
+        parentEventID: this.eventFormData.parentEventID,
 
         frequency: this.eventFormData.frequency,
         interval: this.eventFormData.interval,
@@ -540,6 +541,7 @@ export default {
     },
     configureEventForm(event) {
       this.eventFormData._id = event._id;
+
       this.eventFormData.title = event.title;
       this.eventFormData.description = event.description;
       this.eventFormData.location = event.location;
@@ -554,7 +556,8 @@ export default {
       this.eventFormData.untilDateTime = dayjs(event.untilDateTime);
 
       this.eventFormData.scheduleID = event.scheduleID;
-      this.eventFormData.eventTemplateID = event.eventTemplateID;
+      this.eventFormData.parentEventID = event.parentEventID;
+      this.eventFormData.isInstance = event.isInstance;
 
       this.eventEditOverlayVisible = true;
       this.eventEditAdvanced = false;
@@ -572,6 +575,13 @@ export default {
         this.eventFormData.location = '';
         this.eventFormData.description = '';
         this.eventFormData.tags = '';
+      }
+    },
+    updateDecision() {
+      if (this.eventFormData.isInstance && this.eventFormData.isInstance === true) {
+        this.eventUpdatePopoverVisible = true;
+      } else {
+        this.updateEvent();
       }
     },
     updateEvent() {
@@ -669,6 +679,13 @@ export default {
           }
         });
       });
+    },
+    deleteDecision() {
+      if (this.eventFormData.isInstance && this.eventFormData.isInstance === true) {
+        this.eventDeletePopoverVisible = true;
+      } else {
+        this.deleteEvent();
+      }
     },
     deleteEvent() {
       this.eventSpinning = true;
