@@ -191,8 +191,8 @@
         <div v-if="eventFormData._id" class="mb-2">
           Attendees
           <a-select v-model:value="attendees" size="large" style="width: 100%" allowClear mode="multiple">
-            <a-select-option v-for="attendee in attendeeOptions.sort()" :value="attendee" :key="attendee">
-              {{ attendee }}
+            <a-select-option v-for="schedule in schedules.sort()" :value="schedule._id" :key="schedule._id">
+              {{ schedule.title }}
             </a-select-option>
           </a-select>
         </div>
@@ -481,6 +481,7 @@ export default {
       this.eventEditAdvanced = false;
       this.eventUpdatePopoverVisible = false;
       this.eventDeletePopoverVisible = false;
+
       this.eventFormData = {
         title: '',
         description: '',
@@ -493,9 +494,12 @@ export default {
         frequency: 'Once',
         interval: 0,
         untilDateTime: dayjs(),
-        parentEventID: ''
+        parentEventID: '',
+        scheduleID: this.eventFormData.scheduleID
       };
+
       this.eventFormErrorMessage = '';
+      this.eventSpinning = true;
     },
     createEventBody() {
       let eventBody = {};
@@ -530,7 +534,7 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 201) {
-            this.events.push(data.data.newEvent);
+            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -598,8 +602,7 @@ export default {
         response.json().then((data) => {
           this.eventSpinning = false;
           if (response.status === 200) {
-            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
-            this.events[indexOfUpdatedEvent] = data.data.event;
+            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -622,8 +625,7 @@ export default {
         response.json().then((data) => {
           this.eventSpinning = false;
           if (response.status === 201) {
-            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
-            this.events[indexOfUpdatedEvent] = data.data.event;
+            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -646,8 +648,7 @@ export default {
         response.json().then((data) => {
           this.eventSpinning = false;
           if (response.status === 201) {
-            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.currentEvent._id);
-            this.events[indexOfUpdatedEvent] = data.data.currentEvent;
+            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -670,8 +671,7 @@ export default {
         response.json().then((data) => {
           this.eventSpinning = false;
           if (response.status === 200) {
-            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
-            this.events[indexOfUpdatedEvent] = data.data.event;
+            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -693,9 +693,7 @@ export default {
         method: 'DELETE'
       }).then((response) => {
         if (response.status === 204) {
-          let indexOfDeletedEvent = this.events.findIndex((event) => event._id === this.eventFormData._id);
-          this.events.splice(indexOfDeletedEvent, 1);
-
+          this.getEventsOnSchedule(this.eventFormData.scheduleID);
           this.resetEventForm();
         } else {
           response.json().then((data) => {
@@ -707,7 +705,7 @@ export default {
     },
     deleteThisEvent() {
       this.eventSpinning = true;
-      let eventBody = { startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()) };
+      let eventBody = { scheduleID: this.eventFormData.scheduleID, startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()) };
 
       fetch('/api/v1/events/thisEvent/' + this.eventFormData._id, {
         method: 'DELETE',
@@ -719,8 +717,7 @@ export default {
         response.json().then((data) => {
           this.eventSpinning = false;
           if (response.status === 201) {
-            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
-            this.events[indexOfUpdatedEvent] = data.data.event;
+            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -746,8 +743,7 @@ export default {
         response.json().then((data) => {
           this.eventSpinning = false;
           if (response.status === 200) {
-            let indexOfUpdatedEvent = this.events.findIndex((event) => event._id === data.data.event._id);
-            this.events[indexOfUpdatedEvent] = data.data.event;
+            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -762,9 +758,7 @@ export default {
         method: 'DELETE'
       }).then((response) => {
         if (response.status === 204) {
-          let indexOfDeletedEvent = this.events.findIndex((event) => event._id === this.eventFormData._id);
-          this.events.splice(indexOfDeletedEvent, 1);
-
+          this.getEventsOnSchedule(this.eventFormData.scheduleID);
           this.resetEventForm();
         } else {
           response.json().then((data) => {
