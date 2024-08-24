@@ -5,6 +5,8 @@
     </template>
   </a-float-button>
 
+  <a-button @click="requestICAL()">Get I Cal</a-button>
+
   <div style="margin: 10px; margin-bottom: 15px">
     <a-input size="large" addonBefore="Search" v-model:value="scheduleFilterSettings.search"></a-input>
   </div>
@@ -456,6 +458,19 @@ export default {
         response.json().then((data) => {
           if (response.status === 200) {
             this.events = data.data.events;
+          }
+          this.eventLoadSpinning = false;
+        });
+      });
+    },
+    requestICAL() {
+      this.eventLoadSpinning = true;
+      fetch('/api/v1/schedules/ical', {
+        method: 'GET'
+      }).then((response) => {
+        response.text().then((data) => {
+          if (response.status === 200) {
+            console.log(data);
           }
           this.eventLoadSpinning = false;
         });
