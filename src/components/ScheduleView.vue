@@ -5,8 +5,6 @@
     </template>
   </a-float-button>
 
-  <a-button @click="requestICAL()">Get I Cal</a-button>
-
   <div style="margin: 10px; margin-bottom: 15px">
     <a-input size="large" addonBefore="Search" v-model:value="scheduleFilterSettings.search"></a-input>
   </div>
@@ -16,6 +14,7 @@
       <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())" style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
         <template #extra>
           <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar" @click="configureScheduleViewer(schedule)" />
+          <ShareAltOutlined style="font-size: 1.5rem; margin-right: 15px" key="share" @click="configureScheduleSharingForm(schedule)" />
           <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureScheduleForm(schedule)" />
         </template>
         <div style="padding: 10px; background-color: #333333" v-if="schedule.tagIDs.length > 0">
@@ -247,7 +246,7 @@
 </template>
 
 <script setup>
-import { PlusOutlined, EditOutlined, CalendarOutlined, CaretRightOutlined, CaretLeftOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined, EditOutlined, CalendarOutlined, CaretRightOutlined, CaretLeftOutlined, ShareAltOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 </script>
 
