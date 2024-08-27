@@ -12,7 +12,7 @@
   </a-float-button>
 
   <a-card v-for="clump in clumps" :key="clump._id" style="margin: 10px">
-    <a-card-meta :title="clump.title" :description="roles[clump._id].title"></a-card-meta>
+    <a-card-meta :title="clump.title"></a-card-meta>
     <template #actions>
       <select-outlined style="font-size: 1.5rem" key="select" @click="getClump(clump._id)" />
       <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureClumpFormData(clump)" />
@@ -85,7 +85,6 @@ export default {
         { _id: 'red', title: 'red', inviteToken: 'red' },
         { _id: 'red', title: 'green', inviteToken: 'green' }
       ],
-      roles: { red: { title: 'Admin' } },
       members: {},
       toggle: undefined
     };
@@ -182,7 +181,6 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           this.clumps = data.data.clumps;
-          this.roles = data.data.roles;
           this.members = data.data.members;
         });
       });
@@ -193,7 +191,6 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           this.clumps = data.data.clumps;
-          this.roles = data.data.roles;
         });
       });
     },

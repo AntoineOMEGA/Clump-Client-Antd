@@ -218,6 +218,54 @@
         </div>
       </a-form>
 
+      <a-modal v-model:open="recurrenceRuleModalVisible" title="Recurrence Rule">
+        <div v-if="['Daily', 'Weekly', 'Monthly by Day'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+          Interval
+          <a-input type="number" v-model:value="eventFormData.recurrence.interval" allowClear></a-input>
+        </div>
+
+        <div v-if="['Yearly by Day', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+          Month
+          <a-select v-model:value="eventFormData.recurrence.ByMonth" size="large" style="width: 100%" allowClear>
+            <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.advFreq.ByMonth)" :value="month" :key="month">
+              {{ month }}
+            </a-select-option>
+          </a-select>
+        </div>
+
+        <div v-if="['Monthly by Day', 'Yearly by Day'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+          Occurrences of Week Days in Month
+          <a-select v-model:value="eventFormData.recurrence.ByDayMonthly" size="large" style="width: 100%" allowClear mode="multiple">
+            <a-select-option v-for="monthDay in Object.keys(generatedMonthDays)" :value="monthDay" :key="monthDay">
+              {{ monthDay }}
+            </a-select-option>
+          </a-select>
+        </div>
+
+        <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+          Days of Week
+          <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear mode="multiple">
+            <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)" :value="weekDay" :key="weekDay">
+              {{ weekDay }}
+            </a-select-option>
+          </a-select>
+        </div>
+
+        <div v-if="['Monthly by Date', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+          Day in Month
+          <a-select v-model:value="eventFormData.recurrence.ByMonthDay" size="large" style="width: 100%" allowClear mode="multiple">
+            <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.advFreq.ByMonthDay)" :value="dayInMonth" :key="dayInMonth">
+              {{ dayInMonth }}
+            </a-select-option>
+          </a-select>
+        </div>
+
+        <div v-if="eventFormData.recurrence.frequency != 'Once'" class="mb-2">
+          Until Date
+          <a-date-picker size="large" v-model:value="eventFormData.until" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
+        </div>
+      </a-modal>
+
       <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle" class="mb-2">
@@ -282,6 +330,7 @@ export default {
       eventEditOverlayVisible: false,
       eventUpdatePopoverVisible: false,
       eventDeletePopoverVisible: false,
+      recurrenceRuleModalVisible: false,
       eventLoadSpinning: false,
       eventSpinning: false,
       eventFormErrorMessage: '',
@@ -294,19 +343,85 @@ export default {
         endDate: dayjs(),
         startTime: dayjs(),
         endTime: dayjs(),
-        frequency: 'Once',
-        interval: 0,
-        untilDateTime: dayjs(),
         scheduleID: '',
         eventTemplateID: ''
       },
-
       timeZones: new Intl.Locale('en-US').timeZones,
+
       recurrenceRuleOptions: {
-        freq: ['Once', 'Weekly']
+        //TODO: Google-like Auto Fill Options with more Info
+        frequency: ['Does not repeat', 'Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date', 'Custom'],
+
+        byDay: {
+          Monday: 'MO',
+          Tuesday: 'TU',
+          Wednesday: 'WE',
+          Thursday: 'TH',
+          Friday: 'FR',
+          Saturday: 'SA',
+          Sunday: 'SU'
+        },
+        byWeekInMonth: { '1st': 1, '2nd': 2, '3rd': 3, '4th': 4, '5th': 5, Last: -1 },
+        ByMonthDay: {
+          '1st': 1,
+          '2nd': 2,
+          '3rd': 3,
+          '4th': 4,
+          '5th': 5,
+          '6th': 6,
+          '7th': 7,
+          '8th': 8,
+          '9th': 9,
+          '10th': 10,
+          '11th': 11,
+          '12th': 12,
+          '13th': 13,
+          '14th': 14,
+          '15th': 15,
+          '16th': 16,
+          '17th': 17,
+          '18th': 18,
+          '19th': 19,
+          '20th': 20,
+          '21st': 21,
+          '22nd': 22,
+          '23rd': 23,
+          '24th': 24,
+          '25th': 25,
+          '26th': 26,
+          '27th': 27,
+          '28th': 28,
+          '29th': 29,
+          '30th': 30,
+          '31st': 31
+        },
+        ByMonth: {
+          January: 1,
+          February: 2,
+          March: 3,
+          April: 4,
+          May: 5,
+          June: 6,
+          July: 7,
+          August: 8,
+          September: 9,
+          October: 10,
+          November: 11,
+          December: 12
+        }
       },
-      attendees: ['Florian.Antoine', 'Arslanian.Zachary', 'Wait.Camille', 'Smith.Conrad'],
-      attendeeOptions: ['Florian.Antoine', 'Arslanian.Zachary', 'Wait.Camille', 'Graves.Brayden', 'Smith.Conrad']
+
+      recurrenceRuleFormData: {
+        _id: null,
+        frequency: 'Weekly',
+        byDay: '',
+        byWeekInMonth: 1,
+        byMonthDay: 1,
+        byMonth: 1,
+        interval: 1,
+        untilDateTime: dayjs(),
+        occurrences: 0
+      }
     };
   },
   methods: {
@@ -568,10 +683,6 @@ export default {
       this.eventFormData.endDate = dayjs(event.startDateTime);
       this.eventFormData.startTime = dayjs(event.startDateTime);
       this.eventFormData.endTime = dayjs(event.endDateTime);
-
-      this.eventFormData.frequency = event.frequency;
-      this.eventFormData.interval = event.interval;
-      this.eventFormData.untilDateTime = dayjs(event.untilDateTime);
 
       this.eventFormData.scheduleID = event.scheduleID;
       this.eventFormData.parentEventID = event.parentEventID;
