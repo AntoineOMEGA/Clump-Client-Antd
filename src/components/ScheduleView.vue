@@ -198,71 +198,69 @@
           </a-select>
         </div>
 
+        <a-button type="primary" style="margin: 10px" @click="recurrenceRuleModalVisible = true">Repeat Event</a-button>
+      </a-form>
+
+      //Recurrence Rule Form
+      <a-modal v-model:open="recurrenceRuleModalVisible" title="Recurrence Rule">
         <div class="mb-2">
           Frequency
-          <a-select v-model:value="eventFormData.frequency" size="large" style="width: 100%" allowClear>
-            <a-select-option v-for="option in recurrenceRuleOptions.freq" :value="option" :key="option">
+          <a-select v-model:value="recurrenceRuleFormData.frequency" size="large" style="width: 100%" allowClear>
+            <a-select-option v-for="option in recurrenceRuleOptions.frequency" :value="option" :key="option">
               {{ option }}
             </a-select-option>
           </a-select>
         </div>
 
-        <div v-if="eventFormData.frequency != 'Once'" class="mb-2">
+        <div class="mb-2">
           Interval
-          <a-input type="number" v-model:value="eventFormData.interval" allowClear></a-input>
+          <a-input type="number" v-model:value="recurrenceRuleFormData.interval" allowClear></a-input>
         </div>
 
-        <div v-if="eventFormData.frequency != 'Once'" class="mb-2">
-          Until Date
-          <a-date-picker size="large" v-model:value="eventFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
-        </div>
-      </a-form>
-
-      <a-modal v-model:open="recurrenceRuleModalVisible" title="Recurrence Rule">
-        <div v-if="['Daily', 'Weekly', 'Monthly by Day'].includes(eventFormData.recurrence.frequency)" class="mb-2">
-          Interval
-          <a-input type="number" v-model:value="eventFormData.recurrence.interval" allowClear></a-input>
-        </div>
-
-        <div v-if="['Yearly by Day', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+        <div v-if="['Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
           Month
-          <a-select v-model:value="eventFormData.recurrence.ByMonth" size="large" style="width: 100%" allowClear>
-            <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.advFreq.ByMonth)" :value="month" :key="month">
+          <a-select v-model:value="recurrenceRuleFormData.ByMonth" size="large" style="width: 100%" allowClear>
+            <a-select-option v-for="month in Object.keys(recurrenceRuleFormData.ByMonth)" :value="month" :key="month">
               {{ month }}
             </a-select-option>
           </a-select>
         </div>
 
-        <div v-if="['Monthly by Day', 'Yearly by Day'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+        <div v-if="['Monthly by day', 'Yearly by day'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
           Occurrences of Week Days in Month
-          <a-select v-model:value="eventFormData.recurrence.ByDayMonthly" size="large" style="width: 100%" allowClear mode="multiple">
+          <a-select v-model:value="recurrenceRuleFormData.ByDayMonthly" size="large" style="width: 100%" allowClear mode="multiple">
             <a-select-option v-for="monthDay in Object.keys(generatedMonthDays)" :value="monthDay" :key="monthDay">
               {{ monthDay }}
             </a-select-option>
           </a-select>
         </div>
 
-        <div v-if="['Weekly'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+        <div v-if="['Weekly'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
           Days of Week
-          <a-select v-model:value="eventFormData.recurrence.byDay" size="large" style="width: 100%" allowClear mode="multiple">
-            <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.advFreq.ByDay)" :value="weekDay" :key="weekDay">
+          <a-select v-model:value="recurrenceRuleFormData.byDay" size="large" style="width: 100%" allowClear mode="multiple">
+            <a-select-option v-for="weekDay in Object.keys(recurrenceRuleFormData.ByDay)" :value="weekDay" :key="weekDay">
               {{ weekDay }}
             </a-select-option>
           </a-select>
         </div>
 
-        <div v-if="['Monthly by Date', 'Yearly by Date'].includes(eventFormData.recurrence.frequency)" class="mb-2">
+        <div v-if="['Monthly by Date', 'Yearly by Date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
           Day in Month
-          <a-select v-model:value="eventFormData.recurrence.ByMonthDay" size="large" style="width: 100%" allowClear mode="multiple">
-            <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.advFreq.ByMonthDay)" :value="dayInMonth" :key="dayInMonth">
+          <a-select v-model:value="recurrenceRuleFormData.ByMonthDay" size="large" style="width: 100%" allowClear mode="multiple">
+            <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleFormData.ByMonthDay)" :value="dayInMonth" :key="dayInMonth">
               {{ dayInMonth }}
             </a-select-option>
           </a-select>
         </div>
 
-        <div v-if="eventFormData.recurrence.frequency != 'Once'" class="mb-2">
+        <div class="mb-2">
+          Occurrences
+          <a-input type="number" v-model:value="recurrenceRuleFormData.occurrences" allowClear></a-input>
+        </div>
+
+        <div class="mb-2">
           Until Date
-          <a-date-picker size="large" v-model:value="eventFormData.until" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
+          <a-date-picker size="large" v-model:value="recurrenceRuleFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
         </div>
       </a-modal>
 
@@ -349,8 +347,7 @@ export default {
       timeZones: new Intl.Locale('en-US').timeZones,
 
       recurrenceRuleOptions: {
-        //TODO: Google-like Auto Fill Options with more Info
-        frequency: ['Does not repeat', 'Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date', 'Custom'],
+        frequency: ['Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date'],
 
         byDay: {
           Monday: 'MO',
