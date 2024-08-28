@@ -220,7 +220,7 @@
         <div v-if="['Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
           Month
           <a-select v-model:value="recurrenceRuleFormData.ByMonth" size="large" style="width: 100%" allowClear>
-            <a-select-option v-for="month in Object.keys(recurrenceRuleFormData.ByMonth)" :value="month" :key="month">
+            <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.ByMonth)" :value="month" :key="month">
               {{ month }}
             </a-select-option>
           </a-select>
@@ -238,27 +238,32 @@
         <div v-if="['Weekly'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
           Days of Week
           <a-select v-model:value="recurrenceRuleFormData.byDay" size="large" style="width: 100%" allowClear mode="multiple">
-            <a-select-option v-for="weekDay in Object.keys(recurrenceRuleFormData.ByDay)" :value="weekDay" :key="weekDay">
+            <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.byDay)" :value="weekDay" :key="weekDay">
               {{ weekDay }}
             </a-select-option>
           </a-select>
         </div>
 
-        <div v-if="['Monthly by Date', 'Yearly by Date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
+        <div v-if="['Monthly by date', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
           Day in Month
-          <a-select v-model:value="recurrenceRuleFormData.ByMonthDay" size="large" style="width: 100%" allowClear mode="multiple">
-            <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleFormData.ByMonthDay)" :value="dayInMonth" :key="dayInMonth">
+          <a-select v-model:value="recurrenceRuleFormData.byMonthDay" size="large" style="width: 100%" allowClear mode="multiple">
+            <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.ByMonthDay)" :value="dayInMonth" :key="dayInMonth">
               {{ dayInMonth }}
             </a-select-option>
           </a-select>
         </div>
 
         <div class="mb-2">
+          End
+          <a-radio-group v-model:value="recurrenceRuleFormData.end" option-type="button" :options="recurrenceRuleOptions.endOptions" style="display: block" />
+        </div>
+
+        <div v-if="recurrenceRuleFormData.end == 'Occurrences'" class="mb-2">
           Occurrences
           <a-input type="number" v-model:value="recurrenceRuleFormData.occurrences" allowClear></a-input>
         </div>
 
-        <div class="mb-2">
+        <div v-if="recurrenceRuleFormData.end == 'Until Date'" class="mb-2">
           Until Date
           <a-date-picker size="large" v-model:value="recurrenceRuleFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
         </div>
@@ -289,6 +294,10 @@
       </a-popover>
     </a-spin>
   </a-drawer>
+
+  <a-drawer v-model:open="scheduleSharingOverlayVisible" @close="resetEventForm()">
+    <a-spin :spinning="eventSpinning"> </a-spin>
+  </a-drawer>
 </template>
 
 <script setup>
@@ -306,6 +315,7 @@ export default {
     return {
       selectedWeek: dayjs(),
       scheduleViewerOverlayVisible: false,
+      scheduleSharingOverlayVisible: false,
       scheduleEditOverlayVisible: false,
       scheduleLoadSpinning: false,
       scheduleSpinning: false,
@@ -405,7 +415,8 @@ export default {
           October: 10,
           November: 11,
           December: 12
-        }
+        },
+        endOptions: ['Not Set', 'Until Date', 'Occurrences']
       },
 
       recurrenceRuleFormData: {
@@ -416,10 +427,22 @@ export default {
         byMonthDay: 1,
         byMonth: 1,
         interval: 1,
+        end: 'Not Set',
         untilDateTime: dayjs(),
         occurrences: 0
       }
     };
+  },
+  computed: {
+    generatedMonthDays() {
+      let monthDays = {};
+      for (let dayExtended of Object.keys(this.recurrenceRuleOptions.byWeekInMonth)) {
+        for (let day of Object.keys(this.recurrenceRuleOptions.byDay)) {
+          monthDays[dayExtended + ' ' + day] = this.recurrenceRuleOptions.byWeekInMonth[dayExtended] + this.recurrenceRuleOptions.byDay[day];
+        }
+      }
+      return monthDays;
+    }
   },
   methods: {
     changeWeek(direction) {
@@ -438,6 +461,14 @@ export default {
 
       this.getEventsOnSchedule(schedule._id);
     },
+    getScheduleLinks(id) {
+      console.log(id);
+    },
+    configureScheduleSharingForm(schedule) {
+      this.scheduleSharingOverlayVisible = true;
+      this.getScheduleLinks(schedule._id);
+    },
+
     resetScheduleForm() {
       this.scheduleSpinning = false;
       this.scheduleEditOverlayVisible = false;
