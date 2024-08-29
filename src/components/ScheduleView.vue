@@ -296,12 +296,20 @@
   </a-drawer>
 
   <a-drawer v-model:open="scheduleSharingOverlayVisible" @close="resetEventForm()">
-    <a-spin :spinning="eventSpinning"> </a-spin>
+    <a-spin :spinning="scheduleSharingLoadSpinning">
+      <template v-for="scheduleLink in scheduleLinks.sort((a, b) => (a.recipient >= b.recipient ? 1 : -1))" :key="scheduleLink._id">
+        <a-card style="margin: 10px" :title="scheduleLink.recipient" :bodyStyle="{ padding: '0' }">
+          <template #extra>
+            <UserDeleteOutlined style="font-size: 1.5rem" key="delete" @click="deleteScheduleLink(scheduleLink._id)" />
+          </template>
+        </a-card>
+      </template>
+    </a-spin>
   </a-drawer>
 </template>
 
 <script setup>
-import { PlusOutlined, EditOutlined, CalendarOutlined, CaretRightOutlined, CaretLeftOutlined, ShareAltOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined, EditOutlined, CalendarOutlined, CaretRightOutlined, CaretLeftOutlined, ShareAltOutlined, UserDeleteOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 </script>
 
@@ -430,7 +438,9 @@ export default {
         end: 'Not Set',
         untilDateTime: dayjs(),
         occurrences: 0
-      }
+      },
+
+      scheduleLinks: []
     };
   },
   computed: {
@@ -462,7 +472,17 @@ export default {
       this.getEventsOnSchedule(schedule._id);
     },
     getScheduleLinks(id) {
-      console.log(id);
+      this.scheduleSharingLoadSpinning = true;
+      fetch('/api/v1/scheduleLinks', {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            this.schedules = data.data.schedules;
+          }
+          this.scheduleLoadSpinning = false;
+        });
+      });
     },
     configureScheduleSharingForm(schedule) {
       this.scheduleSharingOverlayVisible = true;
