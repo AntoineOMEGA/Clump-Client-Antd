@@ -10,20 +10,22 @@
   </div>
 
   <a-spin :spinning="scheduleLoadSpinning">
-    <template v-for="schedule in schedules.sort((a, b) => (a.title >= b.title ? 1 : -1))" :key="schedule._id">
-      <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())" style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
-        <template #extra>
-          <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar" @click="configureScheduleViewer(schedule)" />
-          <ShareAltOutlined style="font-size: 1.5rem; margin-right: 15px" key="share" @click="configureScheduleSharingForm(schedule)" />
-          <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureScheduleForm(schedule)" />
-        </template>
-        <div style="padding: 10px; background-color: #333333" v-if="schedule.tagIDs.length > 0">
-          <a-tag v-for="tagID in schedule.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
-            {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
-          </a-tag>
-        </div>
-      </a-card>
-    </template>
+    <a-row>
+      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" v-for="schedule in schedules.sort((a, b) => (a.title >= b.title ? 1 : -1))" :key="schedule._id">
+        <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())" style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
+          <template #extra>
+            <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar" @click="configureScheduleViewer(schedule)" />
+            <ShareAltOutlined style="font-size: 1.5rem; margin-right: 15px" key="share" @click="configureScheduleSharingForm(schedule)" />
+            <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureScheduleForm(schedule)" />
+          </template>
+          <div style="padding: 10px; background-color: #333333" v-if="schedule.tagIDs.length > 0">
+            <a-tag v-for="tagID in schedule.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+              {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
+            </a-tag>
+          </div>
+        </a-card>
+      </a-col>
+    </a-row>
   </a-spin>
 
   <a-drawer v-model:open="scheduleViewerOverlayVisible" :bodyStyle="{ padding: '15px' }">
@@ -471,7 +473,7 @@ export default {
 
       this.getEventsOnSchedule(schedule._id);
     },
-    getScheduleLinks(id) {
+    getScheduleLinks(scheduleID) {
       this.scheduleSharingLoadSpinning = true;
       fetch('/api/v1/scheduleLinks', {
         method: 'GET'

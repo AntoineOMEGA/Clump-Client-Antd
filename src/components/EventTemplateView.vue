@@ -10,18 +10,20 @@
   </div>
 
   <a-spin :spinning="eventTemplateLoadSpinning">
-    <div v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
-      <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
-        <template #extra>
-          <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
-        </template>
-        <div style="padding: 10px; background-color: #333333" v-if="eventTemplate.tagIDs.length > 0">
-          <a-tag v-for="tagID in eventTemplate.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
-            {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
-          </a-tag>
-        </div>
-      </a-card>
-    </div>
+    <a-row>
+      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
+        <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
+          <template #extra>
+            <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
+          </template>
+          <div style="padding: 10px; background-color: #333333" v-if="eventTemplate.tagIDs.length > 0">
+            <a-tag v-for="tagID in eventTemplate.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+              {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
+            </a-tag>
+          </div>
+        </a-card>
+      </a-col>
+    </a-row>
   </a-spin>
 
   <a-drawer v-model:open="eventTemplateEditOverlayVisible" @close="resetEventTemplateForm()">

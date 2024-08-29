@@ -10,19 +10,21 @@
   </div>
 
   <a-spin :spinning="noteLoadSpinning">
-    <template v-for="note in notes" :key="note._id">
-      <a-card :title="note.title" style="margin: 10px" :bodyStyle="{ padding: '0' }">
-        <template #extra>
-          <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureNoteForm(note)" />
-        </template>
-        <p style="padding: 10px; margin: 0 !important; word-wrap: break-word">{{ note.note }}</p>
-        <div style="padding: 10px; background-color: #333333" v-if="note.tagIDs.length > 0">
-          <a-tag v-for="tagID in note.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
-            {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
-          </a-tag>
-        </div>
-      </a-card>
-    </template>
+    <a-row>
+      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" v-for="note in notes" :key="note._id">
+        <a-card :title="note.title" style="margin: 10px" :bodyStyle="{ padding: '0' }">
+          <template #extra>
+            <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureNoteForm(note)" />
+          </template>
+          <p style="padding: 10px; margin: 0 !important; word-wrap: break-word">{{ note.note }}</p>
+          <div style="padding: 10px; background-color: #333333" v-if="note.tagIDs.length > 0">
+            <a-tag v-for="tagID in note.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+              {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
+            </a-tag>
+          </div>
+        </a-card>
+      </a-col>
+    </a-row>
   </a-spin>
 
   <a-drawer v-model:open="noteEditOverlayVisible" @close="resetNoteForm()">
