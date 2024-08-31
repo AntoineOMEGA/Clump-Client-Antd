@@ -305,6 +305,8 @@
             <UserDeleteOutlined style="font-size: 1.5rem" key="delete" @click="deleteScheduleLink(scheduleLink._id)" />
           </template>
         </a-card>
+
+        <a-button type="primary" style="margin: 10px" @click="recurrenceRuleModalVisible = true">Repeat Event</a-button>
       </template>
     </a-spin>
   </a-drawer>
@@ -474,15 +476,33 @@ export default {
       this.getEventsOnSchedule(schedule._id);
     },
     getScheduleLinks(scheduleID) {
-      this.scheduleSharingLoadSpinning = true;
-      fetch('/api/v1/scheduleLinks', {
+      fetch(`/api/v1/schedules/${scheduleID}/scheduleLinks/`, {
         method: 'GET'
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 200) {
-            this.schedules = data.data.schedules;
+            this.scheduleLinks = data.data.scheduleLinks;
           }
-          this.scheduleLoadSpinning = false;
+        });
+      });
+    },
+    createScheduleLink() {
+      fetch(`/api/v1/schedules/${this.scheduleID}/scheduleLinks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          recipients: this.scheduleLinkFormData.recipients
+        })
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 201) {
+            this.scheduleLinks.push(data.data.scheduleLinks);
+            this.resetScheduleForm();
+          } else {
+            this.scheduleFormErrorMessage = data.message;
+          }
         });
       });
     },

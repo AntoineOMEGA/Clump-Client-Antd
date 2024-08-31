@@ -1,12 +1,14 @@
 <template>
-  <div>
-    <a-card v-for="member in members" :key="member._id" style="margin: 10px" :title="member.name" :bodyStyle="{ padding: '0' }">
-      {{ roles[member.clumpID].title }}
-      <template #extra>
-        <EditOutlined style="font-size: 1.5rem" key="edit" @click="exampleViewOpen = !exampleViewOpen" />
-      </template>
-    </a-card>
-  </div>
+  <a-row>
+    <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" v-for="member in members" :key="member._id">
+      <a-card style="margin: 10px" :title="member.name" :bodyStyle="{ padding: '0' }">
+        {{ roles[member.clumpID].title }}
+        <template #extra>
+          <EditOutlined style="font-size: 1.5rem" key="edit" @click="exampleViewOpen = !exampleViewOpen" />
+        </template>
+      </a-card>
+    </a-col>
+  </a-row>
 </template>
 
 <script setup>

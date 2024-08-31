@@ -11,13 +11,19 @@
     </template>
   </a-float-button>
 
-  <a-card v-for="clump in clumps" :key="clump._id" style="margin: 10px">
-    <a-card-meta :title="clump.title"></a-card-meta>
-    <template #actions>
-      <select-outlined style="font-size: 1.5rem" key="select" @click="getClump(clump._id)" />
-      <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureClumpFormData(clump)" />
-    </template>
-  </a-card>
+  <a-spin :spinning="clumpLoadSpinning">
+    <a-row>
+      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" v-for="clump in clumps" :key="clump._id">
+        <a-card style="margin: 10px">
+          <a-card-meta :title="clump.title"></a-card-meta>
+          <template #actions>
+            <select-outlined style="font-size: 1.5rem" key="select" @click="getClump(clump._id)" />
+            <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureClumpFormData(clump)" />
+          </template>
+        </a-card>
+      </a-col>
+    </a-row>
+  </a-spin>
 
   <a-drawer v-model:open="clumpOverlayVisible" @close="resetClumpFormData()">
     <a-form>
@@ -65,6 +71,7 @@ export default {
     return {
       clumpOverlayVisible: false,
       clumpJoinOverlayVisible: false,
+      clumpLoadSpinning: false,
       clumpFormData: {
         title: ''
       },
