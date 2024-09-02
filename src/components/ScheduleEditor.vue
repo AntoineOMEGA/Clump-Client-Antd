@@ -1,5 +1,5 @@
 <template>
-  <a-drawer v-model:open="scheduleEditOverlayVisible" @close="resetScheduleForm()">
+  <a-drawer v-model:open="visible" @close="resetScheduleForm()">
     <a-spin :spinning="scheduleSpinning">
       <a-form>
         <div class="mb-2">
@@ -20,8 +20,7 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Date
-              <a-date-picker size="large" v-model:value="scheduleFormData.startDate"
-                format="MM-DD-YYYY"></a-date-picker>
+              <a-date-picker size="large" v-model:value="scheduleFormData.startDate" format="MM-DD-YYYY"></a-date-picker>
             </div>
             <div>
               End Date
@@ -30,16 +29,12 @@
           </a-flex>
         </div>
 
-        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2"
-          v-if="scheduleFormErrorMessage != ''" />
+        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2" v-if="scheduleFormErrorMessage != ''" />
 
         <a-flex justify="space-around" align="middle" gap="middle">
-          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block
-            @click="createSchedule()">Create</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block
-            @click="updateSchedule()">Save</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger
-            @click="deleteSchedule()">Delete</a-button>
+          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block @click="createSchedule()">Create</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block @click="updateSchedule()">Save</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger @click="deleteSchedule()">Delete</a-button>
         </a-flex>
       </a-form>
     </a-spin>
@@ -53,12 +48,14 @@ import dayjs from 'dayjs';
 
 <script>
 export default {
+  props: ['visible'],
   mounted() {
     this.getTags();
     this.getSchedules();
   },
   data() {
     return {
+      spinning: false,
       selectedWeek: dayjs(),
       scheduleEditOverlayVisible: false,
       scheduleLoadSpinning: false,
@@ -77,11 +74,9 @@ export default {
       scheduleFilterSettings: {
         details: false,
         search: ''
-      },
+      }
     };
   },
-  methods: {
-
-  }
-}
+  methods: {}
+};
 </script>

@@ -28,17 +28,13 @@
     </a-row>
   </a-spin>
 
-  
-
-  
-
-  
-  
+  <ScheduleViewer :visible="scheduleViewerOverlayVisible" :events="events" />
 </template>
 
 <script setup>
-import { PlusOutlined, EditOutlined, CalendarOutlined, CaretRightOutlined, CaretLeftOutlined, ShareAltOutlined, UserDeleteOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined, EditOutlined, CalendarOutlined, ShareAltOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
+import ScheduleViewer from '@/components/ScheduleViewer.vue';
 </script>
 
 <script>
@@ -183,15 +179,6 @@ export default {
     }
   },
   methods: {
-    changeWeek(direction) {
-      if (direction == 'forward') {
-        this.selectedWeek = this.selectedWeek.add(7, 'day');
-      }
-      if (direction == 'backward') {
-        this.selectedWeek = this.selectedWeek.subtract(7, 'day');
-      }
-      this.getEventsOnSchedule(this.eventFormData.scheduleID);
-    },
     configureScheduleViewer(schedule) {
       //Should make a request to server for events now
       this.scheduleViewerOverlayVisible = true;

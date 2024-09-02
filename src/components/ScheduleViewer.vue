@@ -1,5 +1,5 @@
 <template>
-  <a-drawer v-model:open="scheduleViewerOverlayVisible" :bodyStyle="{ padding: '15px' }">
+  <a-drawer :open="visible" :bodyStyle="{ padding: '15px' }">
     <a-flex justify="space-between" class="mb-2">
       <a-date-picker size="large" picker="week" format="[Week of] MM/DD" v-model:value="selectedWeek" />
       <div>
@@ -19,25 +19,29 @@
             dayjs(selectedWeek)
               .day(day - 1)
               .format('dddd [-] MM/DD/YYYY')
-          }}</a-typography-title>
+          }}</a-typography-title
+        >
         <a-spin :spinning="eventLoadSpinning">
-          <div v-for="event in events.sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1))" :key="event._id">
-            <a-card v-if="
-              dayjs(event.startDateTime).format('MM/DD/YYYY') ==
-              dayjs(selectedWeek)
-                .day(day - 1)
-                .format('MM/DD/YYYY')
-            " :bodyStyle="{ padding: '15px' }" style="background-color: #333333; margin-bottom: 10px"
-              @click="configureEventForm(event)">
+          <div v-for="event in sortedEvents" :key="event._id">
+            <a-card
+              v-if="
+                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+                dayjs(selectedWeek)
+                  .day(day - 1)
+                  .format('MM/DD/YYYY')
+              "
+              :bodyStyle="{ padding: '15px' }"
+              style="background-color: #333333; margin-bottom: 10px"
+              @click="configureEventForm(event)"
+            >
               <a-flex justify="space-between">
                 <a-card-meta :title="event.title">
-                  <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                  <template #description
+                    >{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
 
-                    <div style="padding: 5px; background-color: #333333"
-                      v-if="attendees.length > 0 && event.title.includes('Shift')">
-                      <a-tag v-for="attendee in attendees.sort()" style="font-size: 14px; margin: 5px" :key="attendee"
-                        :bordered="false">
+                    <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
+                      <a-tag v-for="attendee in attendees.sort()" style="font-size: 14px; margin: 5px" :key="attendee" :bordered="false">
                         {{ attendee }}
                       </a-tag>
                     </div>
@@ -50,8 +54,7 @@
       </a-timeline-item>
     </a-timeline>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px"
-      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
@@ -66,13 +69,44 @@ import dayjs from 'dayjs';
 
 <script>
 export default {
-  mounted() { },
+  props: ['scheduleID', 'visible'],
+  mounted() {},
   data() {
-    return {};
+    return {
+      selectedWeek: dayjs(),
+      events: []
+    };
+  },
+  computed: {
+    sortedEvents() {
+      return this.events.sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1));
+    }
   },
   methods: {
-
-
+    changeWeek(direction) {
+      if (direction == 'forward') {
+        this.selectedWeek = this.selectedWeek.add(7, 'day');
+      }
+      if (direction == 'backward') {
+        this.selectedWeek = this.selectedWeek.subtract(7, 'day');
+      }
+      this.getEventsOnSchedule(this.eventFormData.scheduleID);
+    },
+    getEventsOnSchedule(scheduleID) {
+      this.eventLoadSpinning = true;
+      let startDateTime = this.selectedWeek.startOf('week');
+      let endDateTime = this.selectedWeek.endOf('week');
+      fetch('/api/v1/events/onSchedule/' + scheduleID + '?startDateTime=' + startDateTime.toISOString() + '&endDateTime=' + endDateTime.toISOString(), {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            this.events = data.data.events;
+          }
+          this.eventLoadSpinning = false;
+        });
+      });
+    }
   }
 };
 </script>
