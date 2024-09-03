@@ -27,6 +27,42 @@ export default {
       spinning: false
     };
   },
-  methods: {}
+  methods: {
+    getScheduleLinks(scheduleID) {
+      fetch(`/api/v1/schedules/${scheduleID}/scheduleLinks/`, {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            this.scheduleLinks = data.data.scheduleLinks;
+          }
+        });
+      });
+    },
+    createScheduleLink() {
+      fetch(`/api/v1/schedules/${this.scheduleID}/scheduleLinks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          recipients: this.scheduleLinkFormData.recipients
+        })
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 201) {
+            this.scheduleLinks.push(data.data.scheduleLinks);
+            this.resetScheduleForm();
+          } else {
+            this.scheduleFormErrorMessage = data.message;
+          }
+        });
+      });
+    },
+    configureScheduleSharingForm(schedule) {
+      this.scheduleSharingOverlayVisible = true;
+      this.getScheduleLinks(schedule._id);
+    }
+  }
 };
 </script>

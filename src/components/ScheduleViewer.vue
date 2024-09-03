@@ -12,16 +12,17 @@
       </div>
     </a-flex>
 
-    <a-timeline>
-      <a-timeline-item color="gray" v-for="day in 7" :key="day - 1">
-        <a-typography-title :level="4">
-          {{
-            dayjs(selectedWeek)
-              .day(day - 1)
-              .format('dddd [-] MM/DD/YYYY')
-          }}</a-typography-title
-        >
-        <a-spin :spinning="eventLoadSpinning">
+    <a-spin :spinning="eventLoadSpinning">
+      <a-timeline>
+        <a-timeline-item color="gray" v-for="day in 7" :key="day - 1">
+          <a-typography-title :level="4">
+            {{
+              dayjs(selectedWeek)
+                .day(day - 1)
+                .format('dddd [-] MM/DD/YYYY')
+            }}</a-typography-title
+          >
+
           <div v-for="event in sortedEvents" :key="event._id">
             <a-card
               v-if="
@@ -50,9 +51,9 @@
               </a-flex>
             </a-card>
           </div>
-        </a-spin>
-      </a-timeline-item>
-    </a-timeline>
+        </a-timeline-item>
+      </a-timeline>
+    </a-spin>
 
     <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
@@ -74,6 +75,7 @@ export default {
   data() {
     return {
       selectedWeek: dayjs(),
+      eventLoadSpinning: false,
       events: []
     };
   },

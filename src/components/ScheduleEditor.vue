@@ -42,7 +42,6 @@
 </template>
 
 <script setup>
-import { PlusOutlined, EditOutlined, CalendarOutlined, CaretRightOutlined, CaretLeftOutlined, ShareAltOutlined, UserDeleteOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 </script>
 
@@ -66,17 +65,87 @@ export default {
         startDate: dayjs(),
         endDate: dayjs()
       },
-      scheduleFormErrorMessage: '',
-      schedules: [],
-      eventTemplates: [],
-      events: [],
-      tags: [],
-      scheduleFilterSettings: {
-        details: false,
-        search: ''
-      }
+      scheduleFormErrorMessage: ''
     };
   },
-  methods: {}
+  methods: {
+    createSchedule() {
+      this.scheduleSpinning = true;
+      fetch('/api/v1/schedules', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: this.scheduleFormData.title,
+          tagIDs: this.scheduleFormData.tagIDs,
+          startDate: this.scheduleFormData.startDate,
+          endDate: this.scheduleFormData.endDate
+        })
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 201) {
+            this.schedules.push(data.data.schedule);
+            this.resetScheduleForm();
+          } else {
+            this.scheduleFormErrorMessage = data.message;
+            this.scheduleSpinning = false;
+          }
+        });
+      });
+    },
+    configureScheduleForm(schedule) {
+      this.scheduleFormData.title = schedule.title;
+      this.scheduleFormData.tagIDs = schedule.tagIDs;
+      this.scheduleFormData._id = schedule._id;
+      this.scheduleFormData.startDate = dayjs(schedule.startDate);
+      this.scheduleFormData.endDate = dayjs(schedule.endDate);
+
+      this.scheduleEditOverlayVisible = true;
+    },
+    updateSchedule() {
+      this.scheduleSpinning = true;
+      fetch('/api/v1/schedules/' + this.scheduleFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: this.scheduleFormData.title,
+          tagIDs: this.scheduleFormData.tagIDs
+        })
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            let indexOfUpdatedSchedule = this.schedules.findIndex((schedule) => schedule._id === data.data.schedule._id);
+            this.schedules[indexOfUpdatedSchedule] = data.data.schedule;
+
+            this.resetScheduleForm();
+          } else {
+            this.scheduleFormErrorMessage = data.message;
+            this.scheduleSpinning = false;
+          }
+        });
+      });
+    },
+    deleteSchedule() {
+      this.scheduleSpinning = true;
+      fetch('/api/v1/schedules/' + this.scheduleFormData._id, {
+        method: 'DELETE'
+      }).then((response) => {
+        if (response.status === 204) {
+          let indexOfDeletedSchedule = this.schedules.findIndex((schedule) => schedule._id === this.scheduleFormData._id);
+          this.schedules.splice(indexOfDeletedSchedule, 1);
+
+          this.resetScheduleForm();
+        } else {
+          response.json().then((data) => {
+            this.scheduleFormErrorMessage = data.message;
+            this.scheduleSpinning = false;
+          });
+        }
+      });
+    }
+  }
 };
 </script>
