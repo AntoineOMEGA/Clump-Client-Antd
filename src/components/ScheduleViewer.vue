@@ -1,5 +1,5 @@
 <template>
-  <a-drawer :open="visible" :bodyStyle="{ padding: '15px' }">
+  <a-drawer :open="visible" :bodyStyle="{ padding: '15px' }" @close="close()">
     <a-flex justify="space-between" class="mb-2">
       <a-date-picker size="large" picker="week" format="[Week of] MM/DD" v-model:value="selectedWeek" />
       <div>
@@ -12,7 +12,7 @@
       </div>
     </a-flex>
 
-    <a-spin :spinning="eventLoadSpinning">
+    <a-spin :spinning="eventsLoading">
       <a-timeline>
         <a-timeline-item color="gray" v-for="day in 7" :key="day - 1">
           <a-typography-title :level="4">
@@ -70,12 +70,13 @@ import dayjs from 'dayjs';
 
 <script>
 export default {
-  props: ['scheduleID', 'visible'],
+  props: ['visible', 'scheduleID'],
+  emits: ['close'],
   mounted() {},
   data() {
     return {
       selectedWeek: dayjs(),
-      eventLoadSpinning: false,
+      eventsLoading: false,
       events: []
     };
   },
@@ -94,20 +95,23 @@ export default {
       }
       this.getEventsOnSchedule(this.eventFormData.scheduleID);
     },
-    getEventsOnSchedule(scheduleID) {
-      this.eventLoadSpinning = true;
+    getEventsOnSchedule() {
+      this.eventsLoading = true;
       let startDateTime = this.selectedWeek.startOf('week');
       let endDateTime = this.selectedWeek.endOf('week');
-      fetch('/api/v1/events/onSchedule/' + scheduleID + '?startDateTime=' + startDateTime.toISOString() + '&endDateTime=' + endDateTime.toISOString(), {
+      fetch('/api/v1/events/onSchedule/' + this.scheduleID + '?startDateTime=' + startDateTime.toISOString() + '&endDateTime=' + endDateTime.toISOString(), {
         method: 'GET'
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 200) {
             this.events = data.data.events;
           }
-          this.eventLoadSpinning = false;
+          this.eventsLoading = false;
         });
       });
+    },
+    close() {
+      this.$emit('close');
     }
   }
 };

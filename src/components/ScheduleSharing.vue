@@ -1,6 +1,6 @@
 <template>
-  <a-drawer v-model:open="visible" @close="resetEventForm()">
-    <a-spin :spinning="spinning">
+  <a-drawer :open="visible" @close="close()">
+    <a-spin :spinning="scheduleLinksLoading">
       <template v-for="scheduleLink in scheduleLinks.sort((a, b) => (a.recipient >= b.recipient ? 1 : -1))" :key="scheduleLink._id">
         <a-card style="margin: 10px" :title="scheduleLink.recipient" :bodyStyle="{ padding: '0' }">
           <template #extra>
@@ -21,10 +21,12 @@ import { UserDeleteOutlined } from '@ant-design/icons-vue';
 <script>
 export default {
   props: ['visible'],
+  emits: ['close'],
   mounted() {},
   data() {
     return {
-      spinning: false
+      scheduleLinksLoading: false,
+      scheduleLinks: []
     };
   },
   methods: {
@@ -62,6 +64,9 @@ export default {
     configureScheduleSharingForm(schedule) {
       this.scheduleSharingOverlayVisible = true;
       this.getScheduleLinks(schedule._id);
+    },
+    close() {
+      this.$emit('close');
     }
   }
 };

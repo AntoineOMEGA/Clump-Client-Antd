@@ -1,6 +1,6 @@
 <template>
-  <a-drawer v-model:open="visible" @close="resetScheduleForm()">
-    <a-spin :spinning="scheduleSpinning">
+  <a-drawer :open="visible" @close="close()">
+    <a-spin :spinning="scheduleLoading">
       <a-form>
         <div class="mb-2">
           Title
@@ -48,6 +48,7 @@ import dayjs from 'dayjs';
 <script>
 export default {
   props: ['visible'],
+  emits: ['close'],
   mounted() {
     this.getTags();
     this.getSchedules();
@@ -57,8 +58,7 @@ export default {
       spinning: false,
       selectedWeek: dayjs(),
       scheduleEditOverlayVisible: false,
-      scheduleLoadSpinning: false,
-      scheduleSpinning: false,
+      scheduleLoading: false,
       scheduleFormData: {
         title: '',
         tagIDs: [],
@@ -69,8 +69,25 @@ export default {
     };
   },
   methods: {
+    configureScheduleViewer(schedule) {
+      this.scheduleViewerOverlayVisible = true;
+      this.eventFormData.scheduleID = schedule._id;
+
+      this.getEventsOnSchedule(schedule._id);
+    },
+    resetScheduleForm() {
+      this.scheduleLoading = false;
+      this.scheduleEditOverlayVisible = false;
+      this.scheduleFormData = {
+        title: '',
+        tagIDs: [],
+        startDate: dayjs(),
+        endDate: dayjs()
+      };
+      this.scheduleFormErrorMessage = '';
+    },
     createSchedule() {
-      this.scheduleSpinning = true;
+      this.scheduleLoading = true;
       fetch('/api/v1/schedules', {
         method: 'POST',
         headers: {
@@ -89,7 +106,7 @@ export default {
             this.resetScheduleForm();
           } else {
             this.scheduleFormErrorMessage = data.message;
-            this.scheduleSpinning = false;
+            this.scheduleLoading = false;
           }
         });
       });
@@ -104,7 +121,7 @@ export default {
       this.scheduleEditOverlayVisible = true;
     },
     updateSchedule() {
-      this.scheduleSpinning = true;
+      this.scheduleLoading = true;
       fetch('/api/v1/schedules/' + this.scheduleFormData._id, {
         method: 'PUT',
         headers: {
@@ -123,13 +140,13 @@ export default {
             this.resetScheduleForm();
           } else {
             this.scheduleFormErrorMessage = data.message;
-            this.scheduleSpinning = false;
+            this.scheduleLoading = false;
           }
         });
       });
     },
     deleteSchedule() {
-      this.scheduleSpinning = true;
+      this.scheduleLoading = true;
       fetch('/api/v1/schedules/' + this.scheduleFormData._id, {
         method: 'DELETE'
       }).then((response) => {
@@ -141,10 +158,14 @@ export default {
         } else {
           response.json().then((data) => {
             this.scheduleFormErrorMessage = data.message;
-            this.scheduleSpinning = false;
+            this.scheduleLoading = false;
           });
         }
       });
+    },
+    close() {
+      this.resetScheduleForm();
+      this.$emit('close');
     }
   }
 };
