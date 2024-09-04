@@ -1,5 +1,5 @@
 <template>
-  <a-modal :open="visible" @close="close()" title="Recurrence Rule">
+  <a-modal :open="visible" @ok="confirmRecurrenceRule()" @cancel="close()" title="Recurrence Rule">
     <div class="mb-2">
       Frequency
       <a-select v-model:value="recurrenceRuleFormData.frequency" size="large" style="width: 100%" allowClear>
@@ -25,8 +25,7 @@
 
     <div v-if="['Monthly by day', 'Yearly by day'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
       Occurrences of Week Days in Month
-      <a-select v-model:value="recurrenceRuleFormData.ByDayMonthly" size="large" style="width: 100%" allowClear
-        mode="multiple">
+      <a-select v-model:value="recurrenceRuleFormData.ByDayMonthly" size="large" style="width: 100%" allowClear mode="multiple">
         <a-select-option v-for="monthDay in Object.keys(generatedMonthDays)" :value="monthDay" :key="monthDay">
           {{ monthDay }}
         </a-select-option>
@@ -35,8 +34,7 @@
 
     <div v-if="['Weekly'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
       Days of Week
-      <a-select v-model:value="recurrenceRuleFormData.byDay" size="large" style="width: 100%" allowClear
-        mode="multiple">
+      <a-select v-model:value="recurrenceRuleFormData.byDay" size="large" style="width: 100%" allowClear mode="multiple">
         <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.byDay)" :value="weekDay" :key="weekDay">
           {{ weekDay }}
         </a-select-option>
@@ -45,10 +43,8 @@
 
     <div v-if="['Monthly by date', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
       Day in Month
-      <a-select v-model:value="recurrenceRuleFormData.byMonthDay" size="large" style="width: 100%" allowClear
-        mode="multiple">
-        <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.ByMonthDay)" :value="dayInMonth"
-          :key="dayInMonth">
+      <a-select v-model:value="recurrenceRuleFormData.byMonthDay" size="large" style="width: 100%" allowClear mode="multiple">
+        <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.ByMonthDay)" :value="dayInMonth" :key="dayInMonth">
           {{ dayInMonth }}
         </a-select-option>
       </a-select>
@@ -56,8 +52,7 @@
 
     <div class="mb-2">
       End
-      <a-radio-group v-model:value="recurrenceRuleFormData.end" option-type="button"
-        :options="recurrenceRuleOptions.endOptions" style="display: block" />
+      <a-radio-group v-model:value="recurrenceRuleFormData.end" option-type="button" :options="recurrenceRuleOptions.endOptions" style="display: block" />
     </div>
 
     <div v-if="recurrenceRuleFormData.end == 'Occurrences'" class="mb-2">
@@ -67,15 +62,16 @@
 
     <div v-if="recurrenceRuleFormData.end == 'Until Date'" class="mb-2">
       Until Date
-      <a-date-picker size="large" v-model:value="recurrenceRuleFormData.untilDateTime" format="MM-DD-YYYY"
-        style="width: 100%" allowClear></a-date-picker>
+      <a-date-picker size="large" v-model:value="recurrenceRuleFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
     </div>
   </a-modal>
 </template>
 
+<script setup></script>
+
 <script>
 export default {
-  mounted() { },
+  mounted() {},
   props: ['visible', 'recurrenceRule'],
   emits: ['close', 'confirmRecurrenceRule'],
   data() {

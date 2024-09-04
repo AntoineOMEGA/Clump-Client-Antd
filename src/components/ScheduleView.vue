@@ -1,6 +1,5 @@
 <template>
-  <a-float-button type="primary" @click="scheduleEditOverlayVisible = !scheduleEditOverlayVisible"
-    style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="scheduleEditOverlayVisible = !scheduleEditOverlayVisible" style="height: 60px; width: 60px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -12,20 +11,15 @@
 
   <a-spin :spinning="schedulesLoading">
     <a-row>
-      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6"
-        v-for="schedule in schedules.sort((a, b) => (a.title >= b.title ? 1 : -1))" :key="schedule._id">
-        <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())"
-          style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
+      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" v-for="schedule in schedules.sort((a, b) => (a.title >= b.title ? 1 : -1))" :key="schedule._id">
+        <a-card v-if="schedule.title.toLowerCase().includes(scheduleFilterSettings.search.toLowerCase())" style="margin: 10px" :title="schedule.title" :bodyStyle="{ padding: '0' }">
           <template #extra>
-            <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar"
-              @click="scheduleViewerOverlayVisible = true" />
-            <ShareAltOutlined style="font-size: 1.5rem; margin-right: 15px" key="share"
-              @click="scheduleSharingOverlayVisible = true" />
+            <CalendarOutlined style="font-size: 1.5rem; margin-right: 15px" key="calendar" @click="scheduleViewerOverlayVisible = true" />
+            <ShareAltOutlined style="font-size: 1.5rem; margin-right: 15px" key="share" @click="scheduleSharingOverlayVisible = true" />
             <EditOutlined style="font-size: 1.5rem" key="edit" @click="scheduleEditorOverlayVisible = true" />
           </template>
           <div style="padding: 10px; background-color: #333333" v-if="schedule.tagIDs.length > 0">
-            <a-tag v-for="tagID in schedule.tagIDs" :key="tagID"
-              :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+            <a-tag v-for="tagID in schedule.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
               {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
             </a-tag>
           </div>
@@ -34,12 +28,9 @@
     </a-row>
   </a-spin>
 
-  <ScheduleViewer :visible="scheduleViewerOverlayVisible" :id="selectedScheduleID"
-    @close="scheduleViewerOverlayVisible = false" />
-  <ScheduleSharing :visible="scheduleSharingOverlayVisible" :id="selectedScheduleID"
-    @close="scheduleSharingOverlayVisible = false" />
-  <ScheduleEditor :visible="scheduleEditorOverlayVisible" :id="selectedScheduleID"
-    @close="scheduleEditorOverlayVisible = false" />
+  <ScheduleViewer :visible="scheduleViewerOverlayVisible" :id="selectedScheduleID" @close="scheduleViewerOverlayVisible = false" />
+  <ScheduleSharing :visible="scheduleSharingOverlayVisible" :id="selectedScheduleID" @close="scheduleSharingOverlayVisible = false" />
+  <ScheduleEditor :visible="scheduleEditorOverlayVisible" :id="selectedScheduleID" @close="scheduleEditorOverlayVisible = false" />
 </template>
 
 <script setup>

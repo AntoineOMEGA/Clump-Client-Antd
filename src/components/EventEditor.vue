@@ -4,10 +4,8 @@
       <a-form>
         <div class="mb-2" v-if="!eventFormData._id">
           Event Template
-          <a-select v-on:change="applyEventTemplate(eventFormData.eventTemplateID)"
-            v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
-            <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))"
-              :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
+          <a-select v-on:change="applyEventTemplate(eventFormData.eventTemplateID)" v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
+            <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
           </a-select>
         </div>
 
@@ -39,13 +37,11 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Time
-              <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5"
-                allowClear></a-time-picker>
+              <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
             </div>
             <div>
               End Time
-              <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5"
-                allowClear></a-time-picker>
+              <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
             </div>
           </a-flex>
         </div>
@@ -54,13 +50,11 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Date
-              <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY"
-                allowClear></a-date-picker>
+              <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY" allowClear></a-date-picker>
             </div>
             <div>
               End Date
-              <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY"
-                allowClear></a-date-picker>
+              <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY" allowClear></a-date-picker>
             </div>
           </a-flex>
         </div>
@@ -77,21 +71,18 @@
         <a-button type="primary" style="margin: 10px" @click="recurrenceRuleModalVisible = true">Repeat Event</a-button>
       </a-form>
 
-      <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2"
-        v-if="eventFormErrorMessage != ''" />
+      <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle" class="mb-2">
         <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
         <a-button v-if="eventFormData._id" type="primary" size="large" block @click="updateDecision()">Save</a-button>
-        <a-button v-if="eventFormData._id" type="primary" size="large" block danger
-          @click="deleteDecision()">Delete</a-button>
+        <a-button v-if="eventFormData._id" type="primary" size="large" block danger @click="deleteDecision()">Delete</a-button>
       </a-flex>
 
       <a-popover v-model:open="eventUpdatePopoverVisible" title="Update Instances" trigger="click">
         <template #content>
           <a-button type="primary" style="margin: 10px" @click="updateThisEvent()">This Event</a-button>
-          <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEvents()">This and Following
-            Events</a-button>
+          <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEvents()">This and Following Events</a-button>
           <a-button type="primary" style="margin: 10px" @Click="updateAllEvents()">All Events</a-button>
         </template>
       </a-popover>
@@ -99,26 +90,24 @@
       <a-popover v-model:open="eventDeletePopoverVisible" title="Delete Instances" trigger="click">
         <template #content>
           <a-button type="primary" style="margin: 10px" @click="deleteThisEvent()">This Event</a-button>
-          <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEvents()">This and Following
-            Events</a-button>
+          <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEvents()">This and Following Events</a-button>
           <a-button type="primary" style="margin: 10px" @click="deleteAllEvents()">All Events</a-button>
         </template>
       </a-popover>
 
-      <RecurrenceRuleEditor :visible="recurrenceRuleModalVisible" :recurrenceRule="recurrenceRule"
-        @close="recurrenceRuleModalVisible = false" />
+      <RecurrenceRuleEditor :visible="recurrenceRuleModalVisible" :recurrenceRule="recurrenceRule" @confirm-recurrence-rule="setRecurrenceRule()" @close="recurrenceRuleModalVisible = false" />
     </a-spin>
   </a-drawer>
 </template>
 
 <script setup>
-import { RecurrenceRuleEditor } from './RecurrenceRuleEditor.vue';
+import RecurrenceRuleEditor from './RecurrenceRuleEditor.vue';
 import dayjs from 'dayjs';
 </script>
 
 <script>
 export default {
-  mounted() { },
+  mounted() {},
   props: ['visible', 'eventID'],
   emits: ['close'],
   data() {
@@ -460,6 +449,11 @@ export default {
           });
         }
       });
+    },
+    setRecurrenceRule(recurrenceRule) {
+      console.log(recurrenceRule);
+      this.recurrenceRule = recurrenceRule;
+      this.recurrenceRuleModalVisible = false;
     }
   }
 };

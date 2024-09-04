@@ -20,25 +20,29 @@
               dayjs(selectedWeek)
                 .day(day - 1)
                 .format('dddd [-] MM/DD/YYYY')
-            }}</a-typography-title>
+            }}</a-typography-title
+          >
 
           <div v-for="event in sortedEvents" :key="event._id">
-            <a-card v-if="
-              dayjs(event.startDateTime).format('MM/DD/YYYY') ==
-              dayjs(selectedWeek)
-                .day(day - 1)
-                .format('MM/DD/YYYY')
-            " :bodyStyle="{ padding: '15px' }" style="background-color: #333333; margin-bottom: 10px"
-              @click="configureEventForm(event)">
+            <a-card
+              v-if="
+                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+                dayjs(selectedWeek)
+                  .day(day - 1)
+                  .format('MM/DD/YYYY')
+              "
+              :bodyStyle="{ padding: '15px' }"
+              style="background-color: #333333; margin-bottom: 10px"
+              @click="configureEventForm(event)"
+            >
               <a-flex justify="space-between">
                 <a-card-meta :title="event.title">
-                  <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                  <template #description
+                    >{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
 
-                    <div style="padding: 5px; background-color: #333333"
-                      v-if="attendees.length > 0 && event.title.includes('Shift')">
-                      <a-tag v-for="attendee in attendees.sort()" style="font-size: 14px; margin: 5px" :key="attendee"
-                        :bordered="false">
+                    <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
+                      <a-tag v-for="attendee in attendees.sort()" style="font-size: 14px; margin: 5px" :key="attendee" :bordered="false">
                         {{ attendee }}
                       </a-tag>
                     </div>
@@ -51,8 +55,7 @@
       </a-timeline>
     </a-spin>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px"
-      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
@@ -64,7 +67,7 @@
 
 <script setup>
 import { PlusOutlined, CaretRightOutlined, CaretLeftOutlined } from '@ant-design/icons-vue';
-import { EventEditor } from './EventEditor.vue';
+import EventEditor from './EventEditor.vue';
 import dayjs from 'dayjs';
 </script>
 
@@ -72,7 +75,7 @@ import dayjs from 'dayjs';
 export default {
   props: ['visible', 'scheduleID'],
   emits: ['close'],
-  mounted() { },
+  mounted() {},
   data() {
     return {
       selectedWeek: dayjs(),
