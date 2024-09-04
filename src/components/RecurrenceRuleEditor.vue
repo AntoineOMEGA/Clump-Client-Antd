@@ -1,6 +1,4 @@
 <template>
-
-  //Recurrence Rule Form
   <a-modal :open="visible" @close="close()" title="Recurrence Rule">
     <div class="mb-2">
       Frequency
@@ -75,10 +73,6 @@
   </a-modal>
 </template>
 
-<script setup>
-import dayjs from 'dayjs';
-</script>
-
 <script>
 export default {
   mounted() { },
@@ -147,19 +141,7 @@ export default {
         },
         endOptions: ['Not Set', 'Until Date', 'Occurrences']
       },
-
-      recurrenceRuleFormData: {
-        _id: null,
-        frequency: 'Weekly',
-        byDay: '',
-        byWeekInMonth: 1,
-        byMonthDay: 1,
-        byMonth: 1,
-        interval: 1,
-        end: 'Not Set',
-        untilDateTime: dayjs(),
-        occurrences: 0
-      }
+      recurrenceRuleFormData: this.recurrenceRule
     };
   },
   computed: {
@@ -177,6 +159,9 @@ export default {
     close() {
       this.$emit('close');
     },
+    confirmRecurrenceRule() {
+      this.$emit('confirmRecurrenceRule', this.recurrenceRuleFormData);
+    }
   }
 };
 </script>

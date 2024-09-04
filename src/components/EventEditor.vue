@@ -105,7 +105,8 @@
         </template>
       </a-popover>
 
-      <RecurrenceRuleEditor />
+      <RecurrenceRuleEditor :visible="recurrenceRuleModalVisible" :recurrenceRule="recurrenceRule"
+        @close="recurrenceRuleModalVisible = false" />
     </a-spin>
   </a-drawer>
 </template>
@@ -142,7 +143,7 @@ export default {
       },
       timeZones: new Intl.Locale('en-US').timeZones,
 
-      recurrenceRuleFormData: {
+      recurrenceRule: {
         _id: null,
         frequency: 'Weekly',
         byDay: '',
