@@ -25,8 +25,8 @@
 
     <div v-if="['Monthly by day', 'Yearly by day'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
       Occurrences of Week Days in Month
-      <a-select v-model:value="recurrenceRuleFormData.ByDayMonthly" size="large" style="width: 100%" allowClear mode="multiple">
-        <a-select-option v-for="monthDay in Object.keys(generatedMonthDays)" :value="monthDay" :key="monthDay">
+      <a-select v-model:value="recurrenceRuleFormData.byWeekDayInMonth" size="large" style="width: 100%" allowClear mode="multiple">
+        <a-select-option v-for="monthDay in Object.keys(generatedMonthDays)" :value="generatedMonthDays[monthDay]" :key="monthDay">
           {{ monthDay }}
         </a-select-option>
       </a-select>
@@ -35,7 +35,7 @@
     <div v-if="['Weekly'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
       Days of Week
       <a-select v-model:value="recurrenceRuleFormData.byDay" size="large" style="width: 100%" allowClear mode="multiple">
-        <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.byDay)" :value="weekDay" :key="weekDay">
+        <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.byDay)" :value="recurrenceRuleOptions.byDay[weekDay]" :key="weekDay">
           {{ weekDay }}
         </a-select-option>
       </a-select>
@@ -67,7 +67,9 @@
   </a-modal>
 </template>
 
-<script setup></script>
+<script setup>
+import dayjs from 'dayjs';
+</script>
 
 <script>
 export default {
@@ -150,7 +152,7 @@ export default {
       let monthDays = {};
       for (let dayExtended of Object.keys(this.recurrenceRuleOptions.byWeekInMonth)) {
         for (let day of Object.keys(this.recurrenceRuleOptions.byDay)) {
-          monthDays[dayExtended + ' ' + day] = this.recurrenceRuleOptions.byWeekInMonth[dayExtended] + this.recurrenceRuleOptions.byDay[day];
+          monthDays[(dayExtended + ' ' + day).toString()] = this.recurrenceRuleOptions.byWeekInMonth[dayExtended] + this.recurrenceRuleOptions.byDay[day];
         }
       }
       return monthDays;
@@ -186,7 +188,7 @@ export default {
 
       if (this.recurrenceRule.untilDateTime) {
         this.recurrenceRuleFormData.end = 'Until Date';
-        this.recurrenceRuleFormData.untilDateTime = this.recurrenceRule.untilDateTime;
+        this.recurrenceRuleFormData.untilDateTime = dayjs(this.recurrenceRule.untilDateTime);
       } else if (this.recurrenceRule.occurrences) {
         this.recurrenceRuleFormData.end = 'Occurrences';
         this.recurrenceRuleFormData.occurrences = this.recurrenceRule.occurrences;
@@ -200,28 +202,24 @@ export default {
         frequency: this.recurrenceRuleFormData.frequency
       };
 
-      if (newRecurrenceRule.frequency == 'Weekly') {
-        if (this.recurrenceRuleFormData.byDay != undefined) {
-          newRecurrenceRule.byDay = this.recurrenceRuleFormData.byDay;
-        }
+      if (this.recurrenceRuleFormData.frequency == 'Weekly') {
+        newRecurrenceRule.byDay = this.recurrenceRuleFormData.byDay;
       }
 
-      if (newRecurrenceRule.frequency == 'Monthly by day') {
-        if (this.recurrenceRuleFormData.byDay != undefined) {
-          newRecurrenceRule.byWeekDayInMonth = this.recurrenceRuleFormData.byWeekDayInMonth;
-        }
+      if (this.recurrenceRuleFormData.frequency == 'Monthly by day') {
+        newRecurrenceRule.byWeekDayInMonth = this.recurrenceRuleFormData.byWeekDayInMonth;
       }
 
-      if (newRecurrenceRule.frequency == 'Monthly by date') {
+      if (this.recurrenceRuleFormData.frequency == 'Monthly by date') {
         newRecurrenceRule.byMonthDay = this.recurrenceRuleFormData.byMonthDay;
       }
 
-      if (newRecurrenceRule.frequency == 'Yearly by day') {
+      if (this.recurrenceRuleFormData.frequency == 'Yearly by day') {
         newRecurrenceRule.byWeekDayInMonth = this.recurrenceRuleFormData.byWeekDayInMonth;
         newRecurrenceRule.byMonth = this.recurrenceRuleFormData.byMonth;
       }
 
-      if (newRecurrenceRule.frequency == 'Yearly by date') {
+      if (this.recurrenceRuleFormData.frequency == 'Yearly by date') {
         newRecurrenceRule.byMonthDay = this.recurrenceRuleFormData.byMonthDay;
         newRecurrenceRule.byMonth = this.recurrenceRuleFormData.byMonth;
       }

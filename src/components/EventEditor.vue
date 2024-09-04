@@ -1,5 +1,6 @@
 <template>
-  <a-drawer :open="visible" @close="close()">
+  <a-modal :open="visible" @cancel="close()" title="Event Editor">
+    <template #footer></template>
     <a-spin :spinning="eventLoading">
       <a-form>
         <div class="mb-2" v-if="!eventFormData._id">
@@ -68,7 +69,9 @@
           </a-select>
         </div> -->
 
+        <!--TODO: Change Buttons to Collapse-->
         <a-button type="primary" style="margin: 10px" @click="recurrenceRuleModalVisible = true">Repeat Event</a-button>
+        <a-button type="primary" style="margin: 10px" @click="console.log('Child Event')">Add to Other Schedules</a-button>
       </a-form>
 
       <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
@@ -97,7 +100,7 @@
 
       <RecurrenceRuleEditor :visible="recurrenceRuleModalVisible" :recurrenceRule="event.recurrenceRule" @confirm-recurrence-rule="setRecurrenceRule" @close="recurrenceRuleModalVisible = false" />
     </a-spin>
-  </a-drawer>
+  </a-modal>
 </template>
 
 <script setup>
@@ -173,9 +176,9 @@ export default {
 
       this.eventFormErrorMessage = '';
       this.eventLoading = false;
+      this.$emit('close');
     },
     close() {
-      this.resetEventForm();
       this.$emit('close');
     },
     createEventBody() {
