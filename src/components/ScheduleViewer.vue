@@ -1,5 +1,5 @@
 <template>
-  <a-drawer :open="visible" :bodyStyle="{ padding: '15px' }" @close="close()">
+  <a-drawer :open="visible" :bodyStyle="{ padding: '15px' }" @close="close()" :title="schedule.title">
     <a-flex justify="space-between" class="mb-2">
       <a-date-picker size="large" picker="week" format="[Week of] MM/DD" v-model:value="selectedWeek" />
       <div>
@@ -33,7 +33,10 @@
               "
               :bodyStyle="{ padding: '15px' }"
               style="background-color: #333333; margin-bottom: 10px"
-              @click="configureEventForm(event)"
+              @click="
+                selectedEvent = event;
+                eventEditOverlayVisible = true;
+              "
             >
               <a-flex justify="space-between">
                 <a-card-meta :title="event.title">
@@ -41,11 +44,11 @@
                     >{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
 
-                    <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
+                    <!-- <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
                       <a-tag v-for="attendee in attendees.sort()" style="font-size: 14px; margin: 5px" :key="attendee" :bordered="false">
                         {{ attendee }}
                       </a-tag>
-                    </div>
+                    </div> -->
                   </template>
                 </a-card-meta>
               </a-flex>
@@ -61,7 +64,15 @@
       </template>
     </a-float-button>
 
-    <EventEditor :visible="eventEditOverlayVisible" :id="selectedEventID" @close="eventEditOverlayVisible = false" />
+    <EventEditor
+      :visible="eventEditOverlayVisible"
+      :scheduleID="schedule._id"
+      :event="selectedEvent"
+      @close="
+        eventEditOverlayVisible = false;
+        getEventsOnSchedule();
+      "
+    />
   </a-drawer>
 </template>
 
@@ -73,9 +84,13 @@ import dayjs from 'dayjs';
 
 <script>
 export default {
-  props: ['visible', 'scheduleID'],
+  props: ['visible', 'schedule'],
   emits: ['close'],
-  mounted() {},
+  updated() {
+    if (this.visible) {
+      this.getEventsOnSchedule();
+    }
+  },
   data() {
     return {
       selectedWeek: dayjs(),
@@ -83,7 +98,7 @@ export default {
       events: [],
 
       eventEditOverlayVisible: false,
-      selectedEventID: ''
+      selectedEvent: {}
     };
   },
   computed: {
@@ -99,13 +114,13 @@ export default {
       if (direction == 'backward') {
         this.selectedWeek = this.selectedWeek.subtract(7, 'day');
       }
-      this.getEventsOnSchedule(this.eventFormData.scheduleID);
+      this.getEventsOnSchedule();
     },
     getEventsOnSchedule() {
       this.eventsLoading = true;
       let startDateTime = this.selectedWeek.startOf('week');
       let endDateTime = this.selectedWeek.endOf('week');
-      fetch('/api/v1/events/onSchedule/' + this.scheduleID + '?startDateTime=' + startDateTime.toISOString() + '&endDateTime=' + endDateTime.toISOString(), {
+      fetch('/api/v1/events/onSchedule/' + this.schedule._id + '?startDateTime=' + startDateTime.toISOString() + '&endDateTime=' + endDateTime.toISOString(), {
         method: 'GET'
       }).then((response) => {
         response.json().then((data) => {

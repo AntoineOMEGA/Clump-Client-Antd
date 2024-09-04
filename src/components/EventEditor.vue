@@ -59,14 +59,14 @@
           </a-flex>
         </div>
 
-        <div v-if="eventFormData._id" class="mb-2">
+        <!-- <div v-if="eventFormData._id" class="mb-2">
           Attendees
           <a-select v-model:value="attendees" size="large" style="width: 100%" allowClear mode="multiple">
             <a-select-option v-for="schedule in schedules.sort()" :value="schedule._id" :key="schedule._id">
               {{ schedule.title }}
             </a-select-option>
           </a-select>
-        </div>
+        </div> -->
 
         <a-button type="primary" style="margin: 10px" @click="recurrenceRuleModalVisible = true">Repeat Event</a-button>
       </a-form>
@@ -95,7 +95,7 @@
         </template>
       </a-popover>
 
-      <RecurrenceRuleEditor :visible="recurrenceRuleModalVisible" :recurrenceRule="recurrenceRule" @confirm-recurrence-rule="setRecurrenceRule()" @close="recurrenceRuleModalVisible = false" />
+      <RecurrenceRuleEditor :visible="recurrenceRuleModalVisible" :recurrenceRule="event.recurrenceRule" @confirm-recurrence-rule="setRecurrenceRule" @close="recurrenceRuleModalVisible = false" />
     </a-spin>
   </a-drawer>
 </template>
@@ -108,8 +108,14 @@ import dayjs from 'dayjs';
 <script>
 export default {
   mounted() {},
-  props: ['visible', 'eventID'],
+  props: ['visible', 'scheduleID', 'event'],
   emits: ['close'],
+  updated() {
+    if (this.visible) {
+      this.configureEventForm(this.event);
+      this.getEventTemplates();
+    }
+  },
   data() {
     return {
       eventUpdatePopoverVisible: false,
@@ -127,23 +133,13 @@ export default {
         endDate: dayjs(),
         startTime: dayjs(),
         endTime: dayjs(),
-        scheduleID: '',
+        scheduleID: this.scheduleID,
         eventTemplateID: ''
       },
       timeZones: new Intl.Locale('en-US').timeZones,
 
-      recurrenceRule: {
-        _id: null,
-        frequency: 'Weekly',
-        byDay: '',
-        byWeekInMonth: 1,
-        byMonthDay: 1,
-        byMonth: 1,
-        interval: 1,
-        end: 'Not Set',
-        untilDateTime: dayjs(),
-        occurrences: 0
-      }
+      recurrenceRule: {},
+      eventTemplates: []
     };
   },
   methods: {
@@ -159,8 +155,6 @@ export default {
       });
     },
     resetEventForm() {
-      this.eventEditOverlayVisible = false;
-      this.eventEditAdvanced = false;
       this.eventUpdatePopoverVisible = false;
       this.eventDeletePopoverVisible = false;
 
@@ -173,15 +167,12 @@ export default {
         endDate: dayjs(),
         startTime: dayjs(),
         endTime: dayjs(),
-        frequency: 'Once',
-        interval: 0,
-        untilDateTime: dayjs(),
         parentEventID: '',
-        scheduleID: this.eventFormData.scheduleID
+        scheduleID: this.scheduleID
       };
 
       this.eventFormErrorMessage = '';
-      this.eventLoading = true;
+      this.eventLoading = false;
     },
     close() {
       this.resetEventForm();
@@ -197,12 +188,10 @@ export default {
         startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
         endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
 
-        scheduleID: this.eventFormData.scheduleID,
+        scheduleID: this.scheduleID,
+        //scheduleID: this.eventFormData.scheduleID,
         parentEventID: this.eventFormData.parentEventID,
-
-        frequency: this.eventFormData.frequency,
-        interval: this.eventFormData.interval,
-        untilDateTime: this.eventFormData.untilDateTime
+        recurrenceRule: this.recurrenceRule
       };
 
       return eventBody;
@@ -220,7 +209,6 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 201) {
-            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -244,9 +232,6 @@ export default {
       this.eventFormData.scheduleID = event.scheduleID;
       this.eventFormData.parentEventID = event.parentEventID;
       this.eventFormData.isInstance = event.isInstance;
-
-      this.eventEditOverlayVisible = true;
-      this.eventEditAdvanced = false;
     },
     applyEventTemplate(eventTemplateID) {
       if (eventTemplateID != null) {
@@ -284,7 +269,6 @@ export default {
         response.json().then((data) => {
           this.eventLoading = false;
           if (response.status === 200) {
-            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -307,7 +291,6 @@ export default {
         response.json().then((data) => {
           this.eventLoading = false;
           if (response.status === 201) {
-            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -330,7 +313,6 @@ export default {
         response.json().then((data) => {
           this.eventLoading = false;
           if (response.status === 201) {
-            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -353,7 +335,6 @@ export default {
         response.json().then((data) => {
           this.eventLoading = false;
           if (response.status === 200) {
-            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -375,7 +356,6 @@ export default {
         method: 'DELETE'
       }).then((response) => {
         if (response.status === 204) {
-          this.getEventsOnSchedule(this.eventFormData.scheduleID);
           this.resetEventForm();
         } else {
           response.json().then((data) => {
@@ -399,7 +379,6 @@ export default {
         response.json().then((data) => {
           this.eventLoading = false;
           if (response.status === 201) {
-            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -425,7 +404,6 @@ export default {
         response.json().then((data) => {
           this.eventLoading = false;
           if (response.status === 200) {
-            this.getEventsOnSchedule(this.eventFormData.scheduleID);
             this.resetEventForm();
           } else {
             this.eventFormErrorMessage = data.message;
@@ -440,7 +418,6 @@ export default {
         method: 'DELETE'
       }).then((response) => {
         if (response.status === 204) {
-          this.getEventsOnSchedule(this.eventFormData.scheduleID);
           this.resetEventForm();
         } else {
           response.json().then((data) => {

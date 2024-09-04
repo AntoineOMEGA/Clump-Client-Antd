@@ -72,6 +72,11 @@
 <script>
 export default {
   mounted() {},
+  updated() {
+    if (this.visible) {
+      this.configureForm();
+    }
+  },
   props: ['visible', 'recurrenceRule'],
   emits: ['close', 'confirmRecurrenceRule'],
   data() {
@@ -137,7 +142,7 @@ export default {
         },
         endOptions: ['Not Set', 'Until Date', 'Occurrences']
       },
-      recurrenceRuleFormData: this.recurrenceRule
+      recurrenceRuleFormData: {}
     };
   },
   computed: {
@@ -152,11 +157,86 @@ export default {
     }
   },
   methods: {
+    configureForm() {
+      this.recurrenceRuleFormData.frequency = this.recurrenceRule.frequency;
+
+      if (this.recurrenceRuleFormData.frequency == 'Weekly') {
+        this.recurrenceRuleFormData.byDay = this.recurrenceRule.byDay;
+      }
+
+      if (this.recurrenceRuleFormData.frequency == 'Monthly by day') {
+        this.recurrenceRuleFormData.byWeekDayInMonth = this.recurrenceRule.byWeekDayInMonth;
+      }
+
+      if (this.recurrenceRuleFormData.frequency == 'Monthly by date') {
+        this.recurrenceRuleFormData.byMonthDay = this.recurrenceRule.byMonthDay;
+      }
+
+      if (this.recurrenceRuleFormData.frequency == 'Yearly by day') {
+        this.recurrenceRuleFormData.byWeekDayInMonth = this.recurrenceRule.byWeekDayInMonth;
+        this.recurrenceRuleFormData.byMonth = this.recurrenceRule.byMonth;
+      }
+
+      if (this.recurrenceRuleFormData.frequency == 'Yearly by date') {
+        this.recurrenceRuleFormData.byMonthDay = this.recurrenceRule.byMonthDay;
+        this.recurrenceRuleFormData.byMonth = this.recurrenceRule.byMonth;
+      }
+
+      this.recurrenceRuleFormData.interval = this.recurrenceRule.interval;
+
+      if (this.recurrenceRule.untilDateTime) {
+        this.recurrenceRuleFormData.end = 'Until Date';
+        this.recurrenceRuleFormData.untilDateTime = this.recurrenceRule.untilDateTime;
+      } else if (this.recurrenceRule.occurrences) {
+        this.recurrenceRuleFormData.end = 'Occurrences';
+        this.recurrenceRuleFormData.occurrences = this.recurrenceRule.occurrences;
+      }
+    },
     close() {
       this.$emit('close');
     },
     confirmRecurrenceRule() {
-      this.$emit('confirmRecurrenceRule', this.recurrenceRuleFormData);
+      let newRecurrenceRule = {
+        frequency: this.recurrenceRuleFormData.frequency
+      };
+
+      if (newRecurrenceRule.frequency == 'Weekly') {
+        if (this.recurrenceRuleFormData.byDay != undefined) {
+          newRecurrenceRule.byDay = this.recurrenceRuleFormData.byDay;
+        }
+      }
+
+      if (newRecurrenceRule.frequency == 'Monthly by day') {
+        if (this.recurrenceRuleFormData.byDay != undefined) {
+          newRecurrenceRule.byWeekDayInMonth = this.recurrenceRuleFormData.byWeekDayInMonth;
+        }
+      }
+
+      if (newRecurrenceRule.frequency == 'Monthly by date') {
+        newRecurrenceRule.byMonthDay = this.recurrenceRuleFormData.byMonthDay;
+      }
+
+      if (newRecurrenceRule.frequency == 'Yearly by day') {
+        newRecurrenceRule.byWeekDayInMonth = this.recurrenceRuleFormData.byWeekDayInMonth;
+        newRecurrenceRule.byMonth = this.recurrenceRuleFormData.byMonth;
+      }
+
+      if (newRecurrenceRule.frequency == 'Yearly by date') {
+        newRecurrenceRule.byMonthDay = this.recurrenceRuleFormData.byMonthDay;
+        newRecurrenceRule.byMonth = this.recurrenceRuleFormData.byMonth;
+      }
+
+      if (this.recurrenceRuleFormData.interval > 1) {
+        newRecurrenceRule.interval = this.recurrenceRuleFormData.interval;
+      }
+
+      if (this.recurrenceRuleFormData.end == 'Until Date') {
+        newRecurrenceRule.untilDateTime = this.recurrenceRuleFormData.untilDateTime;
+      } else if (this.recurrenceRuleFormData.end == 'Occurrences') {
+        newRecurrenceRule.occurrences = this.recurrenceRuleFormData.occurrences;
+      }
+
+      this.$emit('confirmRecurrenceRule', newRecurrenceRule);
     }
   }
 };
