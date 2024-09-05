@@ -16,8 +16,8 @@
 
     <div v-if="['Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
       Month
-      <a-select v-model:value="recurrenceRuleFormData.ByMonth" size="large" style="width: 100%" allowClear>
-        <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.ByMonth)" :value="month" :key="month">
+      <a-select v-model:value="recurrenceRuleFormData.byMonth" size="large" style="width: 100%" allowClear>
+        <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.byMonth)" :value="recurrenceRuleOptions.byMonth[month]" :key="month">
           {{ month }}
         </a-select-option>
       </a-select>
@@ -44,7 +44,7 @@
     <div v-if="['Monthly by date', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
       Day in Month
       <a-select v-model:value="recurrenceRuleFormData.byMonthDay" size="large" style="width: 100%" allowClear mode="multiple">
-        <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.ByMonthDay)" :value="dayInMonth" :key="dayInMonth">
+        <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.byMonthDay)" :value="recurrenceRuleOptions.byMonthDay[dayInMonth]" :key="dayInMonth">
           {{ dayInMonth }}
         </a-select-option>
       </a-select>
@@ -95,7 +95,7 @@ export default {
           Sunday: 'SU'
         },
         byWeekInMonth: { '1st': 1, '2nd': 2, '3rd': 3, '4th': 4, '5th': 5, Last: -1 },
-        ByMonthDay: {
+        byMonthDay: {
           '1st': 1,
           '2nd': 2,
           '3rd': 3,
@@ -128,7 +128,7 @@ export default {
           '30th': 30,
           '31st': 31
         },
-        ByMonth: {
+        byMonth: {
           January: 1,
           February: 2,
           March: 3,
