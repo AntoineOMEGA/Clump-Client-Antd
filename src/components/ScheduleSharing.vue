@@ -7,9 +7,10 @@
             <UserDeleteOutlined style="font-size: 1.5rem" key="delete" @click="deleteScheduleLink(scheduleLink._id)" />
           </template>
         </a-card>
-
-        <a-button type="primary" style="margin: 10px" @click="recurrenceRuleModalVisible = true">Send Link</a-button>
       </template>
+
+      <a-input type="email" placeholder="Email" v-model:value="newScheduleLinkRecipient" />
+      <a-button type="primary" style="margin: 10px" @click="createScheduleLink()">Send Link</a-button>
     </a-spin>
   </a-drawer>
 </template>
@@ -20,18 +21,23 @@ import { UserDeleteOutlined } from '@ant-design/icons-vue';
 
 <script>
 export default {
-  props: ['visible'],
+  props: ['visible', 'scheduleID'],
   emits: ['close'],
-  mounted() {},
+  updated() {
+    if (this.visible) {
+      this.getScheduleLinks(this.scheduleID);
+    }
+  },
   data() {
     return {
       scheduleLinksLoading: false,
-      scheduleLinks: []
+      scheduleLinks: [],
+      newScheduleLinkRecipient: ''
     };
   },
   methods: {
-    getScheduleLinks(scheduleID) {
-      fetch(`/api/v1/schedules/${scheduleID}/scheduleLinks/`, {
+    getScheduleLinks() {
+      fetch(`/api/v1/schedules/${this.scheduleID}/scheduleLinks`, {
         method: 'GET'
       }).then((response) => {
         response.json().then((data) => {
@@ -48,21 +54,20 @@ export default {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          recipients: this.scheduleLinkFormData.recipients
+          recipient: this.newScheduleLinkRecipient
         })
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 201) {
             this.scheduleLinks.push(data.data.scheduleLinks);
-            this.resetScheduleForm();
+            this.newScheduleLinkRecipient = '';
           } else {
-            this.scheduleFormErrorMessage = data.message;
+            //this.scheduleFormErrorMessage = data.message;
           }
         });
       });
     },
     configureScheduleSharingForm(schedule) {
-      this.scheduleSharingOverlayVisible = true;
       this.getScheduleLinks(schedule._id);
     },
     close() {
