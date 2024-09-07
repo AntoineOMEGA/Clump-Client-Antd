@@ -60,6 +60,16 @@
           </a-flex>
         </div>
 
+        <div class="mb-2">
+          Max Attendees
+          <a-input size="large" type="number" v-model:value="eventFormData.maxAttendees" allowClear></a-input>
+        </div>
+
+        <div class="mb-2">
+          Attendees
+          <a-button type="primary" style="margin: 10px" @click="console.log('Child Event')">Add Attendees</a-button>
+        </div>
+
         <!-- <div v-if="eventFormData._id" class="mb-2">
           Attendees
           <a-select v-model:value="attendees" size="large" style="width: 100%" allowClear mode="multiple">
@@ -71,7 +81,6 @@
 
         <!--TODO: Change Buttons to Collapse-->
         <a-button type="primary" style="margin: 10px" @click="recurrenceRuleModalVisible = true">Repeat Event</a-button>
-        <a-button type="primary" style="margin: 10px" @click="console.log('Child Event')">Add to Other Schedules</a-button>
       </a-form>
 
       <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
@@ -137,7 +146,8 @@ export default {
         startTime: dayjs(),
         endTime: dayjs(),
         scheduleID: this.scheduleID,
-        eventTemplateID: ''
+        eventTemplateID: '',
+        maxAttendees: 0
       },
       timeZones: new Intl.Locale('en-US').timeZones,
 
@@ -170,8 +180,8 @@ export default {
         endDate: dayjs(),
         startTime: dayjs(),
         endTime: dayjs(),
-        parentEventID: '',
-        scheduleID: this.scheduleID
+        scheduleID: this.scheduleID,
+        maxAttendees: this.maxAttendees
       };
 
       this.eventFormErrorMessage = '';
@@ -193,8 +203,9 @@ export default {
 
         scheduleID: this.scheduleID,
         //scheduleID: this.eventFormData.scheduleID,
-        parentEventID: this.eventFormData.parentEventID,
-        recurrenceRule: this.recurrenceRule
+        recurrenceRule: this.recurrenceRule,
+
+        maxAttendees: this.eventFormData.maxAttendees
       };
 
       return eventBody;
@@ -233,8 +244,9 @@ export default {
       this.eventFormData.endTime = dayjs(event.endDateTime);
 
       this.eventFormData.scheduleID = event.scheduleID;
-      this.eventFormData.parentEventID = event.parentEventID;
       this.eventFormData.isInstance = event.isInstance;
+
+      this.eventFormData.maxAttendees = event.maxAttendees;
     },
     applyEventTemplate(eventTemplateID) {
       if (eventTemplateID != null) {
