@@ -2,8 +2,9 @@
   <a-drawer :open="visible" @close="close()">
     <a-spin :spinning="scheduleLinksLoading">
       <template v-for="scheduleLink in scheduleLinks.sort((a, b) => (a.recipient >= b.recipient ? 1 : -1))" :key="scheduleLink._id">
-        <a-card style="margin: 10px" :title="scheduleLink.recipient" :bodyStyle="{ padding: '0' }">
+        <a-card style="margin-bottom: 10px" :title="scheduleLink.recipient" :bodyStyle="{ padding: '0' }">
           <template #extra>
+            <CopyOutlined style="font-size: 1.5rem; margin-right: 15px" key="copy" @click="copyLink(scheduleLink)" />
             <UserDeleteOutlined style="font-size: 1.5rem" key="delete" @click="deleteScheduleLink(scheduleLink._id)" />
           </template>
         </a-card>
@@ -16,7 +17,7 @@
 </template>
 
 <script setup>
-import { UserDeleteOutlined } from '@ant-design/icons-vue';
+import { UserDeleteOutlined, CopyOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
@@ -72,6 +73,9 @@ export default {
     },
     close() {
       this.$emit('close');
+    },
+    copyLink(scheduleLink) {
+      navigator.clipboard.writeText(`webcal://clump.app/api/v1/schedules/${scheduleLink.scheduleID}/exportSchedule/${scheduleLink._id}`);
     }
   }
 };
