@@ -60,25 +60,6 @@
           </a-flex>
         </div>
 
-        <div class="mb-2">
-          Max Attendees
-          <a-input size="large" type="number" v-model:value="eventFormData.maxAttendees" allowClear></a-input>
-        </div>
-
-        <div class="mb-2">
-          Attendees
-          <a-button type="primary" style="margin: 10px" @click="console.log('Child Event')">Add Attendees</a-button>
-        </div>
-
-        <!-- <div v-if="eventFormData._id" class="mb-2">
-          Attendees
-          <a-select v-model:value="attendees" size="large" style="width: 100%" allowClear mode="multiple">
-            <a-select-option v-for="schedule in schedules.sort()" :value="schedule._id" :key="schedule._id">
-              {{ schedule.title }}
-            </a-select-option>
-          </a-select>
-        </div> -->
-
         <a-collapse ghost>
           <a-collapse-panel key="recurrence" header="Repeat Event">
             <div class="mb-2">
@@ -90,7 +71,7 @@
               </a-select>
             </div>
 
-            <div class="mb-2">
+            <div class="mb-2" v-if="['Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)">
               Interval
               <a-input type="number" v-model:value="recurrenceRuleFormData.interval" allowClear></a-input>
             </div>
@@ -131,7 +112,7 @@
               </a-select>
             </div>
 
-            <div class="mb-2">
+            <div class="mb-2" v-if="['Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)">
               End
               <a-radio-group v-model:value="recurrenceRuleFormData.end" option-type="button" :options="recurrenceRuleOptions.endOptions" style="display: block" />
             </div>
@@ -145,6 +126,26 @@
               Until Date
               <a-date-picker size="large" v-model:value="recurrenceRuleFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
             </div>
+          </a-collapse-panel>
+          <a-collapse-panel key="attendees" header="Attendees">
+            <div class="mb-2">
+              Max Attendees
+              <a-input size="large" type="number" v-model:value="eventFormData.maxAttendees" allowClear></a-input>
+            </div>
+
+            <div class="mb-2">
+              Attendees
+              <a-button type="primary" style="margin: 10px" @click="console.log('Child Event')">Add Attendees</a-button>
+            </div>
+
+            <!-- <div v-if="eventFormData._id" class="mb-2">
+              Attendees
+              <a-select v-model:value="attendees" size="large" style="width: 100%" allowClear mode="multiple">
+                <a-select-option v-for="schedule in schedules.sort()" :value="schedule._id" :key="schedule._id">
+                  {{ schedule.title }}
+                </a-select-option>
+              </a-select>
+            </div> -->
           </a-collapse-panel>
         </a-collapse>
       </a-form>
@@ -323,7 +324,7 @@ export default {
       this.$emit('close');
     },
     close() {
-      this.$emit('close');
+      this.resetEventForm();
     },
     createEventBody() {
       let eventBody = {};
