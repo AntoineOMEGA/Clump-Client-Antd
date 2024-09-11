@@ -8,19 +8,26 @@
         <a-button class="mb-2" type="primary" size="large" @click="login()" block>Login</a-button>
       </a-form>
       <a-flex justify="space-around" align="middle">
-        <RouterLink to="/forgot-password">Forgot Password?</RouterLink>
+        <a @click="forgotPasswordModalVisible = true">Forgot Password?</a>
         <RouterLink to="/signup">Sign Up</RouterLink>
       </a-flex>
     </a-col>
   </a-row>
+
+  <ForgotPasswordModal :visible="forgotPasswordModalVisible" @close="forgotPasswordModalVisible = false" />
 </template>
+
+<script setup>
+import ForgotPasswordModal from '../components/ForgotPasswordModal.vue';
+</script>
 
 <script>
 export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      forgotPasswordModalVisible: false
     };
   },
 
