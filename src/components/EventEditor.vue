@@ -76,7 +76,6 @@
               <a-input type="number" v-model:value="recurrenceRuleFormData.interval" allowClear></a-input>
             </div>
 
-            <!--
             <div v-if="['Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
               Month
               <a-select v-model:value="recurrenceRuleFormData.byMonth" size="large" style="width: 100%" allowClear>
@@ -112,7 +111,7 @@
                 </a-select-option>
               </a-select>
             </div>
--->
+
             <div class="mb-2" v-if="['Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)">
               End
               <a-radio-group v-model:value="recurrenceRuleFormData.end" option-type="button" :options="recurrenceRuleOptions.endOptions" style="display: block" />
@@ -127,6 +126,8 @@
               Until Date
               <a-date-picker size="large" v-model:value="recurrenceRuleFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
             </div>
+
+            <a-alert message="Recurrence Rules only effect when the Event Repeats. They do not effect which Date the Event Starts." type="warning" />
           </a-collapse-panel>
           <a-collapse-panel key="attendees" header="Attendees">
             <div class="mb-2">
