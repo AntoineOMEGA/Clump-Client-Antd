@@ -8,6 +8,20 @@
         </div>
 
         <div class="mb-2">
+          Color
+          <a-input size="large" type="color" v-model:value="scheduleFormData.color"></a-input>
+        </div>
+
+        <div class="mb-2">
+          Time Zone
+          <a-select v-model:value="scheduleFormData.timeZone" size="large" style="width: 100%" allowClear>
+            <a-select-option v-for="timeZone in timeZones" :value="timeZone" :key="timeZone">
+              {{ timeZone }}
+            </a-select-option>
+          </a-select>
+        </div>
+
+        <div class="mb-2">
           Tag
           <a-select size="large" v-model:value="scheduleFormData.tagIDs" style="width: 100%" mode="multiple">
             <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
@@ -20,7 +34,8 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Date
-              <a-date-picker size="large" v-model:value="scheduleFormData.startDate" format="MM-DD-YYYY"></a-date-picker>
+              <a-date-picker size="large" v-model:value="scheduleFormData.startDate"
+                format="MM-DD-YYYY"></a-date-picker>
             </div>
             <div>
               End Date
@@ -29,12 +44,16 @@
           </a-flex>
         </div>
 
-        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2" v-if="scheduleFormErrorMessage != ''" />
+        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2"
+          v-if="scheduleFormErrorMessage != ''" />
 
         <a-flex justify="space-around" align="middle" gap="middle">
-          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block @click="createSchedule()">Create</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block @click="updateSchedule()">Save</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger @click="deleteSchedule()">Delete</a-button>
+          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block
+            @click="createSchedule()">Create</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block
+            @click="updateSchedule()">Save</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger
+            @click="deleteSchedule()">Delete</a-button>
         </a-flex>
       </a-form>
     </a-spin>
@@ -47,11 +66,12 @@ import dayjs from 'dayjs';
 
 <script>
 export default {
-  props: ['visible'],
+  props: ['visible', 'schedule'],
   emits: ['close'],
-  mounted() {
-    this.getTags();
-    this.getSchedules();
+  updated() {
+    if (this.visible) {
+      this.configureScheduleForm(this.event);
+    }
   },
   data() {
     return {
@@ -59,8 +79,11 @@ export default {
       selectedWeek: dayjs(),
       scheduleEditOverlayVisible: false,
       scheduleLoading: false,
+      timeZones: new Intl.Locale('en-US').timeZones,
       scheduleFormData: {
         title: '',
+        color: '#ffffff',
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         tagIDs: [],
         startDate: dayjs(),
         endDate: dayjs()
@@ -69,17 +92,13 @@ export default {
     };
   },
   methods: {
-    configureScheduleViewer(schedule) {
-      this.scheduleViewerOverlayVisible = true;
-      this.eventFormData.scheduleID = schedule._id;
-
-      this.getEventsOnSchedule(schedule._id);
-    },
     resetScheduleForm() {
       this.scheduleLoading = false;
       this.scheduleEditOverlayVisible = false;
       this.scheduleFormData = {
         title: '',
+        color: '#ffffff',
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         tagIDs: [],
         startDate: dayjs(),
         endDate: dayjs()
@@ -95,6 +114,8 @@ export default {
         },
         body: JSON.stringify({
           title: this.scheduleFormData.title,
+          color: this.scheduleFormData.color,
+          timeZone: this.scheduleFormData.timeZone,
           tagIDs: this.scheduleFormData.tagIDs,
           startDate: this.scheduleFormData.startDate,
           endDate: this.scheduleFormData.endDate
@@ -113,6 +134,8 @@ export default {
     },
     configureScheduleForm(schedule) {
       this.scheduleFormData.title = schedule.title;
+      this.scheduleFormData.color = schedule.color;
+      this.scheduleFormData.timeZone = schedule.timeZone;
       this.scheduleFormData.tagIDs = schedule.tagIDs;
       this.scheduleFormData._id = schedule._id;
       this.scheduleFormData.startDate = dayjs(schedule.startDate);
@@ -129,6 +152,8 @@ export default {
         },
         body: JSON.stringify({
           title: this.scheduleFormData.title,
+          color: this.scheduleFormData.color,
+          timeZone: this.scheduleFormData.timeZone,
           tagIDs: this.scheduleFormData.tagIDs
         })
       }).then((response) => {
