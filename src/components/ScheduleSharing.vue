@@ -1,17 +1,28 @@
 <template>
   <a-drawer :open="visible" @close="close()">
     <a-spin :spinning="scheduleLinksLoading">
-      <template v-for="scheduleLink in scheduleLinks.sort((a, b) => (a.recipient >= b.recipient ? 1 : -1))" :key="scheduleLink._id">
-        <a-card style="margin-bottom: 10px" :title="scheduleLink.recipient" :bodyStyle="{ padding: '0' }">
-          <template #extra>
-            <CopyOutlined style="font-size: 1.5rem; margin-right: 15px" key="copy" @click="copyLink(scheduleLink)" />
-            <UserDeleteOutlined style="font-size: 1.5rem" key="delete" @click="deleteScheduleLink(scheduleLink._id)" />
+      <a-tabs>
+        <a-tab-pane key="Internal" tab="Internal">
+          <template>
+            <a-collapse>
+              <a-collapse-panel key=""> </a-collapse-panel>
+            </a-collapse>
           </template>
-        </a-card>
-      </template>
+        </a-tab-pane>
 
-      <a-input type="email" placeholder="Email" v-model:value="newScheduleLinkRecipient" />
-      <a-button type="primary" style="margin: 10px" @click="createScheduleLink()">Send Link</a-button>
+        <a-tab-pane key="External" tab="External">
+          <template v-for="scheduleLink in scheduleLinks.sort((a, b) => (a.recipient >= b.recipient ? 1 : -1))" :key="scheduleLink._id">
+            <a-card style="margin-bottom: 10px" :title="scheduleLink.recipient" :bodyStyle="{ padding: '0' }">
+              <template #extra>
+                <CopyOutlined style="font-size: 1.5rem; margin-right: 15px" key="copy" @click="copyLink(scheduleLink)" />
+                <UserDeleteOutlined style="font-size: 1.5rem" key="delete" @click="deleteScheduleLink(scheduleLink._id)" />
+              </template>
+            </a-card>
+          </template>
+          <a-input type="email" placeholder="Email" v-model:value="newScheduleLinkRecipient" />
+          <a-button type="primary" style="margin: 10px" @click="createScheduleLink()">Send Link</a-button>
+        </a-tab-pane>
+      </a-tabs>
     </a-spin>
   </a-drawer>
 </template>

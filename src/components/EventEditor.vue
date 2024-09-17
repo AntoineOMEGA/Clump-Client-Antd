@@ -126,6 +126,8 @@
               Until Date
               <a-date-picker size="large" v-model:value="recurrenceRuleFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
             </div>
+
+            <a-alert message="Recurrence Rules only effect when the Event Repeats. They do not effect which Date the Event Starts." type="warning" />
           </a-collapse-panel>
           <a-collapse-panel key="attendees" header="Attendees">
             <div class="mb-2">
