@@ -1,5 +1,5 @@
 <template>
-  <a-drawer :open="visible" @close="close()">
+  <a-drawer :open="visible" @close="resetScheduleForm()">
     <a-spin :spinning="scheduleLoading">
       <a-form>
         <div class="mb-2">
@@ -34,8 +34,7 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Date
-              <a-date-picker size="large" v-model:value="scheduleFormData.startDate"
-                format="MM-DD-YYYY"></a-date-picker>
+              <a-date-picker size="large" v-model:value="scheduleFormData.startDate" format="MM-DD-YYYY"></a-date-picker>
             </div>
             <div>
               End Date
@@ -44,16 +43,12 @@
           </a-flex>
         </div>
 
-        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2"
-          v-if="scheduleFormErrorMessage != ''" />
+        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2" v-if="scheduleFormErrorMessage != ''" />
 
         <a-flex justify="space-around" align="middle" gap="middle">
-          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block
-            @click="createSchedule()">Create</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block
-            @click="updateSchedule()">Save</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger
-            @click="deleteSchedule()">Delete</a-button>
+          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block @click="createSchedule()">Create</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block @click="updateSchedule()">Save</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger @click="deleteSchedule()">Delete</a-button>
         </a-flex>
       </a-form>
     </a-spin>
@@ -70,14 +65,13 @@ export default {
   emits: ['close'],
   updated() {
     if (this.visible) {
-      this.configureScheduleForm(this.event);
+      this.configureScheduleForm(this.schedule);
     }
   },
   data() {
     return {
       spinning: false,
       selectedWeek: dayjs(),
-      scheduleEditOverlayVisible: false,
       scheduleLoading: false,
       timeZones: new Intl.Locale('en-US').timeZones,
       scheduleFormData: {
@@ -86,7 +80,7 @@ export default {
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         tagIDs: [],
         startDate: dayjs(),
-        endDate: dayjs()
+        endDate: dayjs().add(10, 'year')
       },
       scheduleFormErrorMessage: ''
     };
@@ -94,14 +88,13 @@ export default {
   methods: {
     resetScheduleForm() {
       this.scheduleLoading = false;
-      this.scheduleEditOverlayVisible = false;
       this.scheduleFormData = {
         title: '',
         color: '#ffffff',
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         tagIDs: [],
         startDate: dayjs(),
-        endDate: dayjs()
+        endDate: dayjs().add(10, 'year')
       };
       this.scheduleFormErrorMessage = '';
       this.close();
@@ -124,7 +117,6 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 201) {
-            this.schedules.push(data.data.schedule);
             this.resetScheduleForm();
           } else {
             this.scheduleFormErrorMessage = data.message;
@@ -141,8 +133,6 @@ export default {
       this.scheduleFormData._id = this.schedule._id;
       this.scheduleFormData.startDate = dayjs(this.schedule.startDate);
       this.scheduleFormData.endDate = dayjs(this.schedule.endDate);
-
-      this.scheduleEditOverlayVisible = true;
     },
     updateSchedule() {
       this.scheduleLoading = true;
@@ -160,10 +150,6 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 200) {
-            let indexOfUpdatedSchedule = this.schedules.findIndex((schedule) => schedule._id === data.data.schedule._id);
-            this.schedules[indexOfUpdatedSchedule] = data.data.schedule;
-
-            //TODO: Update Schedule using ID and findIndex does not work
             this.resetScheduleForm();
           } else {
             this.scheduleFormErrorMessage = data.message;
@@ -178,9 +164,6 @@ export default {
         method: 'DELETE'
       }).then((response) => {
         if (response.status === 204) {
-          let indexOfDeletedSchedule = this.schedules.findIndex((schedule) => schedule._id === this.scheduleFormData._id);
-          this.schedules.splice(indexOfDeletedSchedule, 1);
-
           this.resetScheduleForm();
         } else {
           response.json().then((data) => {
@@ -191,7 +174,6 @@ export default {
       });
     },
     close() {
-      this.resetScheduleForm();
       this.$emit('close');
     }
   }

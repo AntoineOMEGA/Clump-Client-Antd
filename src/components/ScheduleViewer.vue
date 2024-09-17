@@ -3,11 +3,11 @@
     <a-flex justify="space-between" class="mb-2">
       <a-date-picker size="large" picker="week" format="[Week of] MM/DD" v-model:value="selectedWeek" />
       <div>
-        <a-button size="large" style="margin-right: 10px">
-          <CaretLeftOutlined style="font-size: 1.2rem" @click="changeWeek('backward')" />
+        <a-button size="large" style="margin-right: 10px" @click="changeWeek('backward')">
+          <CaretLeftOutlined style="font-size: 1.2rem" />
         </a-button>
-        <a-button size="large">
-          <CaretRightOutlined style="font-size: 1.2rem" @click="changeWeek('forward')" />
+        <a-button size="large" @click="changeWeek('forward')">
+          <CaretRightOutlined style="font-size: 1.2rem" />
         </a-button>
       </div>
     </a-flex>
@@ -20,21 +20,28 @@
               dayjs(selectedWeek)
                 .day(day - 1)
                 .format('dddd [-] MM/DD/YYYY')
-            }}</a-typography-title>
+            }}</a-typography-title
+          >
 
           <div v-for="event in sortedEvents" :key="event._id">
-            <a-card v-if="
-              dayjs(event.startDateTime).format('MM/DD/YYYY') ==
-              dayjs(selectedWeek)
-                .day(day - 1)
-                .format('MM/DD/YYYY')
-            " :bodyStyle="{ padding: '15px' }" style="background-color: #333; margin-bottom: 10px" @click="
-              selectedEvent = event;
-            eventEditOverlayVisible = true;
-            ">
+            <a-card
+              v-if="
+                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+                dayjs(selectedWeek)
+                  .day(day - 1)
+                  .format('MM/DD/YYYY')
+              "
+              :bodyStyle="{ padding: '15px' }"
+              style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
+              @click="
+                selectedEvent = event;
+                eventEditOverlayVisible = true;
+              "
+            >
               <a-flex justify="space-between">
                 <a-card-meta :title="event.title">
-                  <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                  <template #description
+                    >{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
 
                     <!-- <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
@@ -51,19 +58,29 @@
       </a-timeline>
     </a-spin>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px"
-      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
     </a-float-button>
 
-    <EventEditor :visible="eventEditOverlayVisible" :scheduleID="schedule._id" :event="selectedEvent" @close="
-      eventEditOverlayVisible = false;
-    getEventsOnSchedule();
-    " />
+    <EventEditor
+      :visible="eventEditOverlayVisible"
+      :scheduleID="schedule._id"
+      :event="selectedEvent"
+      @close="
+        eventEditOverlayVisible = false;
+        getEventsOnSchedule();
+      "
+    />
   </a-drawer>
 </template>
+
+<style>
+.ant-card-meta-title {
+  text-wrap: wrap !important;
+}
+</style>
 
 <script setup>
 import { PlusOutlined, CaretRightOutlined, CaretLeftOutlined } from '@ant-design/icons-vue';
@@ -93,13 +110,6 @@ export default {
   computed: {
     sortedEvents() {
       return this.events.sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1));
-    },
-    calculateTextColor() {
-      if (['A', 'B', 'C', 'D', 'E', 'F'].some(v => this.schedule.color.includes(v))) {
-        return '#fff';
-      } else {
-        return '#000';
-      }
     }
   },
   methods: {

@@ -49,9 +49,24 @@
     </a-row>
   </a-spin>
 
-  <ScheduleViewer :visible="scheduleViewerOverlayVisible" :schedule="selectedSchedule" @close="scheduleViewerOverlayVisible = false" />
+  <ScheduleViewer
+    :visible="scheduleViewerOverlayVisible"
+    :schedule="selectedSchedule"
+    @close="
+      scheduleViewerOverlayVisible = false;
+      selectedSchedule = {};
+    "
+  />
   <ScheduleSharing :visible="scheduleSharingOverlayVisible" :scheduleID="selectedSchedule._id" @close="scheduleSharingOverlayVisible = false" />
-  <ScheduleEditor :visible="scheduleEditorOverlayVisible" :schedule="selectedSchedule" @close="scheduleEditorOverlayVisible = false" />
+  <ScheduleEditor
+    :visible="scheduleEditorOverlayVisible"
+    :schedule="selectedSchedule"
+    @close="
+      scheduleEditorOverlayVisible = false;
+      selectedSchedule = {};
+      getSchedules();
+    "
+  />
 </template>
 
 <script setup>
