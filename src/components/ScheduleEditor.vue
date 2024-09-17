@@ -104,6 +104,7 @@ export default {
         endDate: dayjs()
       };
       this.scheduleFormErrorMessage = '';
+      this.close();
     },
     createSchedule() {
       this.scheduleLoading = true;
@@ -132,14 +133,14 @@ export default {
         });
       });
     },
-    configureScheduleForm(schedule) {
-      this.scheduleFormData.title = schedule.title;
-      this.scheduleFormData.color = schedule.color;
-      this.scheduleFormData.timeZone = schedule.timeZone;
-      this.scheduleFormData.tagIDs = schedule.tagIDs;
-      this.scheduleFormData._id = schedule._id;
-      this.scheduleFormData.startDate = dayjs(schedule.startDate);
-      this.scheduleFormData.endDate = dayjs(schedule.endDate);
+    configureScheduleForm() {
+      this.scheduleFormData.title = this.schedule.title;
+      this.scheduleFormData.color = this.schedule.color;
+      this.scheduleFormData.timeZone = this.schedule.timeZone;
+      this.scheduleFormData.tagIDs = this.schedule.tagIDs;
+      this.scheduleFormData._id = this.schedule._id;
+      this.scheduleFormData.startDate = dayjs(this.schedule.startDate);
+      this.scheduleFormData.endDate = dayjs(this.schedule.endDate);
 
       this.scheduleEditOverlayVisible = true;
     },
@@ -162,6 +163,7 @@ export default {
             let indexOfUpdatedSchedule = this.schedules.findIndex((schedule) => schedule._id === data.data.schedule._id);
             this.schedules[indexOfUpdatedSchedule] = data.data.schedule;
 
+            //TODO: Update Schedule using ID and findIndex does not work
             this.resetScheduleForm();
           } else {
             this.scheduleFormErrorMessage = data.message;

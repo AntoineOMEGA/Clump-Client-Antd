@@ -14,34 +14,27 @@
 
     <a-spin :spinning="eventsLoading">
       <a-timeline>
-        <a-timeline-item color="gray" v-for="day in 7" :key="day - 1">
+        <a-timeline-item :color="schedule.color" v-for="day in 7" :key="day - 1">
           <a-typography-title :level="4">
             {{
               dayjs(selectedWeek)
                 .day(day - 1)
                 .format('dddd [-] MM/DD/YYYY')
-            }}</a-typography-title
-          >
+            }}</a-typography-title>
 
           <div v-for="event in sortedEvents" :key="event._id">
-            <a-card
-              v-if="
-                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
-                dayjs(selectedWeek)
-                  .day(day - 1)
-                  .format('MM/DD/YYYY')
-              "
-              :bodyStyle="{ padding: '15px' }"
-              style="background-color: #333333; margin-bottom: 10px"
-              @click="
-                selectedEvent = event;
-                eventEditOverlayVisible = true;
-              "
-            >
+            <a-card v-if="
+              dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+              dayjs(selectedWeek)
+                .day(day - 1)
+                .format('MM/DD/YYYY')
+            " :bodyStyle="{ padding: '15px' }" style="background-color: #333; margin-bottom: 10px" @click="
+              selectedEvent = event;
+            eventEditOverlayVisible = true;
+            ">
               <a-flex justify="space-between">
                 <a-card-meta :title="event.title">
-                  <template #description
-                    >{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                  <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
 
                     <!-- <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
@@ -58,21 +51,17 @@
       </a-timeline>
     </a-spin>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px"
+      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
     </a-float-button>
 
-    <EventEditor
-      :visible="eventEditOverlayVisible"
-      :scheduleID="schedule._id"
-      :event="selectedEvent"
-      @close="
-        eventEditOverlayVisible = false;
-        getEventsOnSchedule();
-      "
-    />
+    <EventEditor :visible="eventEditOverlayVisible" :scheduleID="schedule._id" :event="selectedEvent" @close="
+      eventEditOverlayVisible = false;
+    getEventsOnSchedule();
+    " />
   </a-drawer>
 </template>
 
@@ -104,6 +93,13 @@ export default {
   computed: {
     sortedEvents() {
       return this.events.sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1));
+    },
+    calculateTextColor() {
+      if (['A', 'B', 'C', 'D', 'E', 'F'].some(v => this.schedule.color.includes(v))) {
+        return '#fff';
+      } else {
+        return '#000';
+      }
     }
   },
   methods: {
