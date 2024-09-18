@@ -1,5 +1,5 @@
 <template>
-  <a-modal :open="visible" @cancel="close()" title="Event Editor">
+  <a-modal :open="visible" @cancel="resetEventForm()" title="Event Editor">
     <template #footer></template>
     <a-spin :spinning="eventLoading">
       <a-form>
@@ -190,7 +190,9 @@ export default {
   emits: ['close'],
   updated() {
     if (this.visible) {
-      this.configureEventForm(this.event);
+      if (this.event != {}) {
+        this.configureEventForm(this.event);
+      }
       this.getEventTemplates();
     }
   },

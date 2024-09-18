@@ -70,6 +70,7 @@
       :event="selectedEvent"
       @close="
         eventEditOverlayVisible = false;
+        selectedEvent = {};
         getEventsOnSchedule();
       "
     />
