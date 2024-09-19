@@ -38,11 +38,11 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Time
-              <a-time-picker size="large" v-model:value="eventFormData.startTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
+              <a-time-picker size="large" v-model:value="eventFormData.startDateTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
             </div>
             <div>
               End Time
-              <a-time-picker size="large" v-model:value="eventFormData.endTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
+              <a-time-picker size="large" v-model:value="eventFormData.endDateTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
             </div>
           </a-flex>
         </div>
@@ -51,11 +51,11 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Date
-              <a-date-picker size="large" v-model:value="eventFormData.startDate" format="MM-DD-YYYY" allowClear></a-date-picker>
+              <a-date-picker size="large" v-model:value="eventFormData.startDateTime" format="MM-DD-YYYY" allowClear></a-date-picker>
             </div>
             <div>
               End Date
-              <a-date-picker size="large" v-model:value="eventFormData.endDate" format="MM-DD-YYYY" allowClear></a-date-picker>
+              <a-date-picker size="large" v-model:value="eventFormData.endDateTime" format="MM-DD-YYYY" allowClear></a-date-picker>
             </div>
           </a-flex>
         </div>
@@ -190,8 +190,13 @@ export default {
   emits: ['close'],
   updated() {
     if (this.visible) {
-      if (this.event != {}) {
+      if (Object.keys(this.event).length > 0) {
         this.configureEventForm(this.event);
+      } else {
+        this.eventFormData.startDateTime = this.roundToNearest5Minutes(dayjs());
+        this.eventFormData.endDateTime = this.eventFormData.startDateTime.add(1, 'hour');
+        this.eventFormData.startDateTime = this.roundToNearest5Minutes(dayjs());
+        this.eventFormData.endDateTime = this.eventFormData.startDateTime.add(1, 'hour');
       }
       this.getEventTemplates();
     }
@@ -209,10 +214,8 @@ export default {
         description: '',
         location: '',
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        startDate: dayjs(),
-        endDate: dayjs(),
-        startTime: dayjs(),
-        endTime: dayjs(),
+        startDateTime: dayjs(),
+        endDateTime: dayjs(),
         scheduleID: this.scheduleID,
         eventTemplateID: '',
         maxAttendees: 0
@@ -295,6 +298,10 @@ export default {
     }
   },
   methods: {
+    roundToNearest5Minutes(time) {
+      const roundedMinute = Math.ceil(time.minute() / 5) * 5;
+      return time.startOf('minute').add(roundedMinute - time.minute(), 'minute');
+    },
     getEventTemplates() {
       fetch('/api/v1/event-templates', {
         method: 'GET'
@@ -315,10 +322,8 @@ export default {
         description: '',
         location: '',
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        startDate: dayjs(),
-        endDate: dayjs(),
-        startTime: dayjs(),
-        endTime: dayjs(),
+        startDateTime: dayjs(),
+        endDateTime: dayjs(),
         scheduleID: this.scheduleID,
         maxAttendees: this.maxAttendees
       };
@@ -373,8 +378,8 @@ export default {
         title: this.eventFormData.title,
         description: this.eventFormData.description,
         location: this.eventFormData.location,
-        startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
-        endDateTime: this.eventFormData.endDate.hour(dayjs(this.eventFormData.endTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.endTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.endTime, 'HH:mm:ss').second()),
+        startDateTime: this.eventFormData.startDateTime,
+        endDateTime: this.eventFormData.endDateTime,
         timeZone: this.eventFormData.timeZone,
 
         scheduleID: this.scheduleID,
@@ -416,10 +421,8 @@ export default {
       this.eventFormData.description = event.description;
       this.eventFormData.location = event.location;
 
-      this.eventFormData.startDate = dayjs(event.startDateTime);
-      this.eventFormData.endDate = dayjs(event.startDateTime);
-      this.eventFormData.startTime = dayjs(event.startDateTime);
-      this.eventFormData.endTime = dayjs(event.endDateTime);
+      this.eventFormData.startDateTime = dayjs(event.startDateTime);
+      this.eventFormData.endDateTime = dayjs(event.endDateTime);
       this.eventFormData.timeZone = event.timeZone;
 
       this.eventFormData.scheduleID = event.scheduleID;
@@ -595,7 +598,7 @@ export default {
     },
     deleteThisEvent() {
       this.eventLoading = true;
-      let eventBody = { scheduleID: this.eventFormData.scheduleID, startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()) };
+      let eventBody = { scheduleID: this.eventFormData.scheduleID, startDateTime: this.eventFormData.startDateTime };
 
       fetch('/api/v1/events/thisEvent/' + this.eventFormData._id, {
         method: 'DELETE',
@@ -618,7 +621,7 @@ export default {
     deleteThisAndFollowingEvents() {
       this.eventLoading = true;
       let eventBody = {
-        startDateTime: this.eventFormData.startDate.hour(dayjs(this.eventFormData.startTime, 'HH:mm:ss').hour()).minute(dayjs(this.eventFormData.startTime, 'HH:mm:ss').minute()).second(dayjs(this.eventFormData.startTime, 'HH:mm:ss').second()),
+        startDateTime: this.eventFormData.startDateTime,
         untilDateTime: dayjs(this.eventFormData.untilDateTime)
       };
 
