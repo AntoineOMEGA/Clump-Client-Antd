@@ -33,6 +33,7 @@
               "
               :bodyStyle="{ padding: '15px' }"
               style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
+              :hoverable="true"
               @click="
                 selectedEvent = event;
                 eventEditOverlayVisible = true;
