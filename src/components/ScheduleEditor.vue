@@ -34,8 +34,7 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Date
-              <a-date-picker size="large" v-model:value="scheduleFormData.startDate"
-                format="MM-DD-YYYY"></a-date-picker>
+              <a-date-picker size="large" v-model:value="scheduleFormData.startDate" format="MM-DD-YYYY"></a-date-picker>
             </div>
             <div>
               End Date
@@ -44,16 +43,12 @@
           </a-flex>
         </div>
 
-        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2"
-          v-if="scheduleFormErrorMessage != ''" />
+        <a-alert message="Error" :description="scheduleFormErrorMessage" type="error" class="mb-2" v-if="scheduleFormErrorMessage != ''" />
 
         <a-flex justify="space-around" align="middle" gap="middle">
-          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block
-            @click="createSchedule()">Create</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block
-            @click="updateSchedule()">Save</a-button>
-          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger
-            @click="deleteSchedule()">Delete</a-button>
+          <a-button v-if="!scheduleFormData._id" type="primary" size="large" block @click="createSchedule()">Create</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block @click="updateSchedule()">Save</a-button>
+          <a-button v-if="scheduleFormData._id" type="primary" size="large" block danger @click="deleteSchedule()">Delete</a-button>
         </a-flex>
       </a-form>
     </a-spin>

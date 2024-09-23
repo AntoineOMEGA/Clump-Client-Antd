@@ -36,15 +36,6 @@
           <a-input size="large" type="color" v-model:value="tagFormData.color"></a-input>
         </div>
 
-        <div class="mb-2">
-          Type
-          <a-select size="large" v-model:value="tagFormData.type" style="width: 100%">
-            <a-select-option value="schedule" key="schedule">Schedule</a-select-option>
-            <a-select-option value="event-template" key="event-template">Event Template</a-select-option>
-            <a-select-option value="organizational" key="organizational">Organizational</a-select-option>
-          </a-select>
-        </div>
-
         <a-alert message="Error" :description="tagFormErrorMessage" type="error" class="mb-2" v-if="tagFormErrorMessage != ''" />
 
         <a-flex justify="space-around" align="middle" gap="middle">
@@ -73,8 +64,7 @@ export default {
       tagSpinning: false,
       tagFormData: {
         title: '',
-        color: '#ff0000',
-        type: ''
+        color: '#ff0000'
       },
       tagFormErrorMessage: '',
       tags: [],
@@ -90,8 +80,7 @@ export default {
       this.tagEditOverlayVisible = false;
       this.tagFormData = {
         title: '',
-        color: '#ffffff',
-        type: ''
+        color: '#ffffff'
       };
       this.tagFormErrorMessage = '';
     },
@@ -117,8 +106,7 @@ export default {
         },
         body: JSON.stringify({
           title: this.tagFormData.title,
-          color: this.tagFormData.color,
-          type: this.tagFormData.type
+          color: this.tagFormData.color
         })
       }).then((response) => {
         response.json().then((data) => {
@@ -135,7 +123,6 @@ export default {
     configureTagForm(tag) {
       this.tagFormData.title = tag.title;
       this.tagFormData.color = tag.color;
-      this.tagFormData.type = tag.type;
       this.tagFormData._id = tag._id;
 
       this.tagEditOverlayVisible = true;
@@ -149,8 +136,7 @@ export default {
         },
         body: JSON.stringify({
           title: this.tagFormData.title,
-          color: this.tagFormData.color,
-          type: this.tagFormData.type
+          color: this.tagFormData.color
         })
       }).then((response) => {
         response.json().then((data) => {
