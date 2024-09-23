@@ -16,11 +16,6 @@
           <template #extra>
             <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
           </template>
-          <div style="padding: 10px; background-color: #333333" v-if="eventTemplate.tagIDs.length > 0">
-            <a-tag v-for="tagID in eventTemplate.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
-              {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
-            </a-tag>
-          </div>
         </a-card>
       </a-col>
     </a-row>
@@ -42,15 +37,6 @@
         <div class="mb-2">
           Description
           <a-textarea :auto-size="{ minRows: 2, maxRows: 6 }" v-model:value="eventTemplateFormData.description"></a-textarea>
-        </div>
-
-        <div class="mb-2">
-          Tag
-          <a-select size="large" v-model:value="eventTemplateFormData.tagIDs" style="width: 100%" mode="multiple">
-            <a-select-option v-for="tag in tags" :value="tag._id" :key="tag._id">
-              {{ tag.title }}
-            </a-select-option>
-          </a-select>
         </div>
 
         <a-card v-if="eventTemplateFormErrorMessage != ''">
@@ -75,7 +61,6 @@ import { EditOutlined, PlusOutlined } from '@ant-design/icons-vue';
 export default {
   mounted() {
     this.getEventTemplates();
-    this.getTags();
   },
   data() {
     return {
@@ -84,7 +69,6 @@ export default {
       eventTemplateSpinning: false,
       eventTemplateFormData: {
         title: '',
-        tagIDs: [],
         location: '',
         description: ''
       },
@@ -93,7 +77,6 @@ export default {
       eventTemplateFilterSettings: {
         search: ''
       },
-      tags: [],
       toggleMoreDetails: false
     };
   },
@@ -115,7 +98,6 @@ export default {
       this.eventTemplateSpinning = false;
       this.eventTemplateFormData = {
         title: '',
-        tagIDs: [],
         location: '',
         description: ''
       };
@@ -131,7 +113,6 @@ export default {
         },
         body: JSON.stringify({
           title: this.eventTemplateFormData.title,
-          tagIDs: this.eventTemplateFormData.tagIDs,
           location: this.eventTemplateFormData.location,
           description: this.eventTemplateFormData.description
         })
@@ -150,7 +131,6 @@ export default {
     configureUpdateEventTemplateForm(eventTemplate) {
       this.eventTemplateFormData._id = eventTemplate._id;
       this.eventTemplateFormData.title = eventTemplate.title;
-      this.eventTemplateFormData.tagIDs = eventTemplate.tagIDs;
       this.eventTemplateFormData.description = eventTemplate.description;
       this.eventTemplateFormData.location = eventTemplate.location;
 
@@ -165,7 +145,6 @@ export default {
         },
         body: JSON.stringify({
           title: this.eventTemplateFormData.title,
-          tagIDs: this.eventTemplateFormData.tagIDs,
           location: this.eventTemplateFormData.location,
           description: this.eventTemplateFormData.description
         })
@@ -198,17 +177,6 @@ export default {
           });
           this.eventTemplateSpinning = false;
         }
-      });
-    },
-    getTags() {
-      fetch('/api/v1/tags', {
-        method: 'GET'
-      }).then((response) => {
-        response.json().then((data) => {
-          if (response.status === 200) {
-            this.tags = data.data.tags;
-          }
-        });
       });
     }
   }

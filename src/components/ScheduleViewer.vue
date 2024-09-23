@@ -34,13 +34,18 @@
               :bodyStyle="{ padding: '15px' }"
               style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
               :hoverable="true"
+              :bordered="false"
               @click="
                 selectedEvent = event;
                 eventEditOverlayVisible = true;
               "
+              :title="event.title"
             >
+              <template #extra
+                ><span class="attendee-count" :style="`background-color: ${schedule.color};`">5/{{ event.maxAttendees }}</span></template
+              >
               <a-flex justify="space-between">
-                <a-card-meta :title="event.title">
+                <a-card-meta>
                   <template #description
                     >{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
@@ -79,8 +84,19 @@
 </template>
 
 <style>
-.ant-card-meta-title {
+.ant-card-head-title {
   text-wrap: wrap !important;
+  padding: 10px;
+}
+.attendee-count {
+  display: inline-block;
+  height: 35px;
+  width: 35px;
+  line-height: 35px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 100%;
+  box-shadow: 0 0 15px #000;
 }
 </style>
 

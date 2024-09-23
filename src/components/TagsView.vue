@@ -12,13 +12,11 @@
   <a-spin :spinning="tagLoadSpinning">
     <a-row>
       <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" v-for="tag in tags" :key="tag._id">
-        <a-badge-ribbon :text="tag.type" :color="tag.color" style="right: 5px">
-          <a-card :title="tag.title" style="margin: 10px">
-            <template #extra>
-              <edit-outlined style="font-size: 1.5rem; margin-top: 20px" key="edit" @click="configureTagForm(tag)" />
-            </template>
-          </a-card>
-        </a-badge-ribbon>
+        <a-card :title="tag.title" style="margin: 10px">
+          <template #extra>
+            <edit-outlined style="font-size: 1.5rem" key="edit" @click="configureTagForm(tag)" />
+          </template>
+        </a-card>
       </a-col>
     </a-row>
   </a-spin>

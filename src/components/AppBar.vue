@@ -20,7 +20,7 @@
       </a-col>
     </a-row>
     <a-menu mode="inline" style="border: none">
-      <a-sub-menu title="Calendars">
+      <a-sub-menu title="Resources">
         <a-menu-item
           @click="
             $router.push('/schedules');
@@ -31,31 +31,32 @@
         >
         <a-menu-item
           @click="
+            $router.push('/tags');
+            displayMenu = !displayMenu;
+          "
+          key="tags"
+        >
+          Tags
+        </a-menu-item>
+        <a-menu-item
+          @click="
             $router.push('/event-templates');
             displayMenu = !displayMenu;
           "
           key="event-templates"
           >Event Templates</a-menu-item
         >
+        <a-menu-item
+          @click="
+            $router.push('/notes');
+            displayMenu = !displayMenu;
+          "
+          key="notes"
+        >
+          Notes
+        </a-menu-item>
       </a-sub-menu>
-      <a-menu-item
-        @click="
-          $router.push('/notes');
-          displayMenu = !displayMenu;
-        "
-        key="notes"
-      >
-        Notes
-      </a-menu-item>
-      <a-menu-item
-        @click="
-          $router.push('/tags');
-          displayMenu = !displayMenu;
-        "
-        key="tags"
-      >
-        Tags
-      </a-menu-item>
+
       <a-sub-menu title="Permissions">
         <a-menu-item
           @click="
