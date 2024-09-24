@@ -89,22 +89,27 @@
 </template>
 
 <style>
+.ant-card-head {
+  padding: 0 10px !important;
+}
 .ant-card-head-title,
 .ant-card-meta-title {
   text-wrap: wrap !important;
 }
 .ant-card-head-title {
-  padding: 15px 0px;
+  padding: 15px 10px;
 }
 .ant-card-meta-title {
   padding: 10px;
 }
+.ant-card-extra {
+  margin-right: 10px;
+}
 .attendee-count {
-  padding: 15px;
-  margin: 10px;
+  padding: 10px 15px;
   text-align: center;
   font-weight: bold;
-  border-radius: 100%;
+  border-radius: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
