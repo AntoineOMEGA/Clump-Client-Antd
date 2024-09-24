@@ -5,8 +5,10 @@
       <a-form>
         <div class="mb-2" v-if="!eventFormData._id">
           Event Template
-          <a-select v-on:change="applyEventTemplate(eventFormData.eventTemplateID)" v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
-            <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
+          <a-select v-on:change="applyEventTemplate(eventFormData.eventTemplateID)"
+            v-model:value="eventFormData.eventTemplateID" size="large" style="width: 100%" allowClear>
+            <a-select-option v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))"
+              :value="eventTemplate._id" :key="eventTemplate._id">{{ eventTemplate.title }}</a-select-option>
           </a-select>
         </div>
 
@@ -38,11 +40,13 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Time
-              <a-time-picker size="large" v-model:value="eventFormData.startDateTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
+              <a-time-picker size="large" v-model:value="eventFormData.startDateTime" format="h:mm A" :minute-step="5"
+                allowClear></a-time-picker>
             </div>
             <div>
               End Time
-              <a-time-picker size="large" v-model:value="eventFormData.endDateTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
+              <a-time-picker size="large" v-model:value="eventFormData.endDateTime" format="h:mm A" :minute-step="5"
+                allowClear></a-time-picker>
             </div>
           </a-flex>
         </div>
@@ -51,11 +55,13 @@
           <a-flex justify="space-around" align="middle" gap="middle">
             <div>
               Start Date
-              <a-date-picker size="large" v-model:value="eventFormData.startDateTime" format="MM-DD-YYYY" allowClear></a-date-picker>
+              <a-date-picker size="large" v-model:value="eventFormData.startDateTime" format="MM-DD-YYYY"
+                allowClear></a-date-picker>
             </div>
             <div>
               End Date
-              <a-date-picker size="large" v-model:value="eventFormData.endDateTime" format="MM-DD-YYYY" allowClear></a-date-picker>
+              <a-date-picker size="large" v-model:value="eventFormData.endDateTime" format="MM-DD-YYYY"
+                allowClear></a-date-picker>
             </div>
           </a-flex>
         </div>
@@ -71,7 +77,8 @@
               </a-select>
             </div>
 
-            <div class="mb-2" v-if="['Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)">
+            <div class="mb-2"
+              v-if="['Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)">
               Interval
               <a-input type="number" v-model:value="recurrenceRuleFormData.interval" allowClear></a-input>
             </div>
@@ -79,7 +86,8 @@
             <div v-if="['Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
               Month
               <a-select v-model:value="recurrenceRuleFormData.byMonth" size="large" style="width: 100%" allowClear>
-                <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.byMonth)" :value="recurrenceRuleOptions.byMonth[month]" :key="month">
+                <a-select-option v-for="month in Object.keys(recurrenceRuleOptions.byMonth)"
+                  :value="recurrenceRuleOptions.byMonth[month]" :key="month">
                   {{ month }}
                 </a-select-option>
               </a-select>
@@ -87,8 +95,10 @@
 
             <div v-if="['Monthly by day', 'Yearly by day'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
               Occurrences of Week Days in Month
-              <a-select v-model:value="recurrenceRuleFormData.byWeekDayInMonth" size="large" style="width: 100%" allowClear mode="multiple">
-                <a-select-option v-for="monthDay in Object.keys(generatedMonthDays)" :value="generatedMonthDays[monthDay]" :key="monthDay">
+              <a-select v-model:value="recurrenceRuleFormData.byWeekDayInMonth" size="large" style="width: 100%"
+                allowClear mode="multiple">
+                <a-select-option v-for="monthDay in Object.keys(generatedMonthDays)"
+                  :value="generatedMonthDays[monthDay]" :key="monthDay">
                   {{ monthDay }}
                 </a-select-option>
               </a-select>
@@ -96,8 +106,10 @@
 
             <div v-if="['Weekly'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
               Days of Week
-              <a-select v-model:value="recurrenceRuleFormData.byDay" size="large" style="width: 100%" allowClear mode="multiple">
-                <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.byDay)" :value="recurrenceRuleOptions.byDay[weekDay]" :key="weekDay">
+              <a-select v-model:value="recurrenceRuleFormData.byDay" size="large" style="width: 100%" allowClear
+                mode="multiple">
+                <a-select-option v-for="weekDay in Object.keys(recurrenceRuleOptions.byDay)"
+                  :value="recurrenceRuleOptions.byDay[weekDay]" :key="weekDay">
                   {{ weekDay }}
                 </a-select-option>
               </a-select>
@@ -105,16 +117,20 @@
 
             <div v-if="['Monthly by date', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)" class="mb-2">
               Day in Month
-              <a-select v-model:value="recurrenceRuleFormData.byMonthDay" size="large" style="width: 100%" allowClear mode="multiple">
-                <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.byMonthDay)" :value="recurrenceRuleOptions.byMonthDay[dayInMonth]" :key="dayInMonth">
+              <a-select v-model:value="recurrenceRuleFormData.byMonthDay" size="large" style="width: 100%" allowClear
+                mode="multiple">
+                <a-select-option v-for="dayInMonth in Object.keys(recurrenceRuleOptions.byMonthDay)"
+                  :value="recurrenceRuleOptions.byMonthDay[dayInMonth]" :key="dayInMonth">
                   {{ dayInMonth }}
                 </a-select-option>
               </a-select>
             </div>
 
-            <div class="mb-2" v-if="['Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)">
+            <div class="mb-2"
+              v-if="['Daily', 'Weekly', 'Monthly by day', 'Monthly by date', 'Yearly by day', 'Yearly by date'].includes(recurrenceRuleFormData.frequency)">
               End
-              <a-radio-group v-model:value="recurrenceRuleFormData.end" option-type="button" :options="recurrenceRuleOptions.endOptions" style="display: block" />
+              <a-radio-group v-model:value="recurrenceRuleFormData.end" option-type="button"
+                :options="recurrenceRuleOptions.endOptions" style="display: block" />
             </div>
 
             <div v-if="recurrenceRuleFormData.end == 'Occurrences'" class="mb-2">
@@ -124,46 +140,38 @@
 
             <div v-if="recurrenceRuleFormData.end == 'Until Date'" class="mb-2">
               Until Date
-              <a-date-picker size="large" v-model:value="recurrenceRuleFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
+              <a-date-picker size="large" v-model:value="recurrenceRuleFormData.untilDateTime" format="MM-DD-YYYY"
+                style="width: 100%" allowClear></a-date-picker>
             </div>
 
-            <a-alert message="Recurrence Rules only effect when the Event Repeats. They do not effect which Date the Event Starts." type="warning" />
+            <a-alert
+              message="Recurrence Rules only effect when the Event Repeats. They do not effect which Date the Event Starts."
+              type="warning" />
           </a-collapse-panel>
           <a-collapse-panel key="attendees" header="Attendees">
             <div class="mb-2">
               Max Attendees
               <a-input size="large" type="number" v-model:value="eventFormData.maxAttendees" allowClear></a-input>
             </div>
-
-            <div class="mb-2">
-              Attendees
-              <a-button type="primary" style="margin: 10px" @click="console.log('Child Event')">Add Attendees</a-button>
-            </div>
-
-            <!-- <div v-if="eventFormData._id" class="mb-2">
-              Attendees
-              <a-select v-model:value="attendees" size="large" style="width: 100%" allowClear mode="multiple">
-                <a-select-option v-for="schedule in schedules.sort()" :value="schedule._id" :key="schedule._id">
-                  {{ schedule.title }}
-                </a-select-option>
-              </a-select>
-            </div> -->
           </a-collapse-panel>
         </a-collapse>
       </a-form>
 
-      <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2" v-if="eventFormErrorMessage != ''" />
+      <a-alert message="Error" :description="eventFormErrorMessage" type="error" class="mb-2"
+        v-if="eventFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle" class="mb-2">
         <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
         <a-button v-if="eventFormData._id" type="primary" size="large" block @click="updateDecision()">Save</a-button>
-        <a-button v-if="eventFormData._id" type="primary" size="large" block danger @click="deleteDecision()">Delete</a-button>
+        <a-button v-if="eventFormData._id" type="primary" size="large" block danger
+          @click="deleteDecision()">Delete</a-button>
       </a-flex>
 
       <a-popover v-model:open="eventUpdatePopoverVisible" title="Update Instances" trigger="click">
         <template #content>
           <a-button type="primary" style="margin: 10px" @click="updateThisEvent()">This Event</a-button>
-          <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEvents()">This and Following Events</a-button>
+          <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEvents()">This and Following
+            Events</a-button>
           <a-button type="primary" style="margin: 10px" @Click="updateAllEvents()">All Events</a-button>
         </template>
       </a-popover>
@@ -171,7 +179,8 @@
       <a-popover v-model:open="eventDeletePopoverVisible" title="Delete Instances" trigger="click">
         <template #content>
           <a-button type="primary" style="margin: 10px" @click="deleteThisEvent()">This Event</a-button>
-          <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEvents()">This and Following Events</a-button>
+          <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEvents()">This and Following
+            Events</a-button>
           <a-button type="primary" style="margin: 10px" @click="deleteAllEvents()">All Events</a-button>
         </template>
       </a-popover>
@@ -185,7 +194,7 @@ import dayjs from 'dayjs';
 
 <script>
 export default {
-  mounted() {},
+  mounted() { },
   props: ['visible', 'scheduleID', 'event'],
   emits: ['close'],
   updated() {

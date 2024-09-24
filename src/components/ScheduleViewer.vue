@@ -20,39 +20,32 @@
               dayjs(selectedWeek)
                 .day(day - 1)
                 .format('dddd [-] MM/DD/YYYY')
-            }}</a-typography-title
-          >
+            }}</a-typography-title>
 
           <div v-for="event in sortedEvents" :key="event._id">
-            <a-card
-              v-if="
-                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
-                dayjs(selectedWeek)
-                  .day(day - 1)
-                  .format('MM/DD/YYYY')
-              "
-              :bodyStyle="{ padding: '15px' }"
-              style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
-              :hoverable="true"
-              :bordered="false"
-              @click="
-                selectedEvent = event;
+            <a-card v-if="
+              dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+              dayjs(selectedWeek)
+                .day(day - 1)
+                .format('MM/DD/YYYY')
+            " :bodyStyle="{ padding: '15px' }" style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
+              :hoverable="true" :bordered="false" :title="event.title">
+              <template #extra>
+                <UserAddOutlined style="font-size: 1.5rem; margin-right: 15px" key="share" @click="
+                  selectedEvent = event;
+                eventAttendeeModalVisible = true;
+                " />
+                <EditOutlined style="font-size: 1.5rem" key="edit" @click="
+                  selectedEvent = event;
                 eventEditOverlayVisible = true;
-              "
-              :title="event.title"
-            >
-              <template #extra v-if="event.maxAttendees > 0">
-                <div class="attendee-count">
-                  <span>5/{{ event.maxAttendees }}</span>
-                </div>
+                " />
               </template>
               <a-flex justify="space-between">
                 <a-card-meta>
                   <template #title v-if="event.isAttendee">
                     {{ event.title }}
                   </template>
-                  <template #description
-                    >{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                  <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
 
                     <!-- <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
@@ -62,6 +55,11 @@
                     </div> -->
                   </template>
                 </a-card-meta>
+                <template v-if="event.maxAttendees > 0">
+                  <div class="attendee-count">
+                    <span>5/{{ event.maxAttendees }}</span>
+                  </div>
+                </template>
               </a-flex>
             </a-card>
           </div>
@@ -69,22 +67,24 @@
       </a-timeline>
     </a-spin>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px"
+      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
     </a-float-button>
 
-    <EventEditor
-      :visible="eventEditOverlayVisible"
-      :scheduleID="schedule._id"
-      :event="selectedEvent"
-      @close="
-        eventEditOverlayVisible = false;
-        selectedEvent = {};
-        getEventsOnSchedule();
-      "
-    />
+    <EventEditor :visible="eventEditOverlayVisible" :scheduleID="schedule._id" :event="selectedEvent" @close="
+      eventEditOverlayVisible = false;
+    selectedEvent = {};
+    getEventsOnSchedule();
+    " />
+
+    <EventAttendeeEditor :visible="eventAttendeeModalVisible" :scheduleID="schedule._id" :event="selectedEvent" @close="
+      eventAttendeeModalVisible = false;
+    selectedEvent = {};
+    getEventsOnSchedule();
+    " />
   </a-drawer>
 </template>
 
@@ -92,19 +92,24 @@
 .ant-card-head {
   padding: 0 10px !important;
 }
+
 .ant-card-head-title,
 .ant-card-meta-title {
   text-wrap: wrap !important;
 }
+
 .ant-card-head-title {
   padding: 15px 10px;
 }
+
 .ant-card-meta-title {
   padding: 10px;
 }
+
 .ant-card-extra {
   margin-right: 10px;
 }
+
 .attendee-count {
   padding: 10px 15px;
   text-align: center;
@@ -118,8 +123,9 @@
 </style>
 
 <script setup>
-import { PlusOutlined, CaretRightOutlined, CaretLeftOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined, CaretRightOutlined, CaretLeftOutlined, EditOutlined, UserAddOutlined } from '@ant-design/icons-vue';
 import EventEditor from './EventEditor.vue';
+import EventAttendeeEditor from './EventAttendeeEditor.vue';
 import dayjs from 'dayjs';
 </script>
 
@@ -139,6 +145,7 @@ export default {
       events: [],
 
       eventEditOverlayVisible: false,
+      eventAttendeeModalVisible: false,
       selectedEvent: {}
     };
   },
