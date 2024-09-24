@@ -41,11 +41,16 @@
               "
               :title="event.title"
             >
-              <template #extra
-                ><span class="attendee-count" :style="`background-color: ${schedule.color};`">5/{{ event.maxAttendees }}</span></template
-              >
+              <template #extra v-if="event.maxAttendees > 0">
+                <div class="attendee-count">
+                  <span>5/{{ event.maxAttendees }}</span>
+                </div>
+              </template>
               <a-flex justify="space-between">
                 <a-card-meta>
+                  <template #title v-if="event.isAttendee">
+                    {{ event.title }}
+                  </template>
                   <template #description
                     >{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
@@ -84,19 +89,26 @@
 </template>
 
 <style>
-.ant-card-head-title {
+.ant-card-head-title,
+.ant-card-meta-title {
   text-wrap: wrap !important;
+}
+.ant-card-head-title {
+  padding: 15px 0px;
+}
+.ant-card-meta-title {
   padding: 10px;
 }
 .attendee-count {
-  display: inline-block;
-  height: 35px;
-  width: 35px;
-  line-height: 35px;
+  padding: 15px;
+  margin: 10px;
   text-align: center;
   font-weight: bold;
   border-radius: 100%;
-  box-shadow: 0 0 15px #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #222;
 }
 </style>
 
