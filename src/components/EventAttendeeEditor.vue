@@ -4,12 +4,12 @@
       <a-flex justify="space-around" align="middle" gap="middle">
         <div>
           Start Time
-          <a-time-picker size="large" v-model:value="eventFormData.startDateTime" format="h:mm A" :minute-step="5"
-            allowClear></a-time-picker>
+          <a-time-picker size="large" v-model:value="eventAttendeeFormData.startDateTime" format="h:mm A"
+            :minute-step="5" allowClear></a-time-picker>
         </div>
         <div>
           End Time
-          <a-time-picker size="large" v-model:value="eventFormData.endDateTime" format="h:mm A" :minute-step="5"
+          <a-time-picker size="large" v-model:value="eventAttendeeFormData.endDateTime" format="h:mm A" :minute-step="5"
             allowClear></a-time-picker>
         </div>
       </a-flex>
@@ -19,12 +19,12 @@
       <a-flex justify="space-around" align="middle" gap="middle">
         <div>
           Start Date
-          <a-date-picker size="large" v-model:value="eventFormData.startDateTime" format="MM-DD-YYYY"
+          <a-date-picker size="large" v-model:value="eventAttendeeFormData.startDateTime" format="MM-DD-YYYY"
             allowClear></a-date-picker>
         </div>
         <div>
           End Date
-          <a-date-picker size="large" v-model:value="eventFormData.endDateTime" format="MM-DD-YYYY"
+          <a-date-picker size="large" v-model:value="eventAttendeeFormData.endDateTime" format="MM-DD-YYYY"
             allowClear></a-date-picker>
         </div>
       </a-flex>
@@ -32,38 +32,40 @@
 
     <div class="mb-2">
       End
-      <a-radio-group v-model:value="eventFormData.end" option-type="button" :options="recurrenceRuleOptions.endOptions"
-        style="display: block" />
+      <a-radio-group v-model:value="eventAttendeeFormData.end" option-type="button"
+        :options="recurrenceRuleOptions.endOptions" style="display: block" />
     </div>
 
-    <div v-if="eventFormData.end == 'Until Date'" class="mb-2">
+    <div v-if="eventAttendeeFormData.end == 'Until Date'" class="mb-2">
       Until Date
-      <a-date-picker size="large" v-model:value="eventFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%"
-        allowClear></a-date-picker>
+      <a-date-picker size="large" v-model:value="eventAttendeeFormData.untilDateTime" format="MM-DD-YYYY"
+        style="width: 100%" allowClear></a-date-picker>
     </div>
 
     <a-flex justify="space-around" align="middle" gap="middle" class="mb-2">
-      <a-button v-if="!eventFormData._id" type="primary" size="large" block @click="createEvent()">Create</a-button>
-      <a-button v-if="eventFormData._id" type="primary" size="large" block @click="updateDecision()">Save</a-button>
-      <a-button v-if="eventFormData._id" type="primary" size="large" block danger
+      <a-button v-if="!eventAttendeeFormData._id" type="primary" size="large" block
+        @click="createEventAttendee()">Create</a-button>
+      <a-button v-if="eventAttendeeFormData._id" type="primary" size="large" block
+        @click="updateDecision()">Save</a-button>
+      <a-button v-if="eventAttendeeFormData._id" type="primary" size="large" block danger
         @click="deleteDecision()">Delete</a-button>
     </a-flex>
 
-    <a-popover v-model:open="eventUpdatePopoverVisible" title="Update Instances" trigger="click">
+    <a-popover v-model:open="eventAttendeeUpdatePopoverVisible" title="Update Instances" trigger="click">
       <template #content>
-        <a-button type="primary" style="margin: 10px" @click="updateThisEvent()">This Event</a-button>
-        <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEvents()">This and Following
-          Events</a-button>
-        <a-button type="primary" style="margin: 10px" @Click="updateAllEvents()">All Events</a-button>
+        <a-button type="primary" style="margin: 10px" @click="updateThisEventAttendee()">This EventAttendee</a-button>
+        <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEventAttendees()">This and Following
+          EventAttendees</a-button>
+        <a-button type="primary" style="margin: 10px" @Click="updateAllEventAttendees()">All EventAttendees</a-button>
       </template>
     </a-popover>
 
-    <a-popover v-model:open="eventDeletePopoverVisible" title="Delete Instances" trigger="click">
+    <a-popover v-model:open="eventAttendeeDeletePopoverVisible" title="Delete Instances" trigger="click">
       <template #content>
-        <a-button type="primary" style="margin: 10px" @click="deleteThisEvent()">This Event</a-button>
-        <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEvents()">This and Following
-          Events</a-button>
-        <a-button type="primary" style="margin: 10px" @click="deleteAllEvents()">All Events</a-button>
+        <a-button type="primary" style="margin: 10px" @click="deleteThisEventAttendee()">This EventAttendee</a-button>
+        <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEventAttendees()">This and Following
+          EventAttendees</a-button>
+        <a-button type="primary" style="margin: 10px" @click="deleteAllEventAttendees()">All EventAttendees</a-button>
       </template>
     </a-popover>
   </a-modal>
@@ -81,19 +83,23 @@ export default {
       this.configureForm();
     }
   },
-  props: ['visible', 'event'],
-  emits: ['close', 'confirmRecurrenceRule'],
+  props: ['visible', 'eventAttendee'],
+  emits: ['close', 'confirmEventAttendee'],
   data() {
     return {
-      eventFormData: {
+      eventAttendeeUpdatePopoverVisible: false,
+      eventAttendeeDeletePopoverVisible: false,
+
+      eventAttendeeLoading: false,
+      eventAttendeeFormErrorMessage: '',
+
+      eventAttendeeFormData: {
         startDateTime: dayjs(),
         endDateTime: dayjs(),
-        untilDateTime: dayjs()
+        untilDateTime: dayjs(),
+        occurrences: 0,
       },
-      recurrenceRuleOptions: {
-        endOptions: ['Not Set', 'Until Date']
-      },
-      recurrenceRuleFormData: {}
+      endOptions: ['Not Set', 'Until Date', 'Occurrences']
     };
   },
   methods: {
@@ -103,10 +109,244 @@ export default {
     close() {
       this.$emit('close');
     },
-    confirmRecurrenceRule() {
+    confirmEventAttendee() {
 
 
       //this.$emit('confirmRecurrenceRule', );
+    },
+    createEventAttendeeBody() {
+      let eventAttendeeBody = {
+        startDateTime: this.eventFormData.startDateTime,
+        endDateTime: this.eventFormData.endDateTime,
+        untilDateTime: this.eventFormData.untilDateTime,
+
+        scheduleID: this.scheduleID,
+        eventID: this.eventID,
+
+        modifiedDateTime: this.event.modifiedDateTime
+      };
+
+      return eventAttendeeBody;
+    },
+    createEventAttendee() {
+      this.eventAttendeeLoading = true;
+      let eventAttendeeBody = this.createEventAttendeeBody();
+
+      fetch('/api/v1/event-attendees', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventAttendeeBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 201) {
+            this.resetEventForm();
+          } else {
+            this.eventAttendeeFormErrorMessage = data.message;
+            this.eventAttendeeLoading = false;
+          }
+        });
+      });
+    },
+    configureEventAttendeeForm(eventAttendee) {
+      this.eventAttendeeFormData._id = eventAttendee._id;
+
+      this.eventAttendeeFormData.startDateTime = dayjs(eventAttendee.startDateTime);
+      this.eventAttendeeFormData.endDateTime = dayjs(eventAttendee.endDateTime);
+      this.eventAttendeeFormData.untilDateTime = dayjs(eventAttendee.untilDateTime);
+
+      this.eventAttendeeFormData.occurrences = eventAttendee.occurrences;
+
+      this.eventAttendeeFormData.scheduleID = eventAttendee.scheduleID;
+      this.eventAttendeeFormData.isInstance = eventAttendee.isInstance;
+
+      if (this.eventAttendee.untilDateTime) {
+        this.eventAttendeeFormData.end = 'Until Date';
+        this.eventAttendeeFormData.untilDateTime = dayjs(this.eventAttendee.untilDateTime);
+      } else if (this.eventAttendee.occurrences) {
+        this.eventAttendeeFormData.end = 'Occurrences';
+        this.eventAttendeeFormData.occurrences = this.eventAttendee.occurrences;
+      }
+    },
+    updateDecision() {
+      if (this.eventAttendeeFormData.isInstance && this.eventAttendeeFormData.isInstance === true) {
+        this.eventAttendeeUpdatePopoverVisible = true;
+      } else {
+        this.updateEventAttendee();
+      }
+    },
+    updateEventAttendee() {
+      this.eventAttendeeLoading = true;
+      let eventAttendeeBody = this.createEventAttendeeBody();
+
+      fetch('/api/v1/event-attendees/' + this.eventAttendeeFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventAttendeeBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventAttendeeLoading = false;
+          if (response.status === 200) {
+            this.resetEventAttendeeForm();
+          } else {
+            this.eventAttendeeFormErrorMessage = data.message;
+            this.eventAttendeeLoading = false;
+          }
+        });
+      });
+    },
+    updateThisEventAttendee() {
+      this.eventAttendeeLoading = true;
+      let eventAttendeeBody = this.createEventAttendeeBody();
+
+      fetch('/api/v1/event-attendees/thisEventAttendee/' + this.eventAttendeeFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventAttendeeBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventAttendeeLoading = false;
+          if (response.status === 201) {
+            this.resetEventAttendeeForm();
+          } else {
+            this.eventAttendeeFormErrorMessage = data.message;
+            this.eventAttendeeLoading = false;
+          }
+        });
+      });
+    },
+    updateThisAndFollowingEventAttendees() {
+      this.eventAttendeeLoading = true;
+      let eventAttendeeBody = this.createEventAttendeeBody();
+
+      fetch('/api/v1/event-attendees/thisAndFollowingEventAttendees/' + this.eventAttendeeFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventAttendeeBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventAttendeeLoading = false;
+          if (response.status === 201) {
+            this.resetEventAttendeeForm();
+          } else {
+            this.eventAttendeeFormErrorMessage = data.message;
+            this.eventAttendeeLoading = false;
+          }
+        });
+      });
+    },
+    updateAllEventAttendees() {
+      this.eventAttendeeLoading = true;
+      let eventAttendeeBody = this.createEventAttendeeBody();
+
+      fetch('/api/v1/event-attendees/allEventAttendees/' + this.eventAttendeeFormData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventAttendeeBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventAttendeeLoading = false;
+          if (response.status === 200) {
+            this.resetEventAttendeeForm();
+          } else {
+            this.eventAttendeeFormErrorMessage = data.message;
+            this.eventAttendeeLoading = false;
+          }
+        });
+      });
+    },
+    deleteDecision() {
+      if (this.eventAttendeeFormData.isInstance && this.eventAttendeeFormData.isInstance === true) {
+        this.eventAttendeeDeletePopoverVisible = true;
+      } else {
+        this.deleteEventAttendee();
+      }
+    },
+    deleteEventAttendee() {
+      this.eventAttendeeLoading = true;
+      fetch('/api/v1/event-attendees/' + this.eventAttendeeFormData._id, {
+        method: 'DELETE'
+      }).then((response) => {
+        if (response.status === 204) {
+          this.resetEventAttendeeForm();
+        } else {
+          response.json().then((data) => {
+            this.eventAttendeeFormErrorMessage = data.message;
+            this.eventAttendeeLoading = false;
+          });
+        }
+      });
+    },
+    deleteThisEventAttendee() {
+      this.eventAttendeeLoading = true;
+      let eventAttendeeBody = { scheduleID: this.eventAttendeeFormData.scheduleID, startDateTime: this.eventAttendeeFormData.startDateTime };
+
+      fetch('/api/v1/event-attendees/thisEventAttendee/' + this.eventAttendeeFormData._id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventAttendeeBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventAttendeeLoading = false;
+          if (response.status === 201) {
+            this.resetEventAttendeeForm();
+          } else {
+            this.eventAttendeeFormErrorMessage = data.message;
+            this.eventAttendeeLoading = false;
+          }
+        });
+      });
+    },
+    deleteThisAndFollowingEventAttendees() {
+      this.eventAttendeeLoading = true;
+      let eventAttendeeBody = {
+        startDateTime: this.eventAttendeeFormData.startDateTime,
+        untilDateTime: dayjs(this.eventAttendeeFormData.untilDateTime)
+      };
+
+      fetch('/api/v1/event-attendees/thisAndFollowingEventAttendees/' + this.eventAttendeeFormData._id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventAttendeeBody)
+      }).then((response) => {
+        response.json().then((data) => {
+          this.eventAttendeeLoading = false;
+          if (response.status === 200) {
+            this.resetEventAttendeeForm();
+          } else {
+            this.eventAttendeeFormErrorMessage = data.message;
+            this.eventAttendeeLoading = false;
+          }
+        });
+      });
+    },
+    deleteAllEventAttendees() {
+      this.eventAttendeeLoading = true;
+      fetch('/api/v1/event-attendees/allEventAttendees/' + this.eventAttendeeFormData._id, {
+        method: 'DELETE'
+      }).then((response) => {
+        if (response.status === 204) {
+          this.resetEventAttendeeForm();
+        } else {
+          response.json().then((data) => {
+            this.eventAttendeeFormErrorMessage = data.message;
+            this.eventAttendeeLoading = false;
+          });
+        }
+      });
     }
   }
 };

@@ -20,48 +20,32 @@
               dayjs(selectedWeek)
                 .day(day - 1)
                 .format('dddd [-] MM/DD/YYYY')
-            }}</a-typography-title
-          >
+            }}</a-typography-title>
 
           <div v-for="event in sortedEvents" :key="event._id">
-            <a-card
-              v-if="
-                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
-                dayjs(selectedWeek)
-                  .day(day - 1)
-                  .format('MM/DD/YYYY')
-              "
-              :bodyStyle="{ padding: '15px' }"
-              style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
-              :hoverable="true"
-              :bordered="false"
-              :title="event.title"
-            >
+            <a-card v-if="
+              dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+              dayjs(selectedWeek)
+                .day(day - 1)
+                .format('MM/DD/YYYY')
+            " :bodyStyle="{ padding: '15px' }" style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
+              :hoverable="true" :bordered="false" :title="event.title">
               <template #extra>
-                <UserAddOutlined
-                  style="font-size: 1.5rem; margin-right: 15px"
-                  key="share"
-                  @click="
-                    selectedEvent = event;
-                    eventAttendeeModalVisible = true;
-                  "
-                />
-                <EditOutlined
-                  style="font-size: 1.5rem"
-                  key="edit"
-                  @click="
-                    selectedEvent = event;
-                    eventEditOverlayVisible = true;
-                  "
-                />
+                <UserAddOutlined style="font-size: 1.5rem; margin-right: 15px" key="share" @click="
+                  selectedEvent = event;
+                eventAttendeeModalVisible = true;
+                " />
+                <EditOutlined style="font-size: 1.5rem" key="edit" @click="
+                  selectedEvent = event;
+                eventEditOverlayVisible = true;
+                " />
               </template>
               <a-flex justify="space-between">
                 <a-card-meta>
                   <template #title v-if="event.isAttendee">
                     {{ event.title }}
                   </template>
-                  <template #description
-                    >{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                  <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
 
                     <!-- <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
@@ -71,9 +55,9 @@
                     </div> -->
                   </template>
                 </a-card-meta>
-                <template v-if="event.maxAttendees > 0">
+                <template v-if="event.attendees.length > 0">
                   <div class="attendee-count">
-                    <span>5/{{ event.maxAttendees }}</span>
+                    <span>{{ event.attendees.length }}/{{ event.maxAttendees }}</span>
                   </div>
                 </template>
               </a-flex>
@@ -86,33 +70,24 @@
       </a-timeline>
     </a-spin>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px"
+      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
     </a-float-button>
 
-    <EventEditor
-      :visible="eventEditOverlayVisible"
-      :scheduleID="schedule._id"
-      :event="selectedEvent"
-      @close="
-        eventEditOverlayVisible = false;
-        selectedEvent = {};
-        getEventsOnSchedule();
-      "
-    />
+    <EventEditor :visible="eventEditOverlayVisible" :scheduleID="schedule._id" :event="selectedEvent" @close="
+      eventEditOverlayVisible = false;
+    selectedEvent = {};
+    getEventsOnSchedule();
+    " />
 
-    <EventAttendeeEditor
-      :visible="eventAttendeeModalVisible"
-      :scheduleID="schedule._id"
-      :event="selectedEvent"
-      @close="
-        eventAttendeeModalVisible = false;
-        selectedEvent = {};
-        getEventsOnSchedule();
-      "
-    />
+    <EventAttendeeEditor :visible="eventAttendeeModalVisible" :scheduleID="schedule._id" :event="selectedEvent" @close="
+      eventAttendeeModalVisible = false;
+    selectedEvent = {};
+    getEventsOnSchedule();
+    " />
   </a-drawer>
 </template>
 
