@@ -56,9 +56,12 @@
                   </template>
                 </a-card-meta>
                 <template v-if="event.maxAttendees > 0">
-                  <div class="attendee-count">
-                    <span>5/{{ event.maxAttendees }}</span>
-                  </div>
+                  <a-popover title="Attendees" trigger="click" placement="left">
+                    <template #content>
+                      <a-tag>Tag</a-tag>
+                    </template>
+                    <a-button class="attendee-count">5/{{ event.maxAttendees }}</a-button>
+                  </a-popover>
                 </template>
               </a-flex>
             </a-card>
