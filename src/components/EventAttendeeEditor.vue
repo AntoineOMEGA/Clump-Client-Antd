@@ -32,8 +32,13 @@
 
     <div class="mb-2">
       End
-      <a-radio-group v-model:value="eventAttendeeFormData.end" option-type="button"
-        :options="recurrenceRuleOptions.endOptions" style="display: block" />
+      <a-radio-group v-model:value="eventAttendeeFormData.end" option-type="button" :options="endOptions"
+        style="display: block" />
+    </div>
+
+    <div v-if="eventAttendeeFormData.end == 'Occurrences'" class="mb-2">
+      Occurrences
+      <a-input type="number" v-model:value="eventAttendeeFormData.occurrences" allowClear></a-input>
     </div>
 
     <div v-if="eventAttendeeFormData.end == 'Until Date'" class="mb-2">
@@ -119,6 +124,7 @@ export default {
         startDateTime: this.eventFormData.startDateTime,
         endDateTime: this.eventFormData.endDateTime,
         untilDateTime: this.eventFormData.untilDateTime,
+        occurrences: this.eventFormData.occurrences,
 
         scheduleID: this.scheduleID,
         eventID: this.eventID,
