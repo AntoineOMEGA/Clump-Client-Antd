@@ -1,16 +1,23 @@
 <template>
   <a-modal :open="visible" @ok="confirmRecurrenceRule()" @cancel="close()" title="Attendee">
     <div class="mb-2">
+      Schedule
+      <a-select v-model:value="eventAttendeeFormData.scheduleID" size="large" style="width: 100%" allowClear>
+        <a-select-option v-for="schedule in schedules" :value="schedule._id" :key="schedule._id">
+          {{ schedule.title }}
+        </a-select-option>
+      </a-select>
+    </div>
+
+    <div class="mb-2">
       <a-flex justify="space-around" align="middle" gap="middle">
         <div>
           Start Time
-          <a-time-picker size="large" v-model:value="eventAttendeeFormData.startDateTime" format="h:mm A"
-            :minute-step="5" allowClear></a-time-picker>
+          <a-time-picker size="large" v-model:value="eventAttendeeFormData.startDateTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
         </div>
         <div>
           End Time
-          <a-time-picker size="large" v-model:value="eventAttendeeFormData.endDateTime" format="h:mm A" :minute-step="5"
-            allowClear></a-time-picker>
+          <a-time-picker size="large" v-model:value="eventAttendeeFormData.endDateTime" format="h:mm A" :minute-step="5" allowClear></a-time-picker>
         </div>
       </a-flex>
     </div>
@@ -19,21 +26,18 @@
       <a-flex justify="space-around" align="middle" gap="middle">
         <div>
           Start Date
-          <a-date-picker size="large" v-model:value="eventAttendeeFormData.startDateTime" format="MM-DD-YYYY"
-            allowClear></a-date-picker>
+          <a-date-picker size="large" v-model:value="eventAttendeeFormData.startDateTime" format="MM-DD-YYYY" allowClear></a-date-picker>
         </div>
         <div>
           End Date
-          <a-date-picker size="large" v-model:value="eventAttendeeFormData.endDateTime" format="MM-DD-YYYY"
-            allowClear></a-date-picker>
+          <a-date-picker size="large" v-model:value="eventAttendeeFormData.endDateTime" format="MM-DD-YYYY" allowClear></a-date-picker>
         </div>
       </a-flex>
     </div>
 
     <div class="mb-2">
       End
-      <a-radio-group v-model:value="eventAttendeeFormData.end" option-type="button" :options="endOptions"
-        style="display: block" />
+      <a-radio-group v-model:value="eventAttendeeFormData.end" option-type="button" :options="endOptions" style="display: block" />
     </div>
 
     <div v-if="eventAttendeeFormData.end == 'Occurrences'" class="mb-2">
@@ -43,24 +47,19 @@
 
     <div v-if="eventAttendeeFormData.end == 'Until Date'" class="mb-2">
       Until Date
-      <a-date-picker size="large" v-model:value="eventAttendeeFormData.untilDateTime" format="MM-DD-YYYY"
-        style="width: 100%" allowClear></a-date-picker>
+      <a-date-picker size="large" v-model:value="eventAttendeeFormData.untilDateTime" format="MM-DD-YYYY" style="width: 100%" allowClear></a-date-picker>
     </div>
 
     <a-flex justify="space-around" align="middle" gap="middle" class="mb-2">
-      <a-button v-if="!eventAttendeeFormData._id" type="primary" size="large" block
-        @click="createEventAttendee()">Create</a-button>
-      <a-button v-if="eventAttendeeFormData._id" type="primary" size="large" block
-        @click="updateDecision()">Save</a-button>
-      <a-button v-if="eventAttendeeFormData._id" type="primary" size="large" block danger
-        @click="deleteDecision()">Delete</a-button>
+      <a-button v-if="!eventAttendeeFormData._id" type="primary" size="large" block @click="createEventAttendee()">Create</a-button>
+      <a-button v-if="eventAttendeeFormData._id" type="primary" size="large" block @click="updateDecision()">Save</a-button>
+      <a-button v-if="eventAttendeeFormData._id" type="primary" size="large" block danger @click="deleteDecision()">Delete</a-button>
     </a-flex>
 
     <a-popover v-model:open="eventAttendeeUpdatePopoverVisible" title="Update Instances" trigger="click">
       <template #content>
         <a-button type="primary" style="margin: 10px" @click="updateThisEventAttendee()">This EventAttendee</a-button>
-        <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEventAttendees()">This and Following
-          EventAttendees</a-button>
+        <a-button type="primary" style="margin: 10px" @click="updateThisAndFollowingEventAttendees()">This and Following EventAttendees</a-button>
         <a-button type="primary" style="margin: 10px" @Click="updateAllEventAttendees()">All EventAttendees</a-button>
       </template>
     </a-popover>
@@ -68,8 +67,7 @@
     <a-popover v-model:open="eventAttendeeDeletePopoverVisible" title="Delete Instances" trigger="click">
       <template #content>
         <a-button type="primary" style="margin: 10px" @click="deleteThisEventAttendee()">This EventAttendee</a-button>
-        <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEventAttendees()">This and Following
-          EventAttendees</a-button>
+        <a-button type="primary" style="margin: 10px" @click="deleteThisAndFollowingEventAttendees()">This and Following EventAttendees</a-button>
         <a-button type="primary" style="margin: 10px" @click="deleteAllEventAttendees()">All EventAttendees</a-button>
       </template>
     </a-popover>
@@ -82,13 +80,13 @@ import dayjs from 'dayjs';
 
 <script>
 export default {
-  mounted() { },
+  mounted() {},
   updated() {
     if (this.visible) {
       this.configureForm();
     }
   },
-  props: ['visible', 'eventAttendee'],
+  props: ['visible', 'event'],
   emits: ['close', 'confirmEventAttendee'],
   data() {
     return {
@@ -99,24 +97,36 @@ export default {
       eventAttendeeFormErrorMessage: '',
 
       eventAttendeeFormData: {
+        scheduleID: '',
+        eventID: '',
         startDateTime: dayjs(),
         endDateTime: dayjs(),
         untilDateTime: dayjs(),
-        occurrences: 0,
+        occurrences: 0
       },
-      endOptions: ['Not Set', 'Until Date', 'Occurrences']
+      endOptions: ['Not Set', 'Until Date', 'Occurrences'],
+      schedules: []
     };
   },
   methods: {
-    configureForm() {
-
+    getSchedules() {
+      this.schedulesLoading = true;
+      fetch('/api/v1/schedules', {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            this.schedules = data.data.schedules;
+          }
+          this.schedulesLoading = false;
+        });
+      });
     },
+    configureForm() {},
     close() {
       this.$emit('close');
     },
     confirmEventAttendee() {
-
-
       //this.$emit('confirmRecurrenceRule', );
     },
     createEventAttendeeBody() {
