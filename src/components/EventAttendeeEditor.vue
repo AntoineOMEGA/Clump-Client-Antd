@@ -83,6 +83,7 @@ export default {
   mounted() {},
   updated() {
     if (this.visible) {
+      this.getSchedules();
       this.configureForm();
     }
   },
@@ -129,15 +130,16 @@ export default {
     confirmEventAttendee() {
       //this.$emit('confirmRecurrenceRule', );
     },
+    resetEventAttendeeForm() {},
     createEventAttendeeBody() {
       let eventAttendeeBody = {
-        startDateTime: this.eventFormData.startDateTime,
-        endDateTime: this.eventFormData.endDateTime,
-        untilDateTime: this.eventFormData.untilDateTime,
-        occurrences: this.eventFormData.occurrences,
+        startDateTime: this.eventAttendeeFormData.startDateTime,
+        endDateTime: this.eventAttendeeFormData.endDateTime,
+        untilDateTime: this.eventAttendeeFormData.untilDateTime,
+        occurrences: this.eventAttendeeFormData.occurrences,
 
-        scheduleID: this.scheduleID,
-        eventID: this.eventID,
+        scheduleID: this.eventAttendeeFormData.scheduleID,
+        eventID: this.event._id,
 
         modifiedDateTime: this.event.modifiedDateTime
       };
@@ -157,7 +159,7 @@ export default {
       }).then((response) => {
         response.json().then((data) => {
           if (response.status === 201) {
-            this.resetEventForm();
+            this.resetEventAttendeeForm();
           } else {
             this.eventAttendeeFormErrorMessage = data.message;
             this.eventAttendeeLoading = false;
