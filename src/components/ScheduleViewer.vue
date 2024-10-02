@@ -45,6 +45,7 @@
                     selectedEvent = event;
                     eventAttendeeModalVisible = true;
                   "
+                  v-if="!event.isAttending"
                 />
                 <EditOutlined
                   style="font-size: 1.5rem"
@@ -115,7 +116,7 @@
   </a-drawer>
 </template>
 
-<style>
+<style scoped>
 .ant-card-head {
   padding: 0 10px !important;
 }
@@ -163,6 +164,10 @@ export default {
   updated() {
     if (this.visible) {
       this.getEventsOnSchedule();
+    }
+    let timelineTails = document.querySelectorAll('.ant-timeline-item-tail');
+    for (let tail of timelineTails) {
+      tail.style.backgroundColor = this.schedule.color;
     }
   },
   data() {
