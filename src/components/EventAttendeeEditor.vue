@@ -103,7 +103,8 @@ export default {
         startDateTime: dayjs(),
         endDateTime: dayjs(),
         untilDateTime: dayjs(),
-        occurrences: 0
+        occurrences: 0,
+        end: 'Not Set'
       },
       endOptions: ['Not Set', 'Until Date', 'Occurrences'],
       schedules: []
@@ -135,8 +136,6 @@ export default {
       let eventAttendeeBody = {
         startDateTime: this.eventAttendeeFormData.startDateTime,
         endDateTime: this.eventAttendeeFormData.endDateTime,
-        untilDateTime: this.eventAttendeeFormData.untilDateTime,
-        occurrences: this.eventAttendeeFormData.occurrences,
 
         scheduleID: this.eventAttendeeFormData.scheduleID,
         eventID: this.event._id,
@@ -144,6 +143,12 @@ export default {
         modifiedDateTime: this.event.modifiedDateTime
       };
 
+      if (this.eventAttendeeFormData.end == 'Until Date') {
+        eventAttendeeBody.recurrenceRule = { untilDateTime: this.eventAttendeeFormData.untilDateTime };
+      }
+      if (this.eventAttendeeFormData.end == 'Occurrences') {
+        eventAttendeeBody.recurrenceRule = { occurrences: this.eventAttendeeFormData.occurrences };
+      }
       return eventAttendeeBody;
     },
     createEventAttendee() {
@@ -172,19 +177,16 @@ export default {
 
       this.eventAttendeeFormData.startDateTime = dayjs(eventAttendee.startDateTime);
       this.eventAttendeeFormData.endDateTime = dayjs(eventAttendee.endDateTime);
-      this.eventAttendeeFormData.untilDateTime = dayjs(eventAttendee.untilDateTime);
-
-      this.eventAttendeeFormData.occurrences = eventAttendee.occurrences;
 
       this.eventAttendeeFormData.scheduleID = eventAttendee.scheduleID;
       this.eventAttendeeFormData.isInstance = eventAttendee.isInstance;
 
       if (this.eventAttendee.untilDateTime) {
         this.eventAttendeeFormData.end = 'Until Date';
-        this.eventAttendeeFormData.untilDateTime = dayjs(this.eventAttendee.untilDateTime);
+        this.eventAttendeeFormData.untilDateTime = dayjs(this.eventAttendee.recurrenceRule.untilDateTime);
       } else if (this.eventAttendee.occurrences) {
         this.eventAttendeeFormData.end = 'Occurrences';
-        this.eventAttendeeFormData.occurrences = this.eventAttendee.occurrences;
+        this.eventAttendeeFormData.occurrences = this.eventAttendee.recurrenceRule.occurrences;
       }
     },
     updateDecision() {
