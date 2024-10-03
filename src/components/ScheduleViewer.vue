@@ -33,6 +33,7 @@
               "
               :bodyStyle="{ padding: '15px' }"
               style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
+              :style="`opacity: ${event.status == 'cancelled' ? '50%' : '100%'};`"
               :hoverable="true"
               :bordered="false"
               :title="event.title"
@@ -79,7 +80,7 @@
                 </template>
               </a-flex>
               <div>
-                <a-tag v-for="attendee in event.attendees" :key="attendee.attendeeID">{{ attendee.scheduleID }}</a-tag>
+                <a-tag v-for="attendee in event.attendees" :key="attendee.attendeeID" :style="`opacity: ${attendee.status == 'cancelled' ? '50%' : '100%'};`" @click="attendee.status == 'cancelled' ? (eventExceptionModalVisible = true) : (eventAttendeeModalVisible = true)">{{ attendee.scheduleID }}</a-tag>
               </div>
             </a-card>
           </div>
@@ -110,6 +111,16 @@
       @close="
         eventAttendeeModalVisible = false;
         selectedEvent = {};
+        getEventsOnSchedule();
+      "
+    />
+
+    <EventExceptionModal
+      :visible="eventExceptionModalVisible"
+      :exception="selectedException"
+      @close="
+        eventExceptionModalVisible = false;
+        selectedEventException = {};
         getEventsOnSchedule();
       "
     />
@@ -154,6 +165,7 @@
 import { PlusOutlined, CaretRightOutlined, CaretLeftOutlined, EditOutlined, UserAddOutlined } from '@ant-design/icons-vue';
 import EventEditor from './EventEditor.vue';
 import EventAttendeeEditor from './EventAttendeeEditor.vue';
+import EventExceptionModal from './EventExceptionModal.vue';
 import dayjs from 'dayjs';
 </script>
 
@@ -178,7 +190,10 @@ export default {
 
       eventEditOverlayVisible: false,
       eventAttendeeModalVisible: false,
-      selectedEvent: {}
+      eventExceptionModalVisible: false,
+
+      selectedEvent: {},
+      selectedEventException: {}
     };
   },
   computed: {
