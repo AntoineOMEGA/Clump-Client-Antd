@@ -84,7 +84,7 @@ export default {
   updated() {
     if (this.visible) {
       this.getSchedules();
-      this.configureForm();
+      this.configureEventAttendeeForm(this.event);
     }
   },
   props: ['visible', 'event'],
@@ -124,7 +124,6 @@ export default {
         });
       });
     },
-    configureForm() {},
     close() {
       this.$emit('close');
     },
