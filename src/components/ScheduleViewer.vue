@@ -60,7 +60,7 @@
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
                   </template>
                 </a-card-meta>
-                <template v-if="event.attendees.length > 0">
+                <template v-if="event.attendees">
                   <div class="attendee-count">
                     <span>{{ event.attendees.length }}/{{ event.maxAttendees }}</span>
                   </div>
@@ -69,8 +69,9 @@
               <div>
                 <a-tag v-for="attendee in event.attendees" :key="attendee.attendeeID"
                   :style="`opacity: ${attendee.status == 'cancelled' ? '50%' : '100%'};`"
-                  @click="attendee.status == 'cancelled' ? (eventExceptionModalVisible = true) : (eventAttendeeModalVisible = true)">{{
-                    attendee.scheduleID }}</a-tag>
+                  @click="attendee.status == 'cancelled' ? (eventExceptionModalVisible = true) : (eventAttendeeModalVisible = true)">
+                  {{ getAttendeeScheduleTitle(attendee) }}
+                </a-tag>
               </div>
             </a-card>
           </div>
@@ -155,6 +156,7 @@ export default {
   updated() {
     if (this.visible) {
       this.getEventsOnSchedule();
+      this.getSchedules();
     }
     let timelineTails = document.querySelectorAll('.ant-timeline-item-tail');
     for (let tail of timelineTails) {
@@ -166,6 +168,7 @@ export default {
       selectedWeek: dayjs(),
       eventsLoading: false,
       events: [],
+      schedules: [],
 
       eventEditOverlayVisible: false,
       eventAttendeeModalVisible: false,
@@ -207,6 +210,26 @@ export default {
     },
     close() {
       this.$emit('close');
+    },
+    getAttendeeScheduleTitle(attendee) {
+      for (let cSchedule of this.schedules) {
+        if (cSchedule._id == attendee.scheduleID) {
+          return cSchedule.title;
+        }
+      }
+    },
+    getSchedules() {
+      this.schedulesLoading = true;
+      fetch('/api/v1/schedules', {
+        method: 'GET'
+      }).then((response) => {
+        response.json().then((data) => {
+          if (response.status === 200) {
+            this.schedules = data.data.schedules;
+          }
+          this.schedulesLoading = false;
+        });
+      });
     }
   }
 };
