@@ -20,57 +20,44 @@
               dayjs(selectedWeek)
                 .day(day - 1)
                 .format('dddd [-] MM/DD/YYYY')
-            }}</a-typography-title
-          >
+            }}</a-typography-title>
 
           <div v-for="event in sortedEvents" :key="event._id">
-            <a-card
-              v-if="
-                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
-                dayjs(selectedWeek)
-                  .day(day - 1)
-                  .format('MM/DD/YYYY')
-              "
-              :bodyStyle="{ padding: '15px' }"
-              style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
-              :style="`opacity: ${event.status == 'cancelled' ? '50%' : '100%'};`"
-              :hoverable="true"
-              :bordered="false"
-              :title="event.title"
-            >
+            <a-card v-if="
+              dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+              dayjs(selectedWeek)
+                .day(day - 1)
+                .format('MM/DD/YYYY')
+            " :bodyStyle="{ padding: '15px' }" style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
+              :style="`opacity: ${event.status == 'cancelled' ? '50%' : '100%'};`" :hoverable="true" :bordered="false"
+              :title="event.title">
               <template #extra>
-                <UserAddOutlined
-                  style="font-size: 1.5rem; margin-right: 15px"
-                  key="share"
-                  @click="
+                <UserAddOutlined style="font-size: 1.5rem; margin-right: 15px" key="share" @click="
+                  selectedEvent = event;
+                eventAttendeeModalVisible = true;
+                " v-if="!event.isAttending" />
+                <EditOutlined v-if="!event.isAttending && event.status != 'cancelled'" style="font-size: 1.5rem"
+                  key="edit" @click="
                     selectedEvent = event;
-                    eventAttendeeModalVisible = true;
-                  "
-                  v-if="!event.isAttending"
-                />
-                <EditOutlined
-                  style="font-size: 1.5rem"
-                  key="edit"
-                  @click="
+                  eventEditOverlayVisible = true;
+                  " />
+                <EditOutlined v-if="event.isAttending && event.status != 'cancelled'" style="font-size: 1.5rem"
+                  key="edit" @click="
                     selectedEvent = event;
-                    eventEditOverlayVisible = true;
-                  "
-                />
+                  eventAttendeeModalVisible = true;
+                  " />
+                <EditOutlined v-if="event.status == 'cancelled'" style="font-size: 1.5rem" key="edit" @click="
+                  selectedEventException = event.exception;
+                eventExceptionModalVisible = true;
+                " />
               </template>
               <a-flex justify="space-between">
                 <a-card-meta>
                   <template #title v-if="event.isAttendee">
                     {{ event.title }}
                   </template>
-                  <template #description
-                    >{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                  <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
-
-                    <!-- <div style="padding: 5px; background-color: #333333" v-if="attendees.length > 0 && event.title.includes('Shift')">
-                      <a-tag v-for="attendee in attendees.sort()" style="font-size: 14px; margin: 5px" :key="attendee" :bordered="false">
-                        {{ attendee }}
-                      </a-tag>
-                    </div> -->
                   </template>
                 </a-card-meta>
                 <template v-if="event.attendees.length > 0">
@@ -80,7 +67,10 @@
                 </template>
               </a-flex>
               <div>
-                <a-tag v-for="attendee in event.attendees" :key="attendee.attendeeID" :style="`opacity: ${attendee.status == 'cancelled' ? '50%' : '100%'};`" @click="attendee.status == 'cancelled' ? (eventExceptionModalVisible = true) : (eventAttendeeModalVisible = true)">{{ attendee.scheduleID }}</a-tag>
+                <a-tag v-for="attendee in event.attendees" :key="attendee.attendeeID"
+                  :style="`opacity: ${attendee.status == 'cancelled' ? '50%' : '100%'};`"
+                  @click="attendee.status == 'cancelled' ? (eventExceptionModalVisible = true) : (eventAttendeeModalVisible = true)">{{
+                    attendee.scheduleID }}</a-tag>
               </div>
             </a-card>
           </div>
@@ -88,42 +78,31 @@
       </a-timeline>
     </a-spin>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px"
+      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
     </a-float-button>
 
-    <EventEditor
-      :visible="eventEditOverlayVisible"
-      :scheduleID="schedule._id"
-      :event="selectedEvent"
-      @close="
-        eventEditOverlayVisible = false;
-        selectedEvent = {};
-        getEventsOnSchedule();
-      "
-    />
+    <EventEditor :visible="eventEditOverlayVisible" :scheduleID="schedule._id" :event="selectedEvent" @close="
+      eventEditOverlayVisible = false;
+    selectedEvent = {};
+    getEventsOnSchedule();
+    " />
 
-    <EventAttendeeEditor
-      :visible="eventAttendeeModalVisible"
-      :event="selectedEvent"
+    <EventAttendeeEditor :visible="eventAttendeeModalVisible" :event="selectedEvent" :attendee="selectedAttendee"
       @close="
         eventAttendeeModalVisible = false;
-        selectedEvent = {};
-        getEventsOnSchedule();
-      "
-    />
+      selectedEvent = {};
+      getEventsOnSchedule();
+      " />
 
-    <EventExceptionModal
-      :visible="eventExceptionModalVisible"
-      :exception="selectedException"
-      @close="
-        eventExceptionModalVisible = false;
-        selectedEventException = {};
-        getEventsOnSchedule();
-      "
-    />
+    <EventExceptionModal :visible="eventExceptionModalVisible" :exception="selectedException" @close="
+      eventExceptionModalVisible = false;
+    selectedEventException = '';
+    getEventsOnSchedule();
+    " />
   </a-drawer>
 </template>
 
@@ -193,7 +172,7 @@ export default {
       eventExceptionModalVisible: false,
 
       selectedEvent: {},
-      selectedEventException: {}
+      selectedEventException: ''
     };
   },
   computed: {

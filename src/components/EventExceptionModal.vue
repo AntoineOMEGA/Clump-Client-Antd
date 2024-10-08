@@ -8,10 +8,10 @@
 
 <script>
 export default {
-  mounted() {},
+  mounted() { },
   props: ['visible', 'exception'],
   emits: ['close'],
-  updated() {},
+  updated() { },
   data() {
     return {
       errorMessage: ''
@@ -23,7 +23,7 @@ export default {
     },
     deleteEventException() {
       this.eventLoading = true;
-      fetch('/api/v1/event-exceptions/' + this.exception._id, {
+      fetch('/api/v1/event-exceptions/' + this.exception, {
         method: 'DELETE'
       }).then((response) => {
         if (response.status === 204) {
