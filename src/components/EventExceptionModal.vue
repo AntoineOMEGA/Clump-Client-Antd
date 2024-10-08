@@ -1,17 +1,17 @@
 <template>
-  <a-popover :open="visible" title="Delete Exception" trigger="click">
-    <template #content>
+  <a-modal :open="visible" title="Delete Exception" closeable>
+    <template #footer>
       <a-button type="primary" @click="deleteEventException()">Delete</a-button>
     </template>
-  </a-popover>
+  </a-modal>
 </template>
 
 <script>
 export default {
-  mounted() { },
+  mounted() {},
   props: ['visible', 'exception'],
   emits: ['close'],
-  updated() { },
+  updated() {},
   data() {
     return {
       errorMessage: ''
