@@ -86,9 +86,9 @@
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
                   </template>
                 </a-card-meta>
-                <template v-if="event.attendees">
+                <template v-if="event.attendees.length > 0">
                   <div class="attendee-count">
-                    <span>{{ event.attendees.length }}/{{ event.maxAttendees }}</span>
+                    <span>{{ event.attendees.length > 0 && event.maxAttendees > 0 ? `${event.attendees.length}/${event.maxAttendees}` : `${event.attendees.length}` }}</span>
                   </div>
                 </template>
               </a-flex>

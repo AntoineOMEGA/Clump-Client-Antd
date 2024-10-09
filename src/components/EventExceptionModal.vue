@@ -1,5 +1,5 @@
 <template>
-  <a-modal :open="visible" title="Delete Exception" closeable>
+  <a-modal :open="visible" title="Delete Exception" @cancel="close()">
     <template #footer>
       <a-button type="primary" @click="deleteEventException()">Delete</a-button>
     </template>
