@@ -54,6 +54,7 @@
       <a-button v-if="!eventAttendeeFormData._id" type="primary" size="large" block @click="createEventAttendee()">Create</a-button>
       <a-button v-if="eventAttendeeFormData._id" type="primary" size="large" block @click="updateDecision()">Save</a-button>
       <a-button v-if="eventAttendeeFormData._id" type="primary" size="large" block danger @click="deleteDecision()">Delete</a-button>
+      <!--TODO: Fix v-if --- _id does not work right now, it is disabled for other issues-->
     </a-flex>
 
     <a-popover v-model:open="eventAttendeeUpdatePopoverVisible" title="Update Instances" trigger="click">
@@ -130,7 +131,9 @@ export default {
     confirmEventAttendee() {
       //this.$emit('confirmRecurrenceRule', );
     },
-    resetEventAttendeeForm() {},
+    resetEventAttendeeForm() {
+      this.close();
+    },
     createEventAttendeeBody() {
       let eventAttendeeBody = {
         startDateTime: this.eventAttendeeFormData.startDateTime,
@@ -172,7 +175,7 @@ export default {
       });
     },
     configureEventAttendeeForm(eventAttendee) {
-      this.eventAttendeeFormData._id = eventAttendee._id;
+      //this.eventAttendeeFormData._id = eventAttendee._id;
 
       this.eventAttendeeFormData.startDateTime = dayjs(eventAttendee.startDateTime);
       this.eventAttendeeFormData.endDateTime = dayjs(eventAttendee.endDateTime);
