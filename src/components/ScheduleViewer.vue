@@ -20,57 +20,80 @@
               dayjs(selectedWeek)
                 .day(day - 1)
                 .format('dddd [-] MM/DD/YYYY')
-            }}</a-typography-title>
+            }}</a-typography-title
+          >
 
           <div v-for="event in sortedEvents" :key="event._id">
-            <a-card v-if="
-              dayjs(event.startDateTime).format('MM/DD/YYYY') ==
-              dayjs(selectedWeek)
-                .day(day - 1)
-                .format('MM/DD/YYYY')
-            " :bodyStyle="{ padding: '15px' }" style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
-              :style="`opacity: ${event.status == 'cancelled' ? '50%' : '100%'};`" :hoverable="true" :bordered="false"
-              :title="event.title">
+            <a-card
+              v-if="
+                dayjs(event.startDateTime).format('MM/DD/YYYY') ==
+                dayjs(selectedWeek)
+                  .day(day - 1)
+                  .format('MM/DD/YYYY')
+              "
+              :bodyStyle="{ padding: '15px' }"
+              style="background-color: #333; margin-bottom: 10px; text-wrap: wrap"
+              :style="`opacity: ${event.status == 'cancelled' ? '50%' : '100%'};`"
+              :hoverable="true"
+              :bordered="false"
+              :title="event.title"
+            >
               <template #extra>
-                <UserAddOutlined style="font-size: 1.5rem; margin-right: 15px" key="share" @click="
-                  selectedEvent = event;
-                eventAttendeeModalVisible = true;
-                " v-if="!event.isAttending" />
-                <EditOutlined v-if="!event.isAttending && event.status != 'cancelled'" style="font-size: 1.5rem"
-                  key="edit" @click="
+                <UserAddOutlined
+                  style="font-size: 1.5rem; margin-right: 15px"
+                  key="share"
+                  @click="
                     selectedEvent = event;
-                  eventEditOverlayVisible = true;
-                  " />
-                <EditOutlined v-if="event.isAttending && event.status != 'cancelled'" style="font-size: 1.5rem"
-                  key="edit" @click="
+                    eventAttendeeModalVisible = true;
+                  "
+                  v-if="!event.isAttending"
+                />
+                <EditOutlined
+                  v-if="!event.isAttending && event.status != 'cancelled'"
+                  style="font-size: 1.5rem"
+                  key="edit"
+                  @click="
                     selectedEvent = event;
-                  eventAttendeeModalVisible = true;
-                  " />
-                <EditOutlined v-if="event.status == 'cancelled'" style="font-size: 1.5rem" key="edit" @click="
-                  selectedEventException = event.exception;
-                eventExceptionModalVisible = true;
-                " />
+                    eventEditOverlayVisible = true;
+                  "
+                />
+                <EditOutlined
+                  v-if="event.isAttending && event.status != 'cancelled'"
+                  style="font-size: 1.5rem"
+                  key="edit"
+                  @click="
+                    selectedEvent = event;
+                    eventAttendeeModalVisible = true;
+                  "
+                />
+                <EditOutlined
+                  v-if="event.status == 'cancelled'"
+                  style="font-size: 1.5rem"
+                  key="edit"
+                  @click="
+                    selectedEventException = event.exception;
+                    eventExceptionModalVisible = true;
+                  "
+                />
               </template>
               <a-flex justify="space-between">
                 <a-card-meta>
                   <template #title v-if="event.isAttendee">
                     {{ event.title }}
                   </template>
-                  <template #description>{{ dayjs(event.startDateTime).format('h:mm A') }} to
+                  <template #description
+                    >{{ dayjs(event.startDateTime).format('h:mm A') }} to
                     {{ dayjs(event.endDateTime).format('h:mm A') }}
                   </template>
                 </a-card-meta>
                 <template v-if="event.attendees.length > 0">
                   <div class="attendee-count">
-                    <span>{{ event.attendees.length > 0 && event.maxAttendees > 0 ?
-                      `${event.attendees.length}/${event.maxAttendees}` : `${event.attendees.length}` }}</span>
+                    <span>{{ event.attendees.length > 0 && event.maxAttendees > 0 ? `${event.attendees.length}/${event.maxAttendees}` : `${event.attendees.length}` }}</span>
                   </div>
                 </template>
               </a-flex>
               <div>
-                <a-tag v-for="attendee in event.attendees" :key="attendee.attendeeID"
-                  :style="`opacity: ${attendee.status == 'cancelled' ? '50%' : '100%'};`"
-                  @click="attendee.status == 'cancelled' ? (eventExceptionModalVisible = true) : (eventAttendeeModalVisible = true)">
+                <a-tag v-for="attendee in event.attendees" :key="attendee.attendeeID" :style="`opacity: ${attendee.status == 'cancelled' ? '50%' : '100%'};`" @click="attendee.status == 'cancelled' ? (eventExceptionModalVisible = true) : (eventAttendeeModalVisible = true)">
                   {{ getAttendeeScheduleTitle(attendee) }}
                 </a-tag>
               </div>
@@ -80,31 +103,43 @@
       </a-timeline>
     </a-spin>
 
-    <a-float-button type="primary" style="height: 60px; width: 60px"
-      @click="eventEditOverlayVisible = !eventEditOverlayVisible">
+    <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventEditOverlayVisible = !eventEditOverlayVisible">
       <template #icon>
         <PlusOutlined style="font-size: 20px" />
       </template>
     </a-float-button>
 
-    <EventEditor :visible="eventEditOverlayVisible" :scheduleID="schedule._id" :event="selectedEvent" @close="
-      eventEditOverlayVisible = false;
-    selectedEvent = {};
-    getEventsOnSchedule();
-    " />
+    <EventEditor
+      :visible="eventEditOverlayVisible"
+      :scheduleID="schedule._id"
+      :event="selectedEvent"
+      @close="
+        eventEditOverlayVisible = false;
+        selectedEvent = {};
+        getEventsOnSchedule();
+      "
+    />
 
-    <EventAttendeeEditor :visible="eventAttendeeModalVisible" :event="selectedEvent" :attendee="selectedAttendee"
+    <EventAttendeeEditor
+      :visible="eventAttendeeModalVisible"
+      :event="selectedEvent"
+      :attendee="selectedAttendee"
       @close="
         eventAttendeeModalVisible = false;
-      selectedEvent = {};
-      getEventsOnSchedule();
-      " />
+        selectedEvent = {};
+        getEventsOnSchedule();
+      "
+    />
 
-    <EventExceptionModal :visible="eventExceptionModalVisible" :exception="selectedEventException" @close="
-      eventExceptionModalVisible = false;
-    selectedEventException = '';
-    getEventsOnSchedule();
-    " />
+    <EventExceptionModal
+      :visible="eventExceptionModalVisible"
+      :exception="selectedEventException"
+      @close="
+        eventExceptionModalVisible = false;
+        selectedEventException = '';
+        getEventsOnSchedule();
+      "
+    />
   </a-drawer>
 </template>
 
@@ -148,7 +183,7 @@ import EventEditor from './EventEditor.vue';
 import EventAttendeeEditor from './EventAttendeeEditor.vue';
 import EventExceptionModal from './EventExceptionModal.vue';
 import dayjs from 'dayjs';
-import { datetime, RRule, RRuleSet, rrulestr } from 'rrule'
+import { datetime, RRule } from 'rrule';
 </script>
 
 <script>
@@ -170,6 +205,10 @@ export default {
       selectedWeek: dayjs(),
       eventsLoading: false,
       events: [],
+      attendees: [],
+      eventExceptions: [],
+      attendingEvents: [],
+      refinedEvents: [],
       schedules: [],
 
       eventEditOverlayVisible: false,
@@ -182,7 +221,7 @@ export default {
   },
   computed: {
     sortedEvents() {
-      return this.events.sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1));
+      return this.refineEvents(this.events, this.attendees, this.eventExceptions, this.attendingEvents).sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1));
     }
   },
   methods: {
@@ -193,7 +232,6 @@ export default {
       if (direction == 'backward') {
         this.selectedWeek = this.selectedWeek.subtract(7, 'day');
       }
-      this.getEventsOnSchedule();
     },
     getEventsOnSchedule() {
       this.eventsLoading = true;
@@ -205,6 +243,9 @@ export default {
         response.json().then((data) => {
           if (response.status === 200) {
             this.events = data.data.events;
+            this.attendees = data.data.attendees;
+            this.eventExceptions = data.data.eventExceptions;
+            this.attendingEvents = data.data.attendingEvents;
           }
           this.eventsLoading = false;
         });
@@ -233,28 +274,13 @@ export default {
         });
       });
     },
-    findInstancesInRange(
-      eventStartDateTime,
-      eventEndDateTime,
-      recurrenceRule,
-      rangeStartDateTime,
-      rangeEndDateTime
-    ) {
+    findInstancesInRange(eventStartDateTime, eventEndDateTime, recurrenceRule, rangeStartDateTime, rangeEndDateTime) {
       let rruleString;
-      if (
-        recurrenceRule.frequency == 'Daily' ||
-        recurrenceRule.frequency == 'Weekly'
-      ) {
+      if (recurrenceRule.frequency == 'Daily' || recurrenceRule.frequency == 'Weekly') {
         rruleString = 'FREQ=' + recurrenceRule.frequency + ';';
-      } else if (
-        recurrenceRule.frequency == 'Monthly by day' ||
-        recurrenceRule.frequency == 'Monthly by date'
-      ) {
+      } else if (recurrenceRule.frequency == 'Monthly by day' || recurrenceRule.frequency == 'Monthly by date') {
         rruleString = 'FREQ=MONTHLY;';
-      } else if (
-        recurrenceRule.frequency == 'Yearly by day' ||
-        recurrenceRule.frequency == 'Yearly by date'
-      ) {
+      } else if (recurrenceRule.frequency == 'Yearly by day' || recurrenceRule.frequency == 'Yearly by date') {
         rruleString = 'FREQ=YEARLY;';
       }
 
@@ -271,26 +297,15 @@ export default {
         for (let day of recurrenceRule.byDay) {
           byDayString = byDayString + day + ',';
         }
-        rruleString =
-          rruleString +
-          'BYDAY=' +
-          byDayString.substring(0, byDayString.length - 1) +
-          ';';
+        rruleString = rruleString + 'BYDAY=' + byDayString.substring(0, byDayString.length - 1) + ';';
       }
 
-      if (
-        recurrenceRule.byWeekDayInMonth &&
-        recurrenceRule.byWeekDayInMonth.length > 0
-      ) {
+      if (recurrenceRule.byWeekDayInMonth && recurrenceRule.byWeekDayInMonth.length > 0) {
         let byWeekDayInMonthString = '';
         for (let day of recurrenceRule.byWeekDayInMonth) {
           byWeekDayInMonthString = byWeekDayInMonthString + day + ',';
         }
-        rruleString =
-          rruleString +
-          'BYDAY=' +
-          byWeekDayInMonthString.substring(0, byWeekDayInMonthString.length - 1) +
-          ';';
+        rruleString = rruleString + 'BYDAY=' + byWeekDayInMonthString.substring(0, byWeekDayInMonthString.length - 1) + ';';
       }
 
       if (recurrenceRule.byMonthDay && recurrenceRule.byMonthDay.length > 0) {
@@ -298,101 +313,58 @@ export default {
         for (let day of recurrenceRule.byMonthDay) {
           byMonthDayString = byMonthDayString + day + ',';
         }
-        rruleString =
-          rruleString +
-          'BYMONTHDAY=' +
-          byMonthDayString.substring(0, byMonthDayString.length - 1) +
-          ';';
+        rruleString = rruleString + 'BYMONTHDAY=' + byMonthDayString.substring(0, byMonthDayString.length - 1) + ';';
       }
 
       if (recurrenceRule.untilDateTime) {
-        rruleString =
-          rruleString +
-          'UNTIL=' +
-          new Date(recurrenceRule.untilDateTime)
-            .toISOString()
-            .replaceAll('-', '')
-            .replaceAll(':', '')
-            .split('.')[0] +
-          ';';
+        rruleString = rruleString + 'UNTIL=' + new Date(recurrenceRule.untilDateTime).toISOString().replaceAll('-', '').replaceAll(':', '').split('.')[0] + ';';
       }
 
       if (recurrenceRule.occurrences) {
         rruleString = rruleString + 'COUNT=' + recurrenceRule.occurrences + ';';
       }
 
-      rruleString =
-        rruleString +
-        'DTSTART=' +
-        new Date(eventStartDateTime)
-          .toISOString()
-          .replaceAll('-', '')
-          .replaceAll(':', '')
-          .split('.')[0] +
-        ';';
+      rruleString = rruleString + 'DTSTART=' + new Date(eventStartDateTime).toISOString().replaceAll('-', '').replaceAll(':', '').split('.')[0] + ';';
 
-      const rrule = RRule.fromString(
-        rruleString.substring(0, rruleString.length - 1)
-      );
+      const rrule = RRule.fromString(rruleString.substring(0, rruleString.length - 1));
 
       let tStart = new Date(rangeStartDateTime);
       let tEnd = new Date(rangeEndDateTime);
 
-      let dates = rrule.between(
-        datetime(
-          tStart.getUTCFullYear(),
-          tStart.getUTCMonth() + 1,
-          tStart.getUTCDate()
-        ),
-        datetime(tEnd.getUTCFullYear(), tEnd.getUTCMonth() + 1, tEnd.getUTCDate())
-      );
+      let dates = rrule.between(datetime(tStart.getUTCFullYear(), tStart.getUTCMonth() + 1, tStart.getUTCDate()), datetime(tEnd.getUTCFullYear(), tEnd.getUTCMonth() + 1, tEnd.getUTCDate()));
 
       //ADD Original Start Date Time to Instances (compatibility with ICal calendars elsewhere)
-      if (
-        eventEndDateTime >= new Date(rangeStartDateTime) &&
-        eventStartDateTime <= new Date(rangeEndDateTime)
-      ) {
+      if (eventEndDateTime >= new Date(rangeStartDateTime) && eventStartDateTime <= new Date(rangeEndDateTime)) {
         let found = false;
         for (let date of dates) {
-          if (
-            date.toISOString() ==
-            eventStartDateTime.toISOString().split('.')[0] + '.000Z'
-          ) {
+          if (date.toISOString() == eventStartDateTime.toISOString().split('.')[0] + '.000Z') {
             found = true;
           }
         }
 
         if (!found) {
-          let originDate = eventStartDateTime;
-          dates.unshift(
-            new Date(eventStartDateTime.toISOString().split('.')[0] + '.000Z')
-          );
+          //let originDate = eventStartDateTime;
+          dates.unshift(new Date(eventStartDateTime.toISOString().split('.')[0] + '.000Z'));
         }
       }
 
       return dates;
     },
-    refineEvents() {
+    refineEvents(events, attendees, eventExceptions, attendingEvents) {
       let refinedEvents = [];
+      let rangeStartDateTime = this.selectedWeek.startOf('week');
+      let rangeEndDateTime = this.selectedWeek.endOf('week');
+
       for (let event of events) {
         if (event.recurrenceRule) {
-          let dates = this.findInstancesInRange(
-            event.startDateTime,
-            event.endDateTime,
-            event.recurrenceRule,
-            req.query.startDateTime,
-            req.query.endDateTime
-          );
+          let dates = this.findInstancesInRange(event.startDateTime, event.endDateTime, event.recurrenceRule, rangeStartDateTime, rangeEndDateTime);
 
           for (let date of dates) {
             let startDateTimeTemp = dayjs(event.startDateTime);
             let endDateTimeTemp = dayjs(event.endDateTime);
             let timeBetweenStartAndEnd = endDateTimeTemp.diff(startDateTimeTemp);
 
-            let endDateTime = dayjs(date).add(
-              timeBetweenStartAndEnd,
-              'millisecond'
-            );
+            let endDateTime = dayjs(date).add(timeBetweenStartAndEnd, 'millisecond');
             let eventInstance = {
               _id: event._id,
               isInstance: true,
@@ -407,15 +379,11 @@ export default {
               recurrenceRule: event.recurrenceRule,
               maxAttendees: event.maxAttendees,
 
-              attendees: [],
+              attendees: []
             };
 
             eventExceptions.forEach(function (eventException) {
-              if (
-                (eventException.eventID == event._id.toString(),
-                  new Date(eventException.startDateTime).toISOString() ==
-                  new Date(date).toISOString())
-              ) {
+              if ((eventException.eventID == event._id.toString(), new Date(eventException.startDateTime).toISOString() == new Date(date).toISOString())) {
                 eventInstance.status = 'cancelled';
                 eventInstance.exception = eventException._id;
               }
@@ -426,8 +394,7 @@ export default {
                 let attendeeDateRangeParameters = {};
 
                 if (attendee.startDateTime) {
-                  attendeeDateRangeParameters.startDateTime =
-                    attendee.startDateTime;
+                  attendeeDateRangeParameters.startDateTime = attendee.startDateTime;
                 } else {
                   attendeeDateRangeParameters.startDateTime = event.startDateTime;
                 }
@@ -440,49 +407,35 @@ export default {
 
                 attendeeDateRangeParameters.recurrenceRule = event.recurrenceRule;
                 if (attendee.recurrenceRule.untilDateTime) {
-                  attendeeDateRangeParameters.recurrenceRule.untilDateTime =
-                    attendee.recurrenceRule.untilDateTime;
+                  attendeeDateRangeParameters.recurrenceRule.untilDateTime = attendee.recurrenceRule.untilDateTime;
                 }
                 if (attendee.recurrenceRule.occurrences) {
-                  attendeeDateRangeParameters.recurrenceRule.occurrences =
-                    attendee.recurrenceRule.occurrences;
+                  attendeeDateRangeParameters.recurrenceRule.occurrences = attendee.recurrenceRule.occurrences;
                 }
 
-                let attendeeDates = findInstancesInRange(
-                  attendeeDateRangeParameters.startDateTime,
-                  attendeeDateRangeParameters.endDateTime,
-                  attendeeDateRangeParameters.recurrenceRule,
-                  req.query.startDateTime,
-                  req.query.endDateTime
-                );
+                let attendeeDates = this.findInstancesInRange(attendeeDateRangeParameters.startDateTime, attendeeDateRangeParameters.endDateTime, attendeeDateRangeParameters.recurrenceRule, rangeStartDateTime, rangeEndDateTime);
 
                 for (let attendeeDate of attendeeDates) {
                   if (attendeeDate >= date && attendeeDate <= endDateTime) {
                     let startDateTimeTemp = dayjs(event.startDateTime);
                     let endDateTimeTemp = dayjs(event.endDateTime);
-                    let timeBetweenStartAndEnd =
-                      endDateTimeTemp.diff(startDateTimeTemp);
+                    let timeBetweenStartAndEnd = endDateTimeTemp.diff(startDateTimeTemp);
 
-                    let endDateTime = dayjs(date).add(
-                      timeBetweenStartAndEnd,
-                      'millisecond'
-                    );
+                    let endDateTime = dayjs(date).add(timeBetweenStartAndEnd, 'millisecond');
 
                     let eventAttendeeObject = {
                       scheduleID: attendee.scheduleID,
                       attendeeID: attendee._id,
                       startDateTime: date.toISOString(),
                       endDateTime: endDateTime.toISOString(),
-                      untilDateTime: attendee.untilDateTime,
+                      untilDateTime: attendee.untilDateTime
                     };
                     eventInstance.attendees.push(eventAttendeeObject);
 
                     eventExceptions.forEach(function (eventAttendeeException) {
                       if (
                         eventAttendeeException.eventID == event._id.toString() &&
-                        new Date(
-                          eventAttendeeException.startDateTime
-                        ).toISOString() == new Date(date).toISOString()
+                        new Date(eventAttendeeException.startDateTime).toISOString() == new Date(date).toISOString()
                         //TODO:Something Odd is going on with exceptions on attendees
                         //TODO:Exception until Date does not seem to work
                         //TODO:Events with Different Start and End Dates do not display correctly (hasn't been implemented)
@@ -498,10 +451,7 @@ export default {
             refinedEvents.push(eventInstance);
           }
         } else {
-          if (
-            event.endDateTime >= new Date(req.query.startDateTime) &&
-            event.startDateTime <= new Date(req.query.endDateTime)
-          ) {
+          if (event.endDateTime >= new Date(rangeStartDateTime) && event.startDateTime <= new Date(rangeEndDateTime)) {
             let eventInstance = {
               _id: event._id,
               isInstance: false,
@@ -515,7 +465,7 @@ export default {
               endDateTime: event.endDateTime, //adjust for new date
               maxAttendees: event.maxAttendees,
 
-              attendees: [],
+              attendees: []
             };
 
             attendees.forEach(function (attendee) {
@@ -526,7 +476,7 @@ export default {
                   attendeeID: attendee._id,
                   startDateTime: attendee.startDateTime,
                   endDateTime: attendee.endDateTime,
-                  untilDateTime: attendee.untilDateTime,
+                  untilDateTime: attendee.untilDateTime
                 };
                 eventInstance.attendees.push(eventAttendeeObject);
               }
@@ -539,23 +489,14 @@ export default {
 
       for (let attendeeEvent of attendingEvents) {
         if (attendeeEvent.recurrenceRule) {
-          let dates = findInstancesInRange(
-            attendeeEvent.startDateTime,
-            attendeeEvent.endDateTime,
-            attendeeEvent.recurrenceRule,
-            req.query.startDateTime,
-            req.query.endDateTime
-          );
+          let dates = this.findInstancesInRange(attendeeEvent.startDateTime, attendeeEvent.endDateTime, attendeeEvent.recurrenceRule, rangeStartDateTime, rangeEndDateTime);
 
           for (let date of dates) {
             let startDateTimeTemp = dayjs(attendeeEvent.startDateTime);
             let endDateTimeTemp = dayjs(attendeeEvent.endDateTime);
             let timeBetweenStartAndEnd = endDateTimeTemp.diff(startDateTimeTemp);
 
-            let endDateTime = dayjs(date).add(
-              timeBetweenStartAndEnd,
-              'millisecond'
-            );
+            let endDateTime = dayjs(date).add(timeBetweenStartAndEnd, 'millisecond');
             let attendeeEventInstance = {
               _id: attendeeEvent._id,
               isInstance: true,
@@ -571,14 +512,13 @@ export default {
               recurrenceRule: attendeeEvent.recurrenceRule,
               maxAttendees: attendeeEvent.maxAttendees,
 
-              attendees: [],
+              attendees: []
             };
 
             eventExceptions.forEach(function (eventException) {
               if (
-                (eventException.eventID == attendeeEvent._id.toString() &&
-                  new Date(eventException.startDateTime).toISOString() ==
-                  new Date(date).toISOString())
+                eventException.eventID == attendeeEvent._id.toString() &&
+                new Date(eventException.startDateTime).toISOString() == new Date(date).toISOString()
                 //TODO:Something Odd is going on with exceptions on attendees
               ) {
                 attendeeEventInstance.status = 'cancelled';
@@ -599,11 +539,12 @@ export default {
             timeZone: attendeeEvent.timeZone,
             startDateTime: attendeeEvent.startDateTime,
             endDateTime: attendeeEvent.endDateTime,
-            maxAttendees: attendeeEvent.maxAttendees,
+            maxAttendees: attendeeEvent.maxAttendees
           };
           refinedEvents.push(attendeeEventInstance);
         }
       }
+      return refinedEvents;
     }
   }
 };
