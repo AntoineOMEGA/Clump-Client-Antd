@@ -221,7 +221,7 @@ export default {
   },
   computed: {
     sortedEvents() {
-      return this.refineEvents(this.events, this.attendees, this.eventExceptions, this.attendingEvents).sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1));
+      return this.refineEvents().sort((a, b) => (a.startDateTime >= b.startDateTime ? 1 : -1));
     }
   },
   methods: {
@@ -243,7 +243,7 @@ export default {
         response.json().then((data) => {
           if (response.status === 200) {
             this.events = data.data.events;
-            this.attendees = data.data.attendees;
+            this.attendees = data.data.eventAttendees;
             this.eventExceptions = data.data.eventExceptions;
             this.attendingEvents = data.data.attendingEvents;
           }
@@ -350,12 +350,12 @@ export default {
 
       return dates;
     },
-    refineEvents(events, attendees, eventExceptions, attendingEvents) {
+    refineEvents() {
       let refinedEvents = [];
       let rangeStartDateTime = this.selectedWeek.startOf('week');
       let rangeEndDateTime = this.selectedWeek.endOf('week');
 
-      for (let event of events) {
+      for (let event of this.events) {
         if (event.recurrenceRule) {
           let dates = this.findInstancesInRange(event.startDateTime, event.endDateTime, event.recurrenceRule, rangeStartDateTime, rangeEndDateTime);
 
@@ -382,14 +382,14 @@ export default {
               attendees: []
             };
 
-            eventExceptions.forEach(function (eventException) {
+            this.eventExceptions.forEach(function (eventException) {
               if ((eventException.eventID == event._id.toString(), new Date(eventException.startDateTime).toISOString() == new Date(date).toISOString())) {
                 eventInstance.status = 'cancelled';
                 eventInstance.exception = eventException._id;
               }
             });
 
-            attendees.forEach(function (attendee) {
+            this.attendees.forEach(function (attendee) {
               if (attendee.eventID.toString() == event._id.toString()) {
                 let attendeeDateRangeParameters = {};
 
@@ -432,7 +432,7 @@ export default {
                     };
                     eventInstance.attendees.push(eventAttendeeObject);
 
-                    eventExceptions.forEach(function (eventAttendeeException) {
+                    this.eventExceptions.forEach(function (eventAttendeeException) {
                       if (
                         eventAttendeeException.eventID == event._id.toString() &&
                         new Date(eventAttendeeException.startDateTime).toISOString() == new Date(date).toISOString()
@@ -468,7 +468,7 @@ export default {
               attendees: []
             };
 
-            attendees.forEach(function (attendee) {
+            this.attendees.forEach(function (attendee) {
               //TODO: No attendee date validation
               if (attendee.eventID.toString() == event._id.toString()) {
                 let eventAttendeeObject = {
@@ -487,7 +487,7 @@ export default {
         }
       }
 
-      for (let attendeeEvent of attendingEvents) {
+      for (let attendeeEvent of this.attendingEvents) {
         if (attendeeEvent.recurrenceRule) {
           let dates = this.findInstancesInRange(attendeeEvent.startDateTime, attendeeEvent.endDateTime, attendeeEvent.recurrenceRule, rangeStartDateTime, rangeEndDateTime);
 
@@ -515,7 +515,7 @@ export default {
               attendees: []
             };
 
-            eventExceptions.forEach(function (eventException) {
+            this.eventExceptions.forEach(function (eventException) {
               if (
                 eventException.eventID == attendeeEvent._id.toString() &&
                 new Date(eventException.startDateTime).toISOString() == new Date(date).toISOString()
