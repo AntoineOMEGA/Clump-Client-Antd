@@ -326,13 +326,12 @@ export default {
 
       rruleString = rruleString + 'DTSTART=' + new Date(eventStartDateTime).toISOString().replaceAll('-', '').replaceAll(':', '').split('.')[0] + ';';
 
-      const rrule = RRule.fromString(rruleString.substring(0, rruleString.length - 1));
+      let rrule = RRule.fromString(rruleString.substring(0, rruleString.length - 1));
 
       let tStart = new Date(rangeStartDateTime);
       let tEnd = new Date(rangeEndDateTime);
 
       let dates = rrule.between(datetime(tStart.getUTCFullYear(), tStart.getUTCMonth() + 1, tStart.getUTCDate()), datetime(tEnd.getUTCFullYear(), tEnd.getUTCMonth() + 1, tEnd.getUTCDate()));
-
       //ADD Original Start Date Time to Instances (compatibility with ICal calendars elsewhere)
       if (eventEndDateTime >= new Date(rangeStartDateTime) && eventStartDateTime <= new Date(rangeEndDateTime)) {
         let found = false;
@@ -347,7 +346,6 @@ export default {
           dates.unshift(new Date(eventStartDateTime.toISOString().split('.')[0] + '.000Z'));
         }
       }
-
       return dates;
     },
     refineEvents() {
@@ -382,14 +380,14 @@ export default {
               attendees: []
             };
 
-            this.eventExceptions.forEach(function (eventException) {
+            for (let eventException of this.eventExceptions) {
               if ((eventException.eventID == event._id.toString(), new Date(eventException.startDateTime).toISOString() == new Date(date).toISOString())) {
                 eventInstance.status = 'cancelled';
                 eventInstance.exception = eventException._id;
               }
-            });
+            }
 
-            this.attendees.forEach(function (attendee) {
+            for (let attendee of this.attendees) {
               if (attendee.eventID.toString() == event._id.toString()) {
                 let attendeeDateRangeParameters = {};
 
@@ -432,7 +430,7 @@ export default {
                     };
                     eventInstance.attendees.push(eventAttendeeObject);
 
-                    this.eventExceptions.forEach(function (eventAttendeeException) {
+                    for (let eventAttendeeException of this.eventExceptions) {
                       if (
                         eventAttendeeException.eventID == event._id.toString() &&
                         new Date(eventAttendeeException.startDateTime).toISOString() == new Date(date).toISOString()
@@ -443,11 +441,11 @@ export default {
                         eventAttendeeObject.status = 'cancelled';
                         eventAttendeeObject.exception = eventAttendeeException._id;
                       }
-                    });
+                    }
                   }
                 }
               }
-            });
+            }
             refinedEvents.push(eventInstance);
           }
         } else {
@@ -468,7 +466,7 @@ export default {
               attendees: []
             };
 
-            this.attendees.forEach(function (attendee) {
+            for (let attendee of this.attendees) {
               //TODO: No attendee date validation
               if (attendee.eventID.toString() == event._id.toString()) {
                 let eventAttendeeObject = {
@@ -480,7 +478,7 @@ export default {
                 };
                 eventInstance.attendees.push(eventAttendeeObject);
               }
-            });
+            }
 
             refinedEvents.push(eventInstance);
           }
@@ -515,7 +513,7 @@ export default {
               attendees: []
             };
 
-            this.eventExceptions.forEach(function (eventException) {
+            for (let eventException of this.eventExceptions) {
               if (
                 eventException.eventID == attendeeEvent._id.toString() &&
                 new Date(eventException.startDateTime).toISOString() == new Date(date).toISOString()
@@ -524,7 +522,7 @@ export default {
                 attendeeEventInstance.status = 'cancelled';
                 attendeeEventInstance.exception = eventException._id;
               }
-            });
+            }
             refinedEvents.push(attendeeEventInstance);
           }
         } else {
