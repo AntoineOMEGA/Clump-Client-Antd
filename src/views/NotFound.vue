@@ -10,3 +10,14 @@
 </template>
 
 <script setup></script>
+
+<script>
+import { Row, Col } from 'ant-design-vue';
+
+export default {
+  components: {
+    ARow: Row,
+    ACol: Col,
+  },
+}
+</script>

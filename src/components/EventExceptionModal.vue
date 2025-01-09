@@ -7,11 +7,17 @@
 </template>
 
 <script>
+import { Button, Modal } from 'ant-design-vue';
+
 export default {
-  mounted() {},
+  components: {
+    AButton: Button,
+    AModal: Modal,
+  },
+  mounted() { },
   props: ['visible', 'exception'],
   emits: ['close'],
-  updated() {},
+  updated() { },
   data() {
     return {
       errorMessage: ''

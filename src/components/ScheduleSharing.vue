@@ -11,11 +11,14 @@
         </a-tab-pane>
 
         <a-tab-pane key="External" tab="External">
-          <template v-for="scheduleLink in scheduleLinks.sort((a, b) => (a.recipient >= b.recipient ? 1 : -1))" :key="scheduleLink._id">
+          <template v-for="scheduleLink in scheduleLinks.sort((a, b) => (a.recipient >= b.recipient ? 1 : -1))"
+            :key="scheduleLink._id">
             <a-card style="margin-bottom: 10px" :title="scheduleLink.recipient" :bodyStyle="{ padding: '0' }">
               <template #extra>
-                <CopyOutlined style="font-size: 1.5rem; margin-right: 15px" key="copy" @click="copyLink(scheduleLink)" />
-                <UserDeleteOutlined style="font-size: 1.5rem" key="delete" @click="deleteScheduleLink(scheduleLink._id)" />
+                <CopyOutlined style="font-size: 1.5rem; margin-right: 15px" key="copy"
+                  @click="copyLink(scheduleLink)" />
+                <UserDeleteOutlined style="font-size: 1.5rem" key="delete"
+                  @click="deleteScheduleLink(scheduleLink._id)" />
               </template>
             </a-card>
           </template>
@@ -32,7 +35,20 @@ import { UserDeleteOutlined, CopyOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
+import { Button, Drawer, Spin, Card, Input, Tabs, TabPane, Collapse, CollapsePanel } from 'ant-design-vue';
+
 export default {
+  components: {
+    AButton: Button,
+    ADrawer: Drawer,
+    ASpin: Spin,
+    ACard: Card,
+    AInput: Input,
+    ATabs: Tabs,
+    ATabPane: TabPane,
+    ACollapse: Collapse,
+    ACollapsePanel: CollapsePanel
+  },
   props: ['visible', 'scheduleID'],
   emits: ['close'],
   updated() {

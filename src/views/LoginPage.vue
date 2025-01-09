@@ -4,7 +4,8 @@
       <a-typography-title>CLUMP</a-typography-title>
       <a-form>
         <a-input class="mb-2" size="large" id="email" addonBefore="Email" v-model:value="email"></a-input>
-        <a-input class="mb-2" size="large" id="password" addonBefore="Password" type="password" v-model:value="password"></a-input>
+        <a-input class="mb-2" size="large" id="password" addonBefore="Password" type="password"
+          v-model:value="password"></a-input>
         <a-button class="mb-2" type="primary" size="large" @click="login()" block>Login</a-button>
       </a-form>
       <a-flex justify="space-around" align="middle">
@@ -22,7 +23,18 @@ import ForgotPasswordModal from '../components/ForgotPasswordModal.vue';
 </script>
 
 <script>
+import { Row, Col, Button, Form, Input, Flex, TypographyTitle } from 'ant-design-vue';
+
 export default {
+  components: {
+    ARow: Row,
+    ACol: Col,
+    AButton: Button,
+    AForm: Form,
+    AInput: Input,
+    AFlex: Flex,
+    ATypographyTitle: TypographyTitle
+  },
   data() {
     return {
       email: '',

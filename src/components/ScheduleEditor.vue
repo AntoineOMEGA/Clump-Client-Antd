@@ -65,7 +65,21 @@ import dayjs from 'dayjs';
 </script>
 
 <script>
+import { Button, Drawer, Spin, Form, Input, Flex, Alert, DatePicker, Select, SelectOption } from 'ant-design-vue';
+
 export default {
+  components: {
+    AButton: Button,
+    ADrawer: Drawer,
+    ASpin: Spin,
+    AForm: Form,
+    AInput: Input,
+    AFlex: Flex,
+    AAlert: Alert,
+    ADatePicker: DatePicker,
+    ASelect: Select,
+    ASelectOption: SelectOption
+  },
   props: ['visible', 'schedule'],
   emits: ['close'],
   updated() {

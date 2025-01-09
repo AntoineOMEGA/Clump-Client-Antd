@@ -1,5 +1,6 @@
 <template>
-  <a-float-button type="primary" @click="tagEditOverlayVisible = !tagEditOverlayVisible" style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="tagEditOverlayVisible = !tagEditOverlayVisible"
+    style="height: 60px; width: 60px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -34,12 +35,14 @@
           <a-input size="large" type="color" v-model:value="tagFormData.color"></a-input>
         </div>
 
-        <a-alert message="Error" :description="tagFormErrorMessage" type="error" class="mb-2" v-if="tagFormErrorMessage != ''" />
+        <a-alert message="Error" :description="tagFormErrorMessage" type="error" class="mb-2"
+          v-if="tagFormErrorMessage != ''" />
 
         <a-flex justify="space-around" align="middle" gap="middle">
           <a-button type="primary" size="large" block v-if="!tagFormData._id" @click="createTag()">Create</a-button>
           <a-button type="primary" size="large" block v-if="tagFormData._id" @click="updateTag()">Save</a-button>
-          <a-button type="primary" size="large" block danger v-if="tagFormData._id" @click="deleteTag()">Delete</a-button>
+          <a-button type="primary" size="large" block danger v-if="tagFormData._id"
+            @click="deleteTag()">Delete</a-button>
         </a-flex>
       </a-form>
     </a-spin>
@@ -51,7 +54,22 @@ import { PlusOutlined, EditOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
+import { Row, Col, Button, FloatButton, Drawer, Spin, Card, Form, Input, Flex, Alert } from 'ant-design-vue';
+
 export default {
+  components: {
+    ARow: Row,
+    ACol: Col,
+    AButton: Button,
+    AFloatButton: FloatButton,
+    ADrawer: Drawer,
+    ASpin: Spin,
+    ACard: Card,
+    AForm: Form,
+    AInput: Input,
+    AFlex: Flex,
+    AAlert: Alert
+  },
   mounted() {
     this.getTags();
   },

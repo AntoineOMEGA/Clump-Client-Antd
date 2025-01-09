@@ -1,5 +1,6 @@
 <template>
-  <a-float-button type="primary" style="height: 60px; width: 60px" @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
+  <a-float-button type="primary" style="height: 60px; width: 60px"
+    @click="eventTemplateEditOverlayVisible = !eventTemplateEditOverlayVisible">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -11,10 +12,14 @@
 
   <a-spin :spinning="eventTemplateLoadSpinning">
     <a-row>
-      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
-        <a-card style="margin: 10px" v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())" :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
+      <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6"
+        v-for="eventTemplate in eventTemplates.sort((a, b) => (a.title > b.title ? 1 : -1))" :key="eventTemplate._id">
+        <a-card style="margin: 10px"
+          v-if="eventTemplate.title.toLowerCase().includes(eventTemplateFilterSettings.search.toLowerCase())"
+          :title="eventTemplate.title" :bodyStyle="{ padding: '0' }">
           <template #extra>
-            <EditOutlined style="font-size: 1.5rem" key="edit" @click="configureUpdateEventTemplateForm(eventTemplate)" />
+            <EditOutlined style="font-size: 1.5rem" key="edit"
+              @click="configureUpdateEventTemplateForm(eventTemplate)" />
           </template>
         </a-card>
       </a-col>
@@ -36,7 +41,8 @@
 
         <div class="mb-2">
           Description
-          <a-textarea :auto-size="{ minRows: 2, maxRows: 6 }" v-model:value="eventTemplateFormData.description"></a-textarea>
+          <a-textarea :auto-size="{ minRows: 2, maxRows: 6 }"
+            v-model:value="eventTemplateFormData.description"></a-textarea>
         </div>
 
         <a-card v-if="eventTemplateFormErrorMessage != ''">
@@ -44,9 +50,12 @@
         </a-card>
 
         <a-flex justify="space-around" align="middle" gap="middle">
-          <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id" @click="createEventTemplate()">Create</a-button>
-          <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="updateEventTemplate()">Save</a-button>
-          <a-button type="primary" size="large" block v-if="eventTemplateFormData._id" @click="deleteEventTemplate()">Delete</a-button>
+          <a-button type="primary" size="large" block v-if="!eventTemplateFormData._id"
+            @click="createEventTemplate()">Create</a-button>
+          <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
+            @click="updateEventTemplate()">Save</a-button>
+          <a-button type="primary" size="large" block v-if="eventTemplateFormData._id"
+            @click="deleteEventTemplate()">Delete</a-button>
         </a-flex>
       </a-form>
     </a-spin>
@@ -58,7 +67,23 @@ import { EditOutlined, PlusOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
+import { Button, Input, Flex, Spin, Textarea, Form, Row, Col, Card, CardMeta, Drawer, FloatButton } from 'ant-design-vue';
+
 export default {
+  components: {
+    AButton: Button,
+    AInput: Input,
+    AFlex: Flex,
+    ASpin: Spin,
+    ATextarea: Textarea,
+    AForm: Form,
+    ARow: Row,
+    ACol: Col,
+    ACard: Card,
+    ACardMeta: CardMeta,
+    ADrawer: Drawer,
+    AFloatButton: FloatButton
+  },
   mounted() {
     this.getEventTemplates();
   },

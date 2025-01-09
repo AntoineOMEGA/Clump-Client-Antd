@@ -1,5 +1,6 @@
 <template>
-  <a-float-button type="primary" @click="noteEditOverlayVisible = !noteEditOverlayVisible" style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="noteEditOverlayVisible = !noteEditOverlayVisible"
+    style="height: 60px; width: 60px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
@@ -18,7 +19,8 @@
           </template>
           <p style="padding: 10px; margin: 0 !important; word-wrap: break-word">{{ note.note }}</p>
           <div style="padding: 10px; background-color: #333333" v-if="note.tagIDs.length > 0">
-            <a-tag v-for="tagID in note.tagIDs" :key="tagID" :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
+            <a-tag v-for="tagID in note.tagIDs" :key="tagID"
+              :color="tags[tags.findIndex((tag) => tag._id === tagID)].color">
               {{ tags[tags.findIndex((tag) => tag._id === tagID)].title }}
             </a-tag>
           </div>
@@ -49,12 +51,14 @@
           </a-select>
         </div>
 
-        <a-alert message="Error" :description="noteFormErrorMessage" type="error" class="mb-2" v-if="noteFormErrorMessage != ''" />
+        <a-alert message="Error" :description="noteFormErrorMessage" type="error" class="mb-2"
+          v-if="noteFormErrorMessage != ''" />
 
         <a-flex justify="space-around" align="middle" gap="middle">
           <a-button type="primary" size="large" block v-if="!noteFormData._id" @click="createNote()">Create</a-button>
           <a-button type="primary" size="large" block v-if="noteFormData._id" @click="updateNote()">Save</a-button>
-          <a-button type="primary" size="large" block danger v-if="noteFormData._id" @click="deleteNote()">Delete</a-button>
+          <a-button type="primary" size="large" block danger v-if="noteFormData._id"
+            @click="deleteNote()">Delete</a-button>
         </a-flex>
       </a-form>
     </a-spin>
@@ -66,7 +70,26 @@ import { PlusOutlined, EditOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
+import { Row, Col, Button, FloatButton, Drawer, Spin, Card, Form, Input, Flex, Alert, Tag, Textarea, Select, SelectOption } from 'ant-design-vue';
+
 export default {
+  components: {
+    ARow: Row,
+    ACol: Col,
+    AButton: Button,
+    AFloatButton: FloatButton,
+    ADrawer: Drawer,
+    ASpin: Spin,
+    ACard: Card,
+    AForm: Form,
+    AInput: Input,
+    AFlex: Flex,
+    AAlert: Alert,
+    ATag: Tag,
+    ATextarea: Textarea,
+    ASelect: Select,
+    ASelectOption: SelectOption
+  },
   mounted() {
     this.getTags();
     this.getNotes();

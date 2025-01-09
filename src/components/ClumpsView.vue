@@ -1,11 +1,13 @@
 <template>
-  <a-float-button type="primary" @click="clumpOverlayVisible = !clumpOverlayVisible" style="height: 60px; width: 60px; right: 100px">
+  <a-float-button type="primary" @click="clumpOverlayVisible = !clumpOverlayVisible"
+    style="height: 60px; width: 60px; right: 100px">
     <template #icon>
       <PlusOutlined style="font-size: 20px" />
     </template>
   </a-float-button>
 
-  <a-float-button type="primary" @click="clumpJoinOverlayVisible = !clumpJoinOverlayVisible" style="height: 60px; width: 60px">
+  <a-float-button type="primary" @click="clumpJoinOverlayVisible = !clumpJoinOverlayVisible"
+    style="height: 60px; width: 60px">
     <template #icon>
       <EnterOutlined style="font-size: 20px" />
     </template>
@@ -35,9 +37,12 @@
       <a-card v-if="clumpFormErrorMessage != ''" title="clumpFormErrorMessage"> </a-card>
 
       <a-flex justify="space-around" align="middle" gap="middle">
-        <a-button type="primary" size="large" block v-if="!clumpFormData._id" @click="createClump()"> Create Clump </a-button>
-        <a-button type="primary" size="large" block v-if="clumpFormData._id" @click="updateClump()"> Update Clump </a-button>
-        <a-button type="primary" size="large" block danger v-if="clumpFormData._id" @click="deleteClump()"> Delete Clump </a-button>
+        <a-button type="primary" size="large" block v-if="!clumpFormData._id" @click="createClump()"> Create Clump
+        </a-button>
+        <a-button type="primary" size="large" block v-if="clumpFormData._id" @click="updateClump()"> Update Clump
+        </a-button>
+        <a-button type="primary" size="large" block danger v-if="clumpFormData._id" @click="deleteClump()"> Delete Clump
+        </a-button>
       </a-flex>
     </a-form>
   </a-drawer>
@@ -63,7 +68,22 @@ import { SelectOutlined, EditOutlined, PlusOutlined, EnterOutlined } from '@ant-
 </script>
 
 <script>
+import { Row, Col, Button, FloatButton, Drawer, Spin, Card, CardMeta, Form, Input, Flex } from 'ant-design-vue';
+
 export default {
+  components: {
+    ARow: Row,
+    ACol: Col,
+    AButton: Button,
+    AFloatButton: FloatButton,
+    ADrawer: Drawer,
+    ASpin: Spin,
+    ACard: Card,
+    ACardMeta: CardMeta,
+    AForm: Form,
+    AInput: Input,
+    AFlex: Flex
+  },
   mounted() {
     this.getClumps();
   },

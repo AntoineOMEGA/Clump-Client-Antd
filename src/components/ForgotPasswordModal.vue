@@ -14,7 +14,15 @@
 <script setup></script>
 
 <script>
+import { Button, Input, Flex, Modal } from 'ant-design-vue';
+
 export default {
+  components: {
+    AButton: Button,
+    AInput: Input,
+    AFlex: Flex,
+    AModal: Modal
+  },
   props: ['visible'],
   emits: ['close'],
   data() {

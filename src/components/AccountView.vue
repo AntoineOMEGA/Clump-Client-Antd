@@ -22,7 +22,8 @@
         <a-input size="large" type="password" v-model:value="accountFormData.confirmPassword"></a-input>
       </div>
 
-      <a-alert message="Error" :description="accountFormErrorMessage" type="error" class="mb-2" v-if="accountFormErrorMessage != ''" />
+      <a-alert message="Error" :description="accountFormErrorMessage" type="error" class="mb-2"
+        v-if="accountFormErrorMessage != ''" />
 
       <a-flex justify="space-around" align="middle" gap="middle">
         <a-button type="primary" size="large" block @click="updateAccount()">Save</a-button>
@@ -35,7 +36,16 @@
 <script setup></script>
 
 <script>
+import { Button, Form, Input, Flex, TypographyTitle } from 'ant-design-vue';
+
 export default {
+  components: {
+    AButton: Button,
+    AForm: Form,
+    AInput: Input,
+    AFlex: Flex,
+    ATypographyTitle: TypographyTitle
+  },
   data() {
     return {
       accountFormData: {

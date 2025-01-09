@@ -15,8 +15,15 @@ import { EditOutlined } from '@ant-design/icons-vue';
 </script>
 
 <script>
+import { Row, Col, Card } from 'ant-design-vue';
+
 export default {
-  mounted() {},
+  components: {
+    ARow: Row,
+    ACol: Col,
+    ACard: Card
+  },
+  mounted() { },
   data() {
     return {};
   },

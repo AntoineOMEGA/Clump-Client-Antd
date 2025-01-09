@@ -193,7 +193,26 @@ import dayjs from 'dayjs';
 </script>
 
 <script>
+import { Button, Input, Flex, Modal, Popover, Select, SelectOption, TimePicker, DatePicker, RadioGroup, Spin, Alert, Collapse, CollapsePanel, Textarea } from 'ant-design-vue';
+
 export default {
+  components: {
+    AButton: Button,
+    AInput: Input,
+    AFlex: Flex,
+    AModal: Modal,
+    APopover: Popover,
+    ASelect: Select,
+    ASelectOption: SelectOption,
+    ATimePicker: TimePicker,
+    ADatePicker: DatePicker,
+    ARadioGroup: RadioGroup,
+    AAlert: Alert,
+    ASpin: Spin,
+    ACollapse: Collapse,
+    ACollapsePanel: CollapsePanel,
+    ATextarea: Textarea
+  },
   mounted() { },
   props: ['visible', 'scheduleID', 'event'],
   emits: ['close'],

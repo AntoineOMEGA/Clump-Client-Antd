@@ -3,24 +3,32 @@ import { RouterView } from 'vue-router';
 import AppBar from './components/AppBar.vue';
 </script>
 
+<script>
+import { ConfigProvider, Layout } from 'ant-design-vue';
+export default {
+  components: {
+    AConfigProvider: ConfigProvider,
+    ALayout: Layout
+  }
+}
+</script>
+
 <template>
-  <a-config-provider
-    :theme="{
-      token: {
-        colorBgBase: '#252525',
-        colorTextBase: '#ffffff',
-        colorPrimary: '#22a2ff',
-        colorPrimaryBg: '#22a2ff',
-        colorLink: '#22a2ff',
-        colorBorder: '#444444'
-      },
-      components: {
-        Alert: {
-          colorText: '#000000'
-        }
+  <a-config-provider :theme="{
+    token: {
+      colorBgBase: '#252525',
+      colorTextBase: '#ffffff',
+      colorPrimary: '#22a2ff',
+      colorPrimaryBg: '#22a2ff',
+      colorLink: '#22a2ff',
+      colorBorder: '#444444'
+    },
+    components: {
+      Alert: {
+        colorText: '#000000'
       }
-    }"
-  >
+    }
+  }">
     <a-layout class="full-height">
       <AppBar />
       <RouterView />
